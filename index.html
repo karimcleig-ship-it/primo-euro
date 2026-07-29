@@ -9,6 +9,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
+html {
+  /* i browser Android gonfiano i font col "testo grande" di sistema:
+     qui il layout è una scena costruita al pixel, e deve restare tale
+     su ogni telefono. Chi ha bisogno di testo più grande può usare lo
+     zoom della pagina, che scala tutto insieme senza rompere niente. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 :root {
   --ink: #0b0b12;
   --ink-2: #14141f;
@@ -361,8 +370,8 @@ input[type=range]::-moz-range-thumb {
 .bentornato b { color: var(--lime); }
 
 /* la testata: i testi impacchettati a sinistra, il sogno a destra */
-.testata { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 6px; }
-.countdown { text-align: left; margin: 0; }
+.testata { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 12px; margin-top: 6px; }
+.countdown { flex: 1 1 55%; min-width: 0; text-align: left; margin: 0; }
 .cd-infl { margin-inline: 0; }
 
 /* il box del sogno: la cifra messa via, bene in vista */
@@ -397,7 +406,7 @@ input[type=range]::-moz-range-thumb {
 
 .cd-days {
   font-family: var(--font-display);
-  font-size: 70px; font-weight: 700; letter-spacing: -.05em; line-height: 1;
+  font-size: clamp(52px, 17vw, 70px); font-weight: 700; letter-spacing: -.05em; line-height: 1;
   font-variant-numeric: tabular-nums;
   background: linear-gradient(180deg, var(--paper), #b9c47a);
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -405,7 +414,7 @@ input[type=range]::-moz-range-thumb {
 }
 /* quando il tempo si dice a parole ("1 anno e 3 mesi") il corpo scende
    ma il peso resta: è sempre il protagonista della schermata */
-.cd-days.testo { font-size: 37px; letter-spacing: -.02em; line-height: 1.1; padding: 14px 0; }
+.cd-days.testo { font-size: clamp(24px, 8vw, 34px); letter-spacing: -.02em; line-height: 1.15; padding: 10px 0; }
 #movesDays.testo { font-size: 22px; }
 #recapDays.testo { font-size: 26px; }
 
