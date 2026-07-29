@@ -1101,7 +1101,7 @@ input[type=range]::-moz-range-thumb {
     <!-- 3. home: il conto alla rovescia -->
     <section class="screen" data-screen="home">
       <div class="home-head">
-        <p class="eyebrow">Il tuo sogno</p>
+        <p class="eyebrow">⏳ La tua clessidra</p>
         <div class="home-azioni">
           <button class="ricomincia" id="homeReset" aria-label="Ricomincia da capo" title="Ricomincia da capo">↺</button>
         </div>
@@ -1127,6 +1127,11 @@ input[type=range]::-moz-range-thumb {
 
       <div class="salva" id="homeSalva" style="margin-top:18px"></div>
 
+      <div class="clessidra-box">
+        <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
+        <p class="clessidra-nota" id="clessidraNota"></p>
+      </div>
+
       <div class="sogni-box" id="sogniBox" hidden>
         <p class="week-title">I tuoi sogni, tutti insieme</p>
         <div class="sogni-lista" id="sogniLista"></div>
@@ -1134,15 +1139,10 @@ input[type=range]::-moz-range-thumb {
         <button class="add-voce" id="addSogno">+ Aggiungi un sogno</button>
       </div>
 
-      <div class="clessidra-box">
-        <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
-        <p class="clessidra-nota" id="clessidraNota"></p>
-      </div>
-
       <blockquote class="citazione" id="citazione"></blockquote>
 
       <div class="spacer"></div>
-      <button class="cta" id="goMoves">Ecco i suggerimenti per accelerare →</button>
+      <button class="cta" id="goMoves">Vuoi accelerare ancora? →</button>
     </section>
 
     <!-- 4. AZIONE: il catalogo delle mosse -->
@@ -1205,9 +1205,10 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <nav class="tabbar" id="tabbar" hidden>
-    <button data-go="home" class="on"><i>🎯</i>Sogno</button>
+    <button data-go="dream" class="on"><i>🎯</i>Sogno</button>
     <button data-go="cifre"><i>💡</i>Risveglio</button>
     <button data-go="moves"><i>⚡</i>Azione</button>
+    <button data-go="home"><i>⏳</i>Clessidra</button>
   </nav>
 
 </div>
@@ -1477,9 +1478,14 @@ input[type=range]::-moz-range-thumb {
     $$(".screen").forEach((s) => s.classList.toggle("on", s.dataset.screen === name));
     /* la barra resta accesa anche nelle schermate figlie di una fase,
        così si capisce sempre in che punto del percorso sei */
-    const FASE = { home: "home", moves: "moves", recap: "moves", cifre: "cifre", truth: "cifre" };
+    /* Le quattro tappe sono un percorso, non un menu: Sogno dice cosa vuoi,
+       Risveglio mette in fila le cifre, Azione dà i suggerimenti, Clessidra
+       è dove si arriva e dove si torna ogni volta che riapri l'app. */
+    const FASE = { dream: "dream", cifre: "cifre", truth: "cifre",
+                   moves: "moves", recap: "moves", home: "home" };
     const fase = FASE[name];
-    $("#tabbar").hidden = !fase;
+    /* la barra compare quando esiste un piano: prima non c'è nulla da navigare */
+    $("#tabbar").hidden = !fase || !state.voci;
     $$("#tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === fase));
     const sc = $(`.screen[data-screen="${name}"]`);
     if (sc) sc.scrollTop = 0;
@@ -2325,8 +2331,20 @@ input[type=range]::-moz-range-thumb {
 
       const applica = (val, daSlider) => {
         const invest = state.voci[i].id === "investimento";
-        const cap = invest ? maxInvestimento() : 99999;
+        /* Due tetti: gli investimenti non oltre il 20%, e NESSUNA voce può
+           portare la somma oltre le entrate. Le levette si fermano dove
+           finiscono i soldi veri: prima l'app lasciava sforare e poi
+           avvisava, ma un piano che spende soldi che non esistono non è
+           un piano, è un altro modo di illudersi. */
+        const altre = sommaVoci() - state.voci[i].valore;
+        const capReddito = Math.max(0, (state.plan ? state.plan.income : 0) - altre);
+        const cap = Math.min(invest ? maxInvestimento() : 99999, capReddito);
         const v = Math.max(0, Math.min(cap, val));
+        if (val > cap && !daSlider) {
+          /* a chi scrive a mano una cifra oltre il tetto lo si dice */
+          const hint = row.querySelector(".voce-hint");
+          if (hint) { hint.textContent = `più di così sfori le entrate: massimo ${euro(cap)}`; hint.classList.add("flash"); setTimeout(() => hint.classList.remove("flash"), 1600); }
+        }
         state.voci[i].valore = v;
         state.voci[i].ok = true;
         row.classList.add("ok");
