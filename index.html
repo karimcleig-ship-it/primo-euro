@@ -2028,11 +2028,13 @@ input[type=range]::-moz-range-thumb {
      della Clessidra e la card disegnata si spegne. */
   const sfondoCrescita = $("#sfondoCrescita");
 
-  /* Nel filmato la clessidra occupa circa la fascia 26%–78% del quadro.
-     Questo posizionatore misura lo spazio davvero libero — sotto la barra
-     dei mesi, sopra la banda dei maestri — e ci incastra il video in modo
-     che la clessidra ci stia dentro. Non è un aggiustamento per uno
-     schermo: è la geometria, e vale su qualunque telefono. */
+  /* Nel filmato la clessidra vive nella fascia 37,5%–80% del quadro
+     (misurato sui pixel, non a occhio). Questo posizionatore misura lo
+     spazio davvero libero — sotto la barra dei mesi, sopra la banda dei
+     maestri — e ci mette la clessidra alle proporzioni approvate da Karim
+     il 29/7: riempie l'80% della zona, aria sopra e sotto, i salvadanai
+     al collo. Non è un aggiustamento per uno schermo: è la geometria,
+     e vale su qualunque telefono. */
   function posizionaCrescita() {
     const v = $("#crescita3d");
     if (!v || sfondoCrescita.hidden) return;
@@ -2041,18 +2043,19 @@ input[type=range]::-moz-range-thumb {
     const banda = $("#ticker") && !$("#ticker").hidden ? $("#ticker") : $("#tabbar");
     if (!barra || !banda) return;
 
-    const sopra = barra.getBoundingClientRect().bottom - phone.top + 6;
-    const sotto = banda.getBoundingClientRect().top - phone.top - 4;
+    const sopra = barra.getBoundingClientRect().bottom - phone.top;
+    const sotto = banda.getBoundingClientRect().top - phone.top;
     const zona = sotto - sopra;
     if (zona < 120) return;               /* niente spazio: meglio fermi */
 
-    const altezza = zona / 0.52;          /* la clessidra è ~52% del quadro */
+    const vetro = zona * 0.80;            /* la clessidra riempie l'80% della zona */
+    const altezza = vetro / 0.425;        /* il vetro è il 42,5% del quadro */
     const larghezza = altezza * (1080 / 1920);
     v.style.position = "absolute";
     v.style.width = larghezza + "px";
     v.style.height = altezza + "px";
     v.style.left = "50%";
-    v.style.top = (sopra - 0.26 * altezza) + "px";
+    v.style.top = (sopra + zona * 0.10 - 0.375 * altezza) + "px";
     v.style.transform = "translateX(-50%)";
   }
   window.addEventListener("resize", posizionaCrescita);
