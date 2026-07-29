@@ -1429,10 +1429,19 @@ input[type=range]::-moz-range-thumb {
     const infl = conInflazione ? tassoMensile() : 0;
     if (infl <= 0) return Math.ceil(((costo - avere) / r) * 30.4);
 
+    /* Si avanza di mese in mese, ma poi si guarda DENTRO il mese in cui si
+       arriva: per un sogno da 45 € con 100 € al mese la risposta è due
+       settimane, non trenta giorni. Sui sogni piccoli — quelli che fanno
+       vedere che il meccanismo funziona — l'arrotondamento al mese
+       raddoppiava l'attesa. */
     let soldi = avere, prezzo = costo;
     for (let m = 1; m <= 600; m++) {
+      const prima = soldi;
       soldi += r; prezzo *= 1 + infl;
-      if (soldi >= prezzo) return Math.ceil(m * 30.4);
+      if (soldi >= prezzo) {
+        const dentro = Math.min(1, Math.max(0, (prezzo - prima) / r));
+        return Math.max(1, Math.ceil((m - 1 + dentro) * 30.4));
+      }
     }
     return Infinity;   /* a questo ritmo non ci arriva: lo dicono le mosse */
   }
