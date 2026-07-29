@@ -71,7 +71,12 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
 /* la crescita a tutto schermo: il video copre la cornice, un velo scuro
    sopra e sotto tiene leggibili numeri e pulsanti, e il nero del video
    scompare nel nero dell'app */
-.sfondo-crescita { position: absolute; inset: 0; z-index: 0; }
+.sfondo-crescita {
+  position: absolute; inset: 0; z-index: 0;
+  /* il nero pipettato dal video (#111313): la pagina e il filmato sono
+     dello stesso colore, quindi i bordi del video non esistono più */
+  background: #111313;
+}
 /* la finestra nel flusso: qui sotto non c'è niente, si vede solo il video */
 .finestra-crescita { height: 185px; flex: none; }   /* il flex non la deve schiacciare */
 .finestra-crescita[hidden] { display: none; }
