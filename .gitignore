@@ -2,3 +2,7 @@
 dist/
 
 .DS_Store
+
+# le presentazioni restano fuori: il repo è pubblico (serve a GitHub Pages),
+# e un pitch deck non va pubblicato per sbaglio con un git add -A
+*.pdf
