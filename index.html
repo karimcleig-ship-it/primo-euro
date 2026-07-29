@@ -73,9 +73,11 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
    scompare nel nero dell'app */
 .sfondo-crescita {
   position: absolute; inset: 0; z-index: 0;
-  /* il nero pipettato dal video (#111313): la pagina e il filmato sono
-     dello stesso colore, quindi i bordi del video non esistono più */
-  background: #111313;
+  /* nero assoluto: in blend screen tutto ciò che sta sotto si SOMMA alla
+     luce del video, quindi lo sfondo deve essere zero — e il filtro sotto
+     schiaccia a zero anche il #111313 del filmato. Niente base, niente
+     bordi: resta solo ciò che emette luce. */
+  background: #000;
 }
 /* la finestra nel flusso: qui sotto non c'è niente, si vede solo il video */
 .finestra-crescita { height: 185px; flex: none; }   /* il flex non la deve schiacciare */
@@ -83,23 +85,11 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
 .sfondo-crescita[hidden] { display: none; }
 .sfondo-crescita video {
   width: 100%; height: 100%; object-fit: cover;
-  filter: brightness(.92) saturate(1.05);
-}
-/* la vignetta: il buio si chiude tutt'attorno e lascia respirare solo il
-   centro, dove vive l'oggetto — i bordi del video smettono di esistere */
-/* sugli schermi corti (iPhone SE e simili) la clessidra salirebbe fin
-   sotto la barra: la si accompagna un po' più giù */
-@media (max-height: 800px) {
-  .sfondo-crescita video { transform: translateY(9%) scale(.86); transform-origin: 50% 62%; }
-}
-@media (max-height: 700px) {
-  .sfondo-crescita video { transform: translateY(10%) scale(.78); transform-origin: 50% 62%; }
-}
-
-.sfondo-crescita::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 105% 78% at 50% 48%,
-    transparent 34%, rgba(5,5,10,.5) 58%, #05050a 86%);
+  /* il "senza sfondo" che volevamo: in blend screen il nero è invisibile
+     per definizione — il video non copre la pagina, la illumina. Nessun
+     bordo, nessuna sfumatura laterale: solo la clessidra e la sua luce. */
+  mix-blend-mode: screen;
+  filter: brightness(.9) contrast(1.28) saturate(1.12);
 }
 .sfondo-crescita::after {
   content: ""; position: absolute; inset: 0;
