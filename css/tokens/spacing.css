@@ -1,0 +1,21 @@
+/* PRIMO EURO® — spazi.
+   Una schermata alla volta, senza scroll: il ritmo è fitto e regolare. */
+:root{
+  --sp-1:2px;
+  --sp-2:5px;
+  --sp-3:7px;
+  --sp-4:9px;
+  --sp-5:11px;
+  --sp-6:12px;
+  --sp-7:14px;
+  --sp-8:16px;
+  --sp-9:18px;
+  --sp-10:20px;
+  --sp-12:26px;
+  --sp-14:47px;              /* lo stacco sopra la barra dei mesi */
+
+  --screen-pad:20px 18px 12px;   /* il padding di ogni schermata */
+  --phone-w:430px; /* @kind spacing */
+  --phone-h:880px; /* @kind spacing */
+  --tabbar-pad:8px 6px; /* @kind spacing */
+}

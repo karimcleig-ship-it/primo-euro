@@ -1,0 +1,29 @@
+/* PRIMO EURO® — forme.
+   Angoli morbidi ovunque, bottoni a pillola, vetro semitrasparente.
+   Aloni colorati al posto delle ombre grigie. */
+:root{
+  --r-pill:999px;
+  --r-card:18px;
+  --r-card-l:20px;
+  --r-card-s:14px;
+  --r-field:14px;
+  --r-field-s:10px;
+  --r-phone:42px;
+  --r-mark:9px;
+
+  --border-hair:1px solid var(--line); /* @kind other */
+  --border-lime:1.5px solid var(--lime); /* @kind other */
+
+  --blur-glass:blur(6px); /* @kind other */
+  --blur-bar:blur(12px); /* @kind other */
+
+  /* aloni: la luce di un accento, mai un'ombra grigia */
+  --glow-sogno:0 0 24px -10px rgba(217,255,75,.5);
+  --glow-sogno-forte:0 0 26px -10px rgba(217,255,75,.6);
+  --glow-cta:0 8px 40px -8px rgba(217,255,75,.55);
+  --glow-tab:drop-shadow(0 0 9px rgba(217,255,75,.55)); /* @kind shadow */
+  --shadow-phone:0 40px 120px -30px #000;
+
+  /* il selezionato: bordo lime + velo lime, sempre così */
+  --ring-lime:inset 0 0 0 1px var(--lime); /* @kind other */
+}

@@ -1,0 +1,39 @@
+/* PRIMO EURO® — tipografia.
+   Il conto alla rovescia è il protagonista: 52–70px, peso 700, tracking stretto.
+   Le etichette in alto sono maiuscolo spaziato lime. I numeri sono tabellari. */
+:root{
+  --fs-days:clamp(52px,17vw,70px); /* @kind font */   /* conto alla rovescia */
+  --fs-days-testo:clamp(24px,8vw,34px); /* @kind font */ /* "2 anni e 4 mesi" */
+  --fs-hero:clamp(38px,12vw,52px); /* @kind font */   /* «Cosa vuoi, davvero?» */
+  --fs-rate:62px;                    /* la cifra al mese */
+  --fs-chiusura:52px; /* @kind font */
+  --fs-h1:27px; /* @kind font */
+  --fs-cifra-l:30px; /* @kind font */
+  --fs-cifra-m:21px; /* @kind font */
+  --fs-cifra-s:19px; /* @kind font */
+  --fs-body:14.5px; /* @kind font */
+  --fs-body-s:13.5px; /* @kind font */
+  --fs-small:12.5px; /* @kind font */
+  --fs-xsmall:11.5px; /* @kind font */
+  --fs-tiny:10.5px; /* @kind font */
+  --fs-eyebrow:11.5px; /* @kind font */
+  --fs-eyebrow-grande:17px; /* @kind font */
+
+  --lh-days:1; /* @kind font */
+  --lh-hero:.94; /* @kind font */
+  --lh-title:1.1; /* @kind font */
+  --lh-body:1.55; /* @kind font */
+
+  --ls-days:-.05em; /* @kind font */
+  --ls-hero:-.035em; /* @kind font */
+  --ls-title:-.02em; /* @kind font */
+  --ls-eyebrow:.18em; /* @kind font */
+  --ls-label:.14em; /* @kind font */
+
+  --fw-regular:400; /* @kind font */
+  --fw-medium:500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:700; /* @kind font */
+
+  --grad-days:linear-gradient(180deg,var(--paper),#b9c47a); /* @kind font */
+}

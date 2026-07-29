@@ -1,0 +1,23 @@
+/* PRIMO EURO® — movimento.
+   Lento e morbido, mai rimbalzi: il tempo scorre con calma. */
+:root{
+  --ease:cubic-bezier(.22,1,.36,1); /* @kind other */
+  --dur-tap:.2s; /* @kind other */
+  --dur-ui:.25s; /* @kind other */
+  --dur-screen:.45s; /* @kind other */
+  --dur-entrata:.7s; /* @kind other */
+  --dur-barra:1s; /* @kind other */
+  --battito:5s; /* @kind other */               /* il respiro del conto alla rovescia */
+  --ticker:46s; /* @kind other */               /* il giro della banda dei maestri */
+}
+
+@keyframes primo-sali{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes primo-pulsa{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.93;transform:scale(1.014)}}
+@keyframes primo-pop{from{opacity:0;transform:scale(.86) translateY(16px)}}
+@keyframes primo-respiro{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-4deg)}}
+@keyframes primo-spin{to{transform:rotate(360deg)}}
+@keyframes primo-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition-duration:.01ms !important}
+}

@@ -1,0 +1,48 @@
+/* PRIMO EURO® — colore.
+   Fondo quasi nero, testo bianco caldo, tre accenti dal significato fisso:
+   lime = il sogno, viola = il risparmio, arancio = gli investimenti. */
+:root{
+  /* fondi */
+  --nero:#05050a;            /* il fondo della pagina */
+  --ink:#0b0b12;            /* le superfici, la cornice del telefono */
+  --ink-2:#14141f;          /* la barra in fondo, i pannelli */
+
+  /* testo */
+  --paper:#f5f4ef;          /* bianco caldo, mai bianco puro */
+  --muted:rgba(245,244,239,.55);
+  --faint:rgba(245,244,239,.30);
+
+  /* i tre accenti */
+  --lime:#d9ff4b;           /* IL SOGNO — la firma, uno per schermata */
+  --lime-dim:rgba(217,255,75,.13);
+  --lime-glow:rgba(217,255,75,.5);
+  --violet:#7c5cff;         /* IL RISPARMIO */
+  --violet-dim:rgba(124,92,255,.10);
+  --violet-text:#b09dff;    /* il viola leggibile su nero per le cifre */
+  --arancio:#ff9d4d;        /* GLI INVESTIMENTI */
+  --arancio-dim:rgba(255,157,77,.14);
+
+  /* segnali (usati con parsimonia: l'app non sgrida mai) */
+  --danger:#ff5c72;
+  --danger-dim:rgba(255,92,114,.07);
+
+  /* superfici e bordi */
+  --line:rgba(245,244,239,.10);
+  --card:rgba(255,255,255,.04);
+  --card-solid:rgba(11,11,18,.55);
+  --veil:rgba(11,11,18,.92);
+
+  /* alias semantici */
+  --bg-page:var(--nero);
+  --bg-frame:var(--ink);
+  --bg-bar:var(--veil);
+  --surface-card:var(--card);
+  --surface-glass:var(--card-solid);
+  --text-body:var(--paper);
+  --text-secondary:var(--muted);
+  --text-tenue:var(--faint);
+  --border-hairline:var(--line);
+  --accent-sogno:var(--lime);
+  --accent-risparmio:var(--violet);
+  --accent-investimenti:var(--arancio);
+}

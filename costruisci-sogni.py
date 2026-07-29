@@ -3,7 +3,7 @@
 PRIMO EURO — il dizionario dei sogni.
 
 Legge sogni.csv (che si apre con Excel, si ordina, si modifica) e lo
-trasforma in js/sogni.js, il file che l'app carica.
+trasforma in app/js/sogni.js, il file che l'app carica.
 
     python3 costruisci-sogni.py
 
@@ -36,7 +36,7 @@ import unicodedata
 
 ROOT = pathlib.Path(__file__).parent
 CSV = ROOT / "sogni.csv"
-USCITA = ROOT / "js" / "sogni.js"
+USCITA = ROOT / "app" / "js" / "sogni.js"
 
 
 def normalizza(t):
@@ -111,7 +111,7 @@ def main():
         encoding="utf-8",
     )
 
-    print(f"✓ js/sogni.js: {len(voci)} sogni, {len(viste)} parole chiave")
+    print(f"✓ app/js/sogni.js: {len(voci)} sogni, {len(viste)} parole chiave")
     for cat, n in sorted(per_categoria.items(), key=lambda x: -x[1]):
         print(f"    {cat or '(senza categoria)':<14} {n}")
 

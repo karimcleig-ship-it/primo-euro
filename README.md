@@ -47,7 +47,7 @@ promette «−0 giorni»: dice quanto vale in un anno, che non è mai zero.
 
 ## Il dizionario dei sogni
 
-**179 sogni, 824 parole chiave, 10 categorie.** Scrivi «viaggio alle Azzorre»,
+**181 sogni, 859 parole chiave, 10 categorie.** Scrivi «viaggio alle Azzorre»,
 «aprire un chiosco sulla spiaggia» o «rifarmi i denti» e l'app risponde
 all'istante, senza chiamare nessun server e senza costare niente.
 
@@ -146,11 +146,18 @@ e apri http://localhost:4173 — da telefono, sulla stessa rete: `http://<ip-del
 
 | File | Cos'è |
 |---|---|
-| `index.html` | **L'app.** Markup, stile e logica in un file solo |
-| `js/data.js` | città, veicoli, obiettivi, i principi dei maestri |
-| `js/engine.js` | il motore di budget (70/30, fisco 50% p.IVA, salvadanai) |
-| `netlify/functions/stima-sogno.js` | la stima AI del costo di un sogno |
-| `dashboard.html` | la vecchia dashboard desktop, tenuta come archivio |
+| `index.html` | **Il sito.** La pagina di presentazione, alla radice |
+| `css/tokens/` | il design system: colori, tipografia, forme, movimento |
+| `js/sito.js` | le animazioni del sito, senza librerie esterne |
+| `app/index.html` | **L'app.** Markup, stile e logica in un file solo |
+| `app/js/data.js` | città, veicoli, obiettivi, i principi dei maestri |
+| `app/js/engine.js` | il motore di budget (70/30, fisco 50% p.IVA, salvadanai) |
+| `app/dashboard.html` | la vecchia dashboard desktop, tenuta come archivio |
+| `media/crescita.mp4` | la clessidra 3D, condivisa fra sito e app |
+
+Due indirizzi, un repo solo: il sito sta alla radice, l'app in `app/`. Così un
+CNAME solo, quando arriverà il dominio, porta online tutti e due — GitHub Pages
+collega un dominio per repo, non uno per cartella.
 
 ### Attivare la stima dei sogni con l'AI
 

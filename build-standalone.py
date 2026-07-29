@@ -2,7 +2,7 @@
 """
 PRIMO EURO — build di un file unico e autonomo.
 
-Prende index.html + css + js e produce un solo file HTML con TUTTO dentro
+Prende app/index.html + app/css + app/js e produce un solo file HTML con TUTTO dentro
 (font e GSAP compresi), che funziona anche offline con un doppio click e
 si può spedire per email o WhatsApp.
 
@@ -20,6 +20,7 @@ import re
 import urllib.request
 
 ROOT = pathlib.Path(__file__).parent
+APP = ROOT / "app"
 DIST = ROOT / "dist"
 
 GSAP_URL = "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"
@@ -56,12 +57,12 @@ def inline_fonts() -> str:
 
 def build() -> None:
     """La vecchia dashboard desktop (ora archiviata su dashboard.html)."""
-    html = (ROOT / "dashboard.html").read_text(encoding="utf-8")
+    html = (APP / "dashboard.html").read_text(encoding="utf-8")
 
     print("Scarico font e GSAP…")
     fonts_css = inline_fonts()
     gsap = fetch(GSAP_URL).decode("utf-8")
-    site_css = (ROOT / "css" / "style.css").read_text(encoding="utf-8")
+    site_css = (APP / "css" / "style.css").read_text(encoding="utf-8")
 
     # 1. via i tag verso l'esterno (preconnect + Google Fonts)
     html = re.sub(r'\s*<link rel="preconnect"[^>]*>', "", html)
@@ -79,7 +80,7 @@ def build() -> None:
         f"<script>\n{gsap}\n</script>",
     )
     for name in ("config", "data", "engine", "bg", "app", "auth"):
-        code = (ROOT / "js" / f"{name}.js").read_text(encoding="utf-8")
+        code = (APP / "js" / f"{name}.js").read_text(encoding="utf-8")
         html = html.replace(
             f'<script src="js/{name}.js" defer></script>',
             f"<script>\n{code}\n</script>",
@@ -109,7 +110,7 @@ def build_mobile(demo: bool = False) -> None:
     Con demo=True l'app riparte sempre dalla schermata Sogno: serve a
     mostrare il percorso intero a chi ha già un piano salvato nel
     browser. Il sito vero riprende invece il piano dove era rimasto."""
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
+    html = (APP / "index.html").read_text(encoding="utf-8")
 
     if demo:
         html = html.replace("const RIPRENDI = true;", "const RIPRENDI = false;  /* anteprima */")
@@ -125,7 +126,7 @@ def build_mobile(demo: bool = False) -> None:
     # i tag possono avere una versione (?v=...) per non restare in cache:
     # qui dentro non serve, il file è unico e si porta tutto appresso
     for name in ("europa", "sogni", "data", "engine"):
-        code = (ROOT / "js" / f"{name}.js").read_text(encoding="utf-8")
+        code = (APP / "js" / f"{name}.js").read_text(encoding="utf-8")
         html = re.sub(rf'<script src="js/{name}\.js(\?[^"]*)?"></script>',
                       lambda _m, c=code: f"<script>\n{c}\n</script>", html)
 
