@@ -342,15 +342,20 @@ input[type=range]::-moz-range-thumb {
 .cd-label { font-family: var(--font-display); font-size: 15px; color: var(--muted); letter-spacing: .02em; }
 /* La clessidra sta dietro al numero, non accanto: è lo sfondo del tempo
    che passa, e il numero resta il protagonista. */
-.countdown { position: relative; }
-.clessidra {
-  position: absolute; left: 50%; top: 50%;
-  transform: translate(-50%, -44%);
-  width: 148px; height: 212px;
-  opacity: .55; pointer-events: none; z-index: 0;
+/* La clessidra ha una sua stanza, al centro: è il posto dove l'occhio si
+   posa quando riapri l'app e non c'è niente da fare se non guardare il
+   tempo che lavora per te. */
+.clessidra-box {
+  margin-top: 22px; padding: 20px 16px 18px;
+  border: 1px solid var(--line); background: var(--card);
+  border-radius: 22px; text-align: center;
 }
-.cd-dream, .cd-days, .cd-label, .cd-date, .cd-infl { position: relative; z-index: 1; }
-.cd-days { text-shadow: 0 2px 26px rgba(6,6,11,.85), 0 0 10px rgba(6,6,11,.7); }
+.clessidra { width: 132px; height: 190px; display: block; margin: 0 auto; }
+.clessidra-nota {
+  font-size: 12px; color: var(--muted); line-height: 1.55;
+  margin-top: 12px; max-width: 260px; margin-inline: auto;
+}
+.clessidra-nota b { color: var(--lime); font-weight: 600; }
 
 .cd-date { font-size: 13px; color: var(--faint); margin-top: 6px; }
 
@@ -379,6 +384,33 @@ input[type=range]::-moz-range-thumb {
 }
 .bar-nums b { color: var(--lime); }
 .bar-nums span { color: var(--faint); }
+
+/* I sogni che convivono: uno grande in cima, gli altri in fila. */
+.sogni-box { margin-top: 18px; border: 1px solid var(--line); background: var(--card); border-radius: 20px; padding: 16px; }
+.sogni-box[hidden] { display: none; }
+.sogni-lista { display: grid; gap: 8px; }
+.sg {
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px;
+  transition: border-color .2s, background .2s;
+}
+.sg.attivo { border-color: var(--lime); background: var(--lime-dim); }
+.sg-emoji { font-size: 19px; flex: none; }
+.sg-corpo { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; }
+.sg-nome { display: block; font-weight: 500; font-size: 13.5px; line-height: 1.25;
+           overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sg-meta { display: block; font-size: 11px; color: var(--faint); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.sg-meta b { color: var(--lime); font-weight: 600; }
+.sg-peso { display: flex; align-items: center; gap: 4px; flex: none; }
+.sg-peso button {
+  width: 24px; height: 24px; border-radius: 8px; border: 1px solid var(--line);
+  background: transparent; color: var(--muted); font-size: 14px; line-height: 1;
+}
+.sg-peso button:active { transform: scale(.9); }
+.sg-quota { font-size: 10.5px; color: var(--faint); min-width: 26px; text-align: center; font-variant-numeric: tabular-nums; }
+.sg-via { border: 0; background: none; color: var(--faint); font-size: 15px; padding: 0 2px; flex: none; }
+.sogni-nota { font-size: 11px; color: var(--faint); line-height: 1.55; margin-top: 12px; }
+.sogni-nota b { color: var(--muted); }
 
 .week {
   margin-top: 20px; border: 1px solid var(--line); background: var(--card);
@@ -1078,7 +1110,6 @@ input[type=range]::-moz-range-thumb {
       <div class="bentornato" id="bentornato" hidden></div>
 
       <div class="countdown">
-        <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
         <div class="cd-dream" id="cdEmoji">🗾</div>
         <div class="cd-days" id="cdDays">—</div>
         <div class="cd-label" id="cdLabel">giorni al Giappone</div>
@@ -1096,15 +1127,22 @@ input[type=range]::-moz-range-thumb {
 
       <div class="salva" id="homeSalva" style="margin-top:18px"></div>
 
-      <div class="week">
-        <p class="week-title">Se vuoi accelerare</p>
-        <div class="week-list" id="weekList"></div>
+      <div class="sogni-box" id="sogniBox" hidden>
+        <p class="week-title">I tuoi sogni, tutti insieme</p>
+        <div class="sogni-lista" id="sogniLista"></div>
+        <p class="sogni-nota">Il budget del mese è uno solo: le frecce spostano il peso da un sogno all'altro. Toglierne a uno vuol dire darne a un altro — <b>i giorni si muovono subito</b>.</p>
+        <button class="add-voce" id="addSogno">+ Aggiungi un sogno</button>
+      </div>
+
+      <div class="clessidra-box">
+        <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
+        <p class="clessidra-nota" id="clessidraNota"></p>
       </div>
 
       <blockquote class="citazione" id="citazione"></blockquote>
 
       <div class="spacer"></div>
-      <button class="cta" id="goMoves">Vedi tutti i suggerimenti</button>
+      <button class="cta" id="goMoves">Ecco i suggerimenti per accelerare →</button>
     </section>
 
     <!-- 4. AZIONE: il catalogo delle mosse -->
@@ -1273,19 +1311,63 @@ input[type=range]::-moz-range-thumb {
   /* ---------- stato ---------- */
 
   const KEY = "primo-mobile-v1";
-  let state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, cifraTua: false, once: [], week: [], plan: null };
+  let state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, cifraTua: false,
+                once: [], week: [], plan: null, sogni: [], attivoId: null };
 
   const save = () => {
     state.ultimoAccesso = Date.now();
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
   };
-  const load = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.dreamText) { state = Object.assign(state, s); return true; } } catch (e) {} return false; };
+  const load = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && (s.dreamText || (s.sogni && s.sogni.length))) { state = Object.assign(state, s); migraSogni(); return true; } } catch (e) {} return false; };
 
-  const dream = () => ({
-    emoji: state.dreamEmoji || "✨",
-    label: state.dreamText || "il tuo sogno",
-    cost: state.dreamCost || 1500,
-  });
+  /* ---------- più sogni insieme ----------
+     Il budget del mese è uno solo, i sogni possono essere tanti. Ognuno ha
+     un PESO: quanto della quota mensile tira verso di sé. Due libri pesano
+     poco e arrivano fra tre settimane, il Giappone pesa tanto e arriva fra
+     un anno — dallo stesso identico portafoglio.
+
+     È il motivo per cui vale la pena averne più di uno: i sogni piccoli si
+     realizzano in fretta e dimostrano che il meccanismo funziona davvero,
+     e quella prova tiene in piedi il sogno grande nei mesi in cui sembra
+     lontano. */
+
+  let contatore = 0;
+  const nuovoId = () => "s" + Date.now().toString(36) + (contatore++);
+
+  const sogni = () => state.sogni || [];
+  const sommaPesi = () => sogni().reduce((s, x) => s + Math.max(1, x.peso || 1), 0) || 1;
+
+  function sognoAttivo() {
+    const l = sogni();
+    return l.find((s) => s.id === state.attivoId) || l[0] || null;
+  }
+
+  /* quanto va ogni mese su UN sogno: la sua fetta della quota mensile */
+  function quotaDi(s) {
+    if (!s) return 0;
+    return (rate() * Math.max(1, s.peso || 1)) / sommaPesi();
+  }
+
+  /* Chi arriva da una versione con un sogno solo non deve perdere niente. */
+  function migraSogni() {
+    if (state.sogni && state.sogni.length) return;
+    state.sogni = state.dreamText ? [{
+      id: nuovoId(),
+      text: state.dreamText,
+      emoji: state.dreamEmoji || "✨",
+      cost: state.dreamCost || 1500,
+      saved: state.saved || 0,
+      peso: 1,
+    }] : [];
+    state.attivoId = state.sogni.length ? state.sogni[0].id : null;
+  }
+
+  const dream = () => {
+    const s = sognoAttivo();
+    return s
+      ? { emoji: s.emoji || "✨", label: s.text || "il tuo sogno", cost: s.cost || 1500 }
+      : { emoji: state.dreamEmoji || "✨", label: state.dreamText || "il tuo sogno", cost: state.dreamCost || 1500 };
+  };
   const move = (id) => MOVES.find((m) => m.id === id);
 
   /* La mossa vista attraverso i tuoi numeri. Finché non hai compilato le
@@ -1328,25 +1410,51 @@ input[type=range]::-moz-range-thumb {
      Fingere il contrario vorrebbe dire promettere una data che non arriva.
      Non è pessimismo — è il motivo per cui i soldi vanno fatti lavorare,
      ed è la cosa che l'app può dire con la fonte in mano. */
-  const daysLeft = (extraSaved = 0, extraRate = 0, conInflazione = true) => {
-    const costo = dream().cost;
-    const avere = state.saved + extraSaved;
-    const r = rate() + extraRate;
+  const daysLeft = (extraSaved = 0, extraRate = 0, conInflazione = true) =>
+    giorniPer(sognoAttivo(), extraSaved, extraRate, conInflazione);
+
+  /* Quanti giorni mancano a UN sogno, con la sua fetta di quota mensile.
+     Il traguardo non sta fermo: mentre metti via, il prezzo sale. Fingere
+     il contrario vorrebbe dire promettere una data che non arriva. */
+  function giorniPer(s, extraSaved = 0, extraRate = 0, conInflazione = true) {
+    if (!s) return Infinity;
+    const costo = s.cost || 1500;
+    const avere = (s.saved || 0) + extraSaved;
     if (avere >= costo) return 0;
+
+    const fetta = Math.max(1, s.peso || 1) / sommaPesi();
+    const r = quotaDi(s) + extraRate * fetta;   /* anche il di più si divide */
     if (r <= 0) return Infinity;
 
-    const i = conInflazione ? tassoMensile() : 0;
-    if (i <= 0) return Math.ceil(((costo - avere) / r) * 30.4);
+    const infl = conInflazione ? tassoMensile() : 0;
+    if (infl <= 0) return Math.ceil(((costo - avere) / r) * 30.4);
 
-    /* mese per mese, finché i risparmi non raggiungono un prezzo che sale */
     let soldi = avere, prezzo = costo;
     for (let m = 1; m <= 600; m++) {
-      soldi += r;
-      prezzo *= 1 + i;
+      soldi += r; prezzo *= 1 + infl;
       if (soldi >= prezzo) return Math.ceil(m * 30.4);
     }
-    return Infinity;   /* a questo ritmo non lo raggiunge: lo dicono le mosse */
-  };
+    return Infinity;   /* a questo ritmo non ci arriva: lo dicono le mosse */
+  }
+
+
+
+  /* Ogni euro che entra si divide fra i sogni secondo il peso. Chi ne ha
+     uno solo lo riceve tutto; chi ne ha tre vede muoversi tre contatori. */
+  function versa(quanto) {
+    const l = sogni();
+    if (!l.length) { state.saved += quanto; return; }
+    const tot = sommaPesi();
+    let dato = 0;
+    l.forEach((s, i) => {
+      const parte = i === l.length - 1 ? quanto - dato
+                  : Math.round((quanto * Math.max(1, s.peso || 1)) / tot);
+      s.saved = Math.max(0, (s.saved || 0) + parte);
+      dato += parte;
+    });
+    const a = sognoAttivo();
+    state.saved = a ? a.saved : state.saved;
+  }
 
   /* quanti giorni ci mette in più il traguardo per colpa dei prezzi che salgono */
   function giorniDiInflazione() {
@@ -1505,7 +1613,38 @@ input[type=range]::-moz-range-thumb {
   });
   costInput.addEventListener("blur", () => { costInput.value = state.dreamCost || 1500; });
 
-  $("#toRate").addEventListener("click", () => { save(); show("wake"); });
+  $("#toRate").addEventListener("click", () => {
+    const s = {
+      id: nuovoId(),
+      text: state.dreamText || "un sogno",
+      emoji: state.dreamEmoji || "✨",
+      cost: state.dreamCost || 1500,
+      saved: 0,
+      peso: 1,
+    };
+
+    if (state.aggiungo) {
+      /* un sogno in più: il piano c'è già, si torna dritti al contatore
+         e si vede subito come si spostano i giorni di tutti */
+      state.aggiungo = false;
+      state.sogni = sogni().concat([s]);
+      state.attivoId = s.id;
+      shownDays = null;
+      save();
+      show(state.voci ? "home" : "wake");
+      return;
+    }
+
+    migraSogni();
+    if (!sogni().length) { state.sogni = [s]; state.attivoId = s.id; }
+    else {
+      /* è il primo giro: si sta ancora scegliendo, non si accumula */
+      const a = sognoAttivo();
+      Object.assign(a, { text: s.text, emoji: s.emoji, cost: s.cost });
+    }
+    save();
+    show("wake");
+  });
   $("#backDream").addEventListener("click", () => show("dream"));
 
   /* ---------- 3. home ---------- */
@@ -1537,11 +1676,13 @@ input[type=range]::-moz-range-thumb {
 
   function renderHome() {
     const d = dream();
+    const attivo = sognoAttivo();
+    const messiVia = attivo ? (attivo.saved || 0) : state.saved;
     $("#cdEmoji").textContent = d.emoji;
     $("#cdLabel").textContent = "giorni a « " + d.label.toLowerCase() + " »";
     $("#costN").textContent = euro(d.cost);
-    $("#savedN").textContent = euro(state.saved);
-    const quota = d.cost > 0 ? state.saved / d.cost : 0;
+    $("#savedN").textContent = euro(messiVia);
+    const quota = d.cost > 0 ? messiVia / d.cost : 0;
     $("#barFill").style.width = Math.min(100, quota * 100) + "%";
     clessidra.mostra(quota);
 
@@ -1562,6 +1703,7 @@ input[type=range]::-moz-range-thumb {
     }
 
     dilloDellInflazione();
+    renderSogni();
 
     /* i tre salvadanai, a colpo d'occhio */
     if (state.voci) {
@@ -1574,17 +1716,11 @@ input[type=range]::-moz-range-thumb {
         <div class="sv sogno"><span class="sv-emoji">${d.emoji}</span><span class="sv-testo"><b>Sogno</b></span><span class="sv-cifra">${euro(perSogno)}</span></div>`;
     }
 
-    /* Tre suggerimenti, e sono i tuoi: prima le strutturali (nessuna
-       rinuncia), dentro ogni gruppo quelle che sulle tue cifre valgono
-       di più. Chi ha 200 € di abbonamenti non si sente dire "vendi
-       cinque cose in soffitta". */
-    const libere = (t) => MOVES.filter((m) => m.type === t && !fatta(m) && applicabile(m))
-      .sort(perPeso);
-    const pool = libere("once").concat(libere("week"));
-    const list = $("#weekList");
-    list.innerHTML = "";
-    pool.slice(0, 3).forEach((m) => list.appendChild(moveRow(m, "wm")));
-    if (!pool.length) list.innerHTML = `<p class="sub">Le hai prese tutte. Da qui in poi conta una cosa sola: tenere il ritmo.</p>`;
+    /* La clessidra racconta a parole quello che disegna. */
+    const perc = Math.round(quota * 100);
+    $("#clessidraNota").innerHTML = messiVia > 0
+      ? `Hai già messo via <b>${euro(messiVia)}</b> di ${euro(d.cost)}: la sabbia scesa è tua. Ogni mese ne cade un'altra fetta, anche quando non ci pensi.`
+      : `La sabbia comincia a scendere dal primo euro. Ogni mese ne cade una fetta da <b>${euro(Math.round(quotaDi(attivo)))}</b>, anche quando non ci pensi.`;
 
     /* una voce dei maestri, stabile per tutta la giornata */
     if (typeof TEACHERS !== "undefined") {
@@ -1604,7 +1740,7 @@ input[type=range]::-moz-range-thumb {
     if (!c || !c.getContext) return { mostra() {} };
 
     const ctx = c.getContext("2d");
-    const W = 148, H = 212, dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = 132, H = 190, dpr = Math.min(2, window.devicePixelRatio || 1);
     c.width = W * dpr; c.height = H * dpr;
     ctx.scale(dpr, dpr);
 
@@ -1620,7 +1756,7 @@ input[type=range]::-moz-range-thumb {
     const granelli = [];
 
     function vetro() {
-      ctx.strokeStyle = "rgba(255,255,255,.20)";
+      ctx.strokeStyle = "rgba(255,255,255,.28)";
       ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.moveTo(cxs(alto, -1), alto); ctx.lineTo(cxs(alto, 1), alto);
@@ -1654,12 +1790,12 @@ input[type=range]::-moz-range-thumb {
     function disegna() {
       ctx.clearRect(0, 0, W, H);
       vetro();
-      ctx.fillStyle = "rgba(217,255,75,.42)";
+      ctx.fillStyle = "rgba(217,255,75,.8)";
       sabbiaSopra(1 - mostrato);
       sabbiaSotto(mostrato);
 
       /* i granelli che cadono: pochi, sottili, mai spettacolari */
-      ctx.fillStyle = "rgba(217,255,75,.85)";
+      ctx.fillStyle = "rgba(217,255,75,1)";
       for (const g of granelli) {
         ctx.fillRect(W / 2 + g.x - 0.6, g.y, 1.2, 3);
       }
@@ -1692,6 +1828,85 @@ input[type=range]::-moz-range-thumb {
       },
     };
   })();
+
+/* ---------- la lista dei sogni che convivono ---------- */
+
+  function renderSogni() {
+    const box = $("#sogniBox"), lista = $("#sogniLista");
+    const l = sogni();
+    box.hidden = l.length < 1;
+    if (!l.length) return;
+
+    const tot = sommaPesi();
+    lista.innerHTML = "";
+
+    l.forEach((s) => {
+      const g = giorniPer(s);
+      const q = Math.round(quotaDi(s));
+      const perc = Math.round((Math.max(1, s.peso || 1) / tot) * 100);
+      const lontano = !isFinite(g) || g > TROPPO;
+
+      const riga = document.createElement("div");
+      riga.className = "sg" + (s.id === state.attivoId ? " attivo" : "");
+      riga.innerHTML = `
+        <span class="sg-emoji">${s.emoji || "✨"}</span>
+        <button class="sg-corpo" data-vai="${s.id}">
+          <span class="sg-nome">${s.text || "un sogno"}</span>
+          <span class="sg-meta">${lontano ? "serve ancora tempo" : "<b>" + g + " giorni</b>"} · ${euro(q)}/mese · ${euro(s.cost)}</span>
+        </button>
+        <span class="sg-peso">
+          <button data-meno="${s.id}" aria-label="Meno peso">−</button>
+          <span class="sg-quota">${perc}%</span>
+          <button data-piu="${s.id}" aria-label="Più peso">+</button>
+        </span>
+        ${l.length > 1 ? `<button class="sg-via" data-via="${s.id}" aria-label="Togli">×</button>` : ""}`;
+      lista.appendChild(riga);
+    });
+
+    $$("#sogniLista [data-vai]").forEach((b) => b.addEventListener("click", () => {
+      state.attivoId = b.dataset.vai; shownDays = null; save(); renderHome();
+    }));
+    $$("#sogniLista [data-piu]").forEach((b) => b.addEventListener("click", () => pesa(b.dataset.piu, +1)));
+    $$("#sogniLista [data-meno]").forEach((b) => b.addEventListener("click", () => pesa(b.dataset.meno, -1)));
+    $$("#sogniLista [data-via]").forEach((b) => b.addEventListener("click", () => togliSogno(b.dataset.via)));
+  }
+
+  function pesa(id, verso) {
+    const s = sogni().find((x) => x.id === id);
+    if (!s) return;
+    s.peso = Math.max(1, Math.min(9, (s.peso || 1) + verso));
+    save(); renderHome();
+  }
+
+  /* Togliere un sogno non cancella i soldi: tornano sugli altri, perché
+     sono stati messi via davvero e non devono sparire. */
+  function togliSogno(id) {
+    const l = sogni();
+    if (l.length < 2) return;
+    const s = l.find((x) => x.id === id);
+    if (!s) return;
+    if (!confirm(`Vuoi togliere «${s.text}»?\nI ${euro(s.saved || 0)} già messi via passano agli altri sogni.`)) return;
+
+    const recuperati = s.saved || 0;
+    state.sogni = l.filter((x) => x.id !== id);
+    if (state.attivoId === id) state.attivoId = state.sogni[0].id;
+    if (recuperati > 0) versa(recuperati);
+    shownDays = null;
+    save(); renderHome();
+  }
+
+  /* aggiungere un sogno riporta alla prima schermata, in modalità aggiunta */
+  $("#addSogno").addEventListener("click", () => {
+    state.aggiungo = true;
+    state.cifraTua = false;
+    dreamInput.value = "";
+    costInput.value = "";
+    $("#dreamEmoji").textContent = "✨";
+    $("#guess").hidden = true;
+    $("#toRate").disabled = true;
+    show("dream");
+    dreamInput.focus();
+  });
 
   function countTo(el, to) {
     if (!isFinite(to)) { el.textContent = "∞"; shownDays = null; return; }
@@ -1806,10 +2021,10 @@ input[type=range]::-moz-range-thumb {
     const x = mossa(m);
     if (m.type === "once") {
       state.once.push(m.id);
-      if (x.oneShot) state.saved += x.oneShot;
+      if (x.oneShot) versa(x.oneShot);
     } else {
       state.week.push(m.id);
-      state.saved += Math.round(x.perMonth / 4.3);
+      versa(Math.round(x.perMonth / 4.3));
     }
     save();
     renderMoves();
@@ -2421,7 +2636,8 @@ input[type=range]::-moz-range-thumb {
 
   function ricomincia() {
     try { localStorage.removeItem(KEY); } catch (e) {}
-    state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, cifraTua: false, once: [], week: [], plan: null, voci: null };
+    state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, cifraTua: false,
+              once: [], week: [], plan: null, voci: null, sogni: [], attivoId: null };
     dreamInput.value = "";
     costInput.value = "";
     daysAtStart = null;
@@ -2448,7 +2664,7 @@ input[type=range]::-moz-range-thumb {
 
     const prima = daysLeft();
     const maturato = Math.round((rate() / 30.4) * giorni);
-    state.saved += maturato;
+    versa(maturato);
     const dopo = daysLeft();
     const scesi = isFinite(prima) && isFinite(dopo) ? Math.max(0, prima - dopo) : 0;
 
