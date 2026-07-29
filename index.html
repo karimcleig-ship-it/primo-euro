@@ -2606,7 +2606,13 @@ input[type=range]::-moz-range-thumb {
     save();
   }
 
-  if (RIPRENDI && load()) {
+  /* Il link di test: aprendo l'app con ?nuovo si riparte sempre da zero,
+     piano cancellato, come un utente mai visto. Il link normale invece
+     riprende il piano dov'era — è il motivo per cui si torna la domenica. */
+  const daZero = /[?&](nuovo|test|reset)\b/.test(location.search);
+  if (daZero) { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+  if (!daZero && RIPRENDI && load()) {
     tempoTrascorso();
     fillSelects();
     dreamInput.value = state.dreamText || "";
