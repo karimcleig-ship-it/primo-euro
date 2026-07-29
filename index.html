@@ -57,6 +57,22 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
   .phone { border-radius: 42px; border: 1px solid rgba(245,244,239,0.14); box-shadow: 0 40px 120px -30px #000; }
 }
 
+/* la crescita a tutto schermo: il video copre la cornice, un velo scuro
+   sopra e sotto tiene leggibili numeri e pulsanti, e il nero del video
+   scompare nel nero dell'app */
+.sfondo-crescita { position: absolute; inset: 0; z-index: 0; }
+.sfondo-crescita[hidden] { display: none; }
+.sfondo-crescita video {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 42%;
+  filter: brightness(.9) saturate(1.05);
+}
+.sfondo-crescita::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(5,5,10,.92) 0%, rgba(5,5,10,.62) 20%, rgba(5,5,10,.3) 44%,
+    rgba(5,5,10,.55) 66%, rgba(5,5,10,.95) 100%);
+}
+
 /* l'orizzonte: onde lente che riempiono il basso della schermata.
    Non è decorazione — è la distanza da attraversare, resa visibile. */
 .orizzonte {
@@ -356,20 +372,6 @@ input[type=range]::-moz-range-thumb {
   border-radius: 20px; text-align: center;
 }
 .clessidra { width: 96px; height: 138px; display: block; margin: 0 auto; }
-/* Il video si fonde nella card: angoli morbidi, bordi che sfumano nel
-   buio e neri schiacciati verso il nostro inchiostro — così anche uno
-   sfondo non perfettamente nero non si vede come un rettangolo. */
-.crescita {
-  /* il riquadro comanda: qualunque proporzione abbia il video, qui dentro
-     diventa un quadrato morbido e non una torre che sfonda la card */
-  width: 170px; height: 170px; max-width: 70%; object-fit: cover;
-  display: block; margin: 0 auto;
-  border-radius: 16px;
-  filter: brightness(.82) contrast(1.22) saturate(1.05);
-  -webkit-mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, #000 58%, transparent 97%);
-  mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, #000 58%, transparent 97%);
-}
-.crescita[hidden] { display: none; }
 .clessidra-nota {
   font-size: 11.5px; color: var(--muted); line-height: 1.5;
   margin-top: 8px; max-width: 280px; margin-inline: auto;
@@ -933,6 +935,18 @@ input[type=range]::-moz-range-thumb {
   <div class="glow"></div>
   <canvas class="orizzonte" id="orizzonte" aria-hidden="true"></canvas>
 
+  <!-- La crescita 3D a tutto schermo: vive dietro la schermata Clessidra,
+       le scritte ci si costruiscono sopra. Il nero del video si fonde col
+       nero dell'app: per questo l'abbiamo generato così. Finché il file
+       media/crescita.mp4 non c'è, questo livello resta spento e in home
+       tiene il posto la clessidra disegnata. -->
+  <div class="sfondo-crescita" id="sfondoCrescita" hidden>
+    <video id="crescita3d" autoplay muted loop playsinline preload="metadata">
+      <source src="media/crescita.webm" type="video/webm" />
+      <source src="media/crescita.mp4" type="video/mp4" />
+    </video>
+  </div>
+
   <div class="screens">
 
     <!-- 1. che cosa sogni: scrivilo con parole tue -->
@@ -1100,13 +1114,6 @@ input[type=range]::-moz-range-thumb {
       <div class="salva" id="homeSalva" style="margin-top:8px"></div>
 
       <div class="clessidra-box">
-        <!-- Il posto della crescita 3D: quando media/crescita.mp4 (o .webm)
-             arriverà nel progetto, il video prende il posto della clessidra
-             disegnata, da solo. Finché non c'è, resta lei. -->
-        <video class="crescita" id="crescita3d" autoplay muted loop playsinline preload="metadata" hidden>
-          <source src="media/crescita.webm" type="video/webm" />
-          <source src="media/crescita.mp4" type="video/mp4" />
-        </video>
         <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
         <p class="clessidra-nota" id="clessidraNota"></p>
       </div>
@@ -1466,6 +1473,7 @@ input[type=range]::-moz-range-thumb {
     /* la barra compare quando esiste un piano: prima non c'è nulla da navigare */
     $("#tabbar").hidden = !fase || !state.voci;
     $$("#tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === fase));
+    if (sfondoCrescita) sfondoCrescita.hidden = !(name === "home" && sfondoCrescita.dataset.pronto === "1");
     const sc = $(`.screen[data-screen="${name}"]`);
     if (sc) sc.scrollTop = 0;
     if (name === "home") renderHome();
@@ -1732,6 +1740,10 @@ input[type=range]::-moz-range-thumb {
         <div class="sv sogno"><span class="sv-emoji">${d.emoji}</span><span class="sv-testo"><b>Sogno</b></span><span class="sv-cifra">${euro(perSogno)}</span></div>`;
     }
 
+    /* col video a tutto schermo la card disegnata non serve più */
+    const videoAttivo = sfondoCrescita && sfondoCrescita.dataset.pronto === "1";
+    $(".clessidra-box").hidden = videoAttivo;
+
     /* La clessidra racconta a parole quello che disegna. */
     const perc = Math.round(quota * 100);
     $("#clessidraNota").innerHTML = messiVia > 0
@@ -1940,14 +1952,19 @@ input[type=range]::-moz-range-thumb {
     return a + m;
   }
 
-  /* La crescita 3D: se il file c'è, il video sostituisce la clessidra. */
+  /* La crescita 3D: quando il file esiste, il video diventa lo sfondo
+     della Clessidra e la card disegnata si spegne. */
+  const sfondoCrescita = $("#sfondoCrescita");
   (function () {
     const v = $("#crescita3d");
-    if (!v) return;
+    if (!v || !sfondoCrescita) return;
     v.addEventListener("loadeddata", () => {
-      v.hidden = false;
-      const c = $("#clessidra");
-      if (c) c.style.display = "none";
+      sfondoCrescita.dataset.pronto = "1";
+      const attuale = $(".screen.on");
+      if (attuale && attuale.dataset.screen === "home") {
+        sfondoCrescita.hidden = false;
+        renderHome();
+      }
     });
   })();
 
