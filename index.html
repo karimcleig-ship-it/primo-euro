@@ -891,7 +891,7 @@ input[type=range]::-moz-range-thumb {
         <div class="guess-row">
           <div class="field-money" style="flex:1"><input id="dreamCost" type="text" inputmode="numeric" maxlength="7" /><span>€</span></div>
         </div>
-        <p class="guess-note">Non è la tua cifra? Cambiala: il conto alla rovescia si basa su questa.</p>
+        <p class="guess-note" id="guessNote"></p>
       </div>
 
         <p class="examples-title anima">Oppure parti da qui</p>
@@ -1405,7 +1405,17 @@ input[type=range]::-moz-range-thumb {
       ? `La cifra è tua, e resta tua. <b>Cambiala quando vuoi.</b>`
       : g
       ? `Di solito <b>${g.what}</b> costa più o meno così:`
-      : `Non conosco questo sogno, e va benissimo. <b>Quanto ti serve, all'incirca?</b>`;
+      /* Mai un errore, mai "non lo conosco": un sogno che il dizionario non
+         ha dentro non è un sogno sbagliato. La domanda resta aperta e la
+         parola torna a chi sogna. */
+      : `Questo non me l'aveva ancora chiesto nessuno. <b>Dimmi tu di che cifra hai bisogno.</b>`;
+
+    /* Sempre, anche quando la stima ci ha preso: perché potrebbe aver capito
+       un'altra cosa — chi scrive "studio recording" magari vuole comprarlo,
+       non allestirlo — e nessuno deve sentirsi dire di no. */
+    $("#guessNote").innerHTML = g
+      ? `Non è questo il tuo sogno? Scrivilo comunque e metti la cifra che serve a te: <b>il contatore parte da lì.</b>`
+      : `Qualsiasi cosa tu abbia in mente va bene: <b>tutto è possibile</b>, basta sapere quanto costa.`;
 
     /* La stima non sovrascrive MAI una cifra scritta a mano. Chi scrive
        1500 per le Azzorre sa qualcosa che il dizionario non sa: magari
