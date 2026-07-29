@@ -346,14 +346,14 @@ input[type=range]::-moz-range-thumb {
    posa quando riapri l'app e non c'è niente da fare se non guardare il
    tempo che lavora per te. */
 .clessidra-box {
-  margin-top: 22px; padding: 20px 16px 18px;
+  margin-top: 12px; padding: 12px 14px 12px;
   border: 1px solid var(--line); background: var(--card);
-  border-radius: 22px; text-align: center;
+  border-radius: 20px; text-align: center;
 }
-.clessidra { width: 132px; height: 190px; display: block; margin: 0 auto; }
+.clessidra { width: 108px; height: 156px; display: block; margin: 0 auto; }
 .clessidra-nota {
-  font-size: 12px; color: var(--muted); line-height: 1.55;
-  margin-top: 12px; max-width: 260px; margin-inline: auto;
+  font-size: 11.5px; color: var(--muted); line-height: 1.5;
+  margin-top: 8px; max-width: 280px; margin-inline: auto;
 }
 .clessidra-nota b { color: var(--lime); font-weight: 600; }
 
@@ -386,7 +386,7 @@ input[type=range]::-moz-range-thumb {
 .bar-nums span { color: var(--faint); }
 
 /* I sogni che convivono: uno grande in cima, gli altri in fila. */
-.sogni-box { margin-top: 18px; border: 1px solid var(--line); background: var(--card); border-radius: 20px; padding: 16px; }
+.sogni-box { margin-top: 12px; border: 1px solid var(--line); background: var(--card); border-radius: 18px; padding: 13px; }
 .sogni-box[hidden] { display: none; }
 .sogni-lista { display: grid; gap: 8px; }
 .sg {
@@ -670,31 +670,6 @@ input[type=range]::-moz-range-thumb {
 }
 .add-voce:hover { border-color: var(--lime); color: var(--paper); }
 
-/* La scelta che conta: dove finiscono i soldi che avanzano. */
-.dividi { margin-top: 18px; border: 1px solid var(--line); background: var(--card); border-radius: 18px; padding: 16px; }
-.dividi[hidden] { display: none; }
-.dividi-titolo { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
-.dividi-testo { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-top: 8px; }
-.dividi-testo b { color: var(--paper); font-weight: 600; }
-.dividi-scelte { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-.scelta {
-  flex: 1 1 150px; text-align: left; padding: 11px 13px; border-radius: 14px;
-  border: 1px solid var(--line); background: transparent;
-  transition: border-color .2s, background .2s, transform .18s var(--ease);
-}
-.scelta:active { transform: scale(.97); }
-.scelta b { display: block; font-size: 13.5px; font-weight: 600; }
-.scelta small { display: block; font-size: 11px; color: var(--faint); margin-top: 3px; line-height: 1.4; }
-.scelta.on { border-color: var(--lime); background: var(--lime-dim); }
-.scelta.on b { color: var(--lime); }
-.dividi-allarme {
-  margin-top: 12px; padding: 11px 13px; border-radius: 13px;
-  border: 1px solid rgba(255,122,89,.4); background: rgba(255,122,89,.1);
-  font-size: 12px; color: #ffb59e; line-height: 1.55;
-}
-.dividi-allarme[hidden] { display: none; }
-.dividi-allarme b { color: #ff7a59; font-weight: 600; }
-.dividi-nota { font-size: 11px; color: var(--faint); line-height: 1.55; margin-top: 12px; }
 
 .resto {
   margin-top: 14px; border-radius: 14px; padding: 12px 14px;
@@ -1036,31 +1011,6 @@ input[type=range]::-moz-range-thumb {
 
       <div class="resto" id="resto"></div>
 
-      <div class="dividi" id="dividi" hidden>
-        <p class="dividi-titolo">Quello che ti resta, come lo dividi?</p>
-        <p class="dividi-testo">
-          Solo il salvadanaio del <b>sogno</b> fa scendere il contatore. Il
-          <b>risparmio</b> è il cuscino che non si tocca, e gli
-          <b>investimenti</b> sono soldi che restano fermi per anni.
-          Puoi metterli lì, o puoi mettere tutto sul sogno: <b>decidi tu.</b>
-        </p>
-        <div class="dividi-scelte">
-          <button class="scelta" data-modo="sogno">
-            <b>Tutto quello che avanza</b><small>ci arrivi prima, senza rete</small>
-          </button>
-          <button class="scelta" data-modo="equilibrio">
-            <b>In tre parti uguali</b><small>sogno, cuscino, investimenti</small>
-          </button>
-        </div>
-        <p class="dividi-allarme" id="dividiAllarme" hidden></p>
-        <p class="dividi-nota">
-          La regola del 70/30 di Jim Rohn dice: 70% per vivere, 30% per il
-          futuro — diviso fra risparmio, investimenti e dono. Non è un obbligo
-          né un consiglio finanziario: è un esempio che funziona da
-          quarant'anni. Qualunque cifra puoi sempre riscriverla a mano qui sopra.
-        </p>
-      </div>
-
       <div class="spacer"></div>
       <button class="cta" id="confermaPiano" disabled>Conferma il piano</button>
       <button class="cta-ghost" id="cifreBack" style="margin-top:9px">← Cambio città, casa o entrate</button>
@@ -1125,7 +1075,7 @@ input[type=range]::-moz-range-thumb {
         </div>
       </div>
 
-      <div class="salva" id="homeSalva" style="margin-top:18px"></div>
+      <div class="salva" id="homeSalva" style="margin-top:12px"></div>
 
       <div class="clessidra-box">
         <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
@@ -2388,45 +2338,10 @@ input[type=range]::-moz-range-thumb {
     aggiornaResto();
   }
 
-  /* ---------- come dividi quello che ti resta ----------
-     Il punto più importante dell'app, e per un po' è stato sbagliato:
-     il contatore corre SOLO sul salvadanaio del sogno. Il risparmio è il
-     cuscino che non si tocca, gli investimenti sono soldi fermi per anni:
-     nessuno dei due compra il sogno. Chi vuole arrivarci prima può mettere
-     lì tutto quello che avanza, ed è una scelta legittima — la nostra parte
-     è dire cosa ci si guadagna e cosa ci si perde, non decidere al posto suo. */
-
+  /* Il contatore corre SOLO sul salvadanaio del sogno: risparmio e
+     investimenti costruiscono il futuro a prescindere, non comprano il
+     sogno. La divisione la scrive l'utente, voce per voce, a mano. */
   const valoreVoce = (id) => (state.voci.find((x) => x.id === id) || {}).valore || 0;
-
-  /* tutto quello che non è già impegnato a vivere */
-  const avanzo = () => risparmio() + valoreVoce("sogno") + valoreVoce("investimento");
-
-  function dividi(modo) {
-    const tot = avanzo();
-    const set = (id, v) => {
-      const x = state.voci.find((y) => y.id === id);
-      if (x) { x.valore = Math.max(0, Math.round(v)); x.ok = true; }
-    };
-
-    if (modo === "sogno") {
-      /* tutto al sogno: il risparmio resta a zero perché è quello che ha scelto */
-      set("investimento", 0);
-      set("sogno", tot);
-    } else {
-      /* tre parti uguali, con il tetto del 20% sugli investimenti */
-      const terzo = Math.floor(tot / 3);
-      set("investimento", Math.min(terzo, maxInvestimento()));
-      set("sogno", terzo);
-      /* il resto diventa risparmio da solo: è ciò che avanza */
-    }
-
-    state.dividiModo = modo;
-    save();
-    renderVoci();
-  }
-
-  $$("#dividi .scelta").forEach((b) =>
-    b.addEventListener("click", () => dividi(b.dataset.modo)));
 
   function aggiornaResto() {
     const tot = state.voci.length;
@@ -2441,28 +2356,14 @@ input[type=range]::-moz-range-thumb {
     const rispEl = $("#risparmioVal");
     if (rispEl) rispEl.textContent = euro(r);
 
-    /* il pannello della divisione compare solo quando c'è qualcosa da dividere */
-    const resta = avanzo();
-    $("#dividi").hidden = resta <= 0;
-    $$("#dividi .scelta").forEach((b) => b.classList.toggle("on", b.dataset.modo === state.dividiModo));
-
-    /* Mettere tutto sul sogno si può, ma senza cuscino basta una lavatrice
-       rotta per far saltare il piano. Non lo vietiamo: lo diciamo. */
-    const rete = risparmio() + valoreVoce("investimento");
-    const allarme = $("#dividiAllarme");
-    allarme.hidden = !(resta > 0 && rete <= 0);
-    if (!allarme.hidden) {
-      allarme.innerHTML = `<b>Occhio:</b> così non ti resta niente per gli imprevisti. Basta una lavatrice che si rompe o un dente da curare e il piano salta — e riparti da zero, che è la cosa che scoraggia di più. Per qualche mese ha senso; come regola fissa, meno. Se ti va, lascia da parte anche solo <b>1&nbsp;€</b>.`;
-    }
-
     const sforo = sommaVoci() - state.plan.income;
     const box = $("#resto");
     if (sforo > 0) {
       box.className = "resto male";
       box.innerHTML = `Così esci di <b>${euro(sforo)}</b> dal mese. Non è una bocciatura: è l'informazione che ti serviva. Abbassa qualche voce — le azioni della fase 3 ti daranno una mano.`;
-    } else if (r === 0) {
+    } else if (r === 0 && valoreVoce("investimento") === 0) {
       box.className = "resto";
-      box.innerHTML = `Tutto assegnato, <b>zero</b> di risparmio. Prova a liberare anche solo <b>1&nbsp;€</b>: conta più di quanto sembri.`;
+      box.innerHTML = `Tutto sul sogno, <b>niente cuscino</b>: basta un imprevisto e il piano salta. Se ti va, lascia da parte anche solo <b>1&nbsp;€</b> — decidi tu.`;
     } else {
       box.className = "resto";
       const inv = (state.voci.find((x) => x.id === "investimento") || {}).valore || 0;
