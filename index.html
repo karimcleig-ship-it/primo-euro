@@ -61,16 +61,26 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
    sopra e sotto tiene leggibili numeri e pulsanti, e il nero del video
    scompare nel nero dell'app */
 .sfondo-crescita { position: absolute; inset: 0; z-index: 0; }
+/* la finestra nel flusso: qui sotto non c'è niente, si vede solo il video */
+.finestra-crescita { height: 185px; flex: none; }   /* il flex non la deve schiacciare */
+.finestra-crescita[hidden] { display: none; }
 .sfondo-crescita[hidden] { display: none; }
 .sfondo-crescita video {
-  width: 100%; height: 100%; object-fit: cover; object-position: center 42%;
-  filter: brightness(.9) saturate(1.05);
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(.92) saturate(1.05);
+}
+/* la vignetta: il buio si chiude tutt'attorno e lascia respirare solo il
+   centro, dove vive l'oggetto — i bordi del video smettono di esistere */
+.sfondo-crescita::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 105% 78% at 50% 48%,
+    transparent 34%, rgba(5,5,10,.5) 58%, #05050a 86%);
 }
 .sfondo-crescita::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(180deg,
-    rgba(5,5,10,.92) 0%, rgba(5,5,10,.62) 20%, rgba(5,5,10,.3) 44%,
-    rgba(5,5,10,.55) 66%, rgba(5,5,10,.95) 100%);
+    rgba(5,5,10,.88) 0%, rgba(5,5,10,.5) 20%, rgba(5,5,10,.12) 44%,
+    rgba(5,5,10,.4) 66%, rgba(5,5,10,.92) 100%);
 }
 
 /* l'orizzonte: onde lente che riempiono il basso della schermata.
@@ -342,13 +352,43 @@ input[type=range]::-moz-range-thumb {
 .bentornato[hidden] { display: none; }
 .bentornato b { color: var(--lime); }
 
-.countdown { text-align: center; margin: 4px 0 2px; }
+/* la testata: i testi impacchettati a sinistra, il sogno a destra */
+.testata { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.countdown { text-align: left; margin: 0; }
+.cd-infl { margin-inline: 0; }
 
-.cd-dream { font-size: 44px; line-height: 1; }
+/* il box del sogno: la cifra messa via, bene in vista */
+.box-sogno {
+  flex: 1; max-width: 52%; align-self: stretch;
+  display: flex; flex-direction: column; justify-content: center;
+  border: 1.5px solid var(--lime); background: rgba(217,255,75,.1);
+  border-radius: 18px; padding: 12px 15px; text-align: right;
+  box-shadow: 0 0 24px -10px rgba(217,255,75,.5);
+}
+.box-sogno .bs-nome { display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 12.5px; color: var(--lime); font-weight: 600; }
+.box-sogno .bs-cifra { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--paper); margin-top: 5px; font-variant-numeric: tabular-nums; }
+.box-sogno .bs-sotto { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+
+/* i fianchi: risparmio e investimenti ai lati della clessidra */
+.fianchi { display: flex; justify-content: space-between; align-items: center; }
+.sv-fianco {
+  border-radius: 16px; padding: 11px 14px; max-width: 142px;
+  border: 1px solid var(--line); background: rgba(11,11,18,.55); backdrop-filter: blur(6px);
+}
+.sv-fianco .sf-nome { font-size: 12px; font-weight: 600; }
+.sv-fianco .sf-cifra { font-family: var(--font-display); font-size: 19px; font-weight: 700; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.sv-fianco.risparmio { text-align: left; }
+.sv-fianco.investimenti { text-align: right; }
+.sv-fianco.risparmio { border-color: rgba(124,92,255,.5); }
+.sv-fianco.risparmio .sf-nome { color: var(--violet); }
+.sv-fianco.investimenti { border-color: rgba(255,157,77,.5); }
+.sv-fianco.investimenti .sf-nome { color: var(--arancio); }
+
+.cd-dream { font-size: 35px; line-height: 1; }
 
 .cd-days {
   font-family: var(--font-display);
-  font-size: 88px; font-weight: 700; letter-spacing: -.05em; line-height: 1;
+  font-size: 70px; font-weight: 700; letter-spacing: -.05em; line-height: 1;
   font-variant-numeric: tabular-nums;
   background: linear-gradient(180deg, var(--paper), #b9c47a);
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -356,11 +396,11 @@ input[type=range]::-moz-range-thumb {
 }
 /* quando il tempo si dice a parole ("1 anno e 3 mesi") il corpo scende
    ma il peso resta: è sempre il protagonista della schermata */
-.cd-days.testo { font-size: 46px; letter-spacing: -.02em; line-height: 1.1; padding: 14px 0; }
+.cd-days.testo { font-size: 37px; letter-spacing: -.02em; line-height: 1.1; padding: 14px 0; }
 #movesDays.testo { font-size: 22px; }
 #recapDays.testo { font-size: 26px; }
 
-.cd-label { font-family: var(--font-display); font-size: 15px; color: var(--muted); letter-spacing: .02em; }
+.cd-label { font-family: var(--font-display); font-size: 12px; color: var(--muted); letter-spacing: .02em; }
 /* La clessidra sta dietro al numero, non accanto: è lo sfondo del tempo
    che passa, e il numero resta il protagonista. */
 /* La clessidra ha una sua stanza, al centro: è il posto dove l'occhio si
@@ -378,34 +418,40 @@ input[type=range]::-moz-range-thumb {
 }
 .clessidra-nota b { color: var(--lime); font-weight: 600; }
 
-.cd-date { font-size: 13px; color: var(--faint); margin-top: 6px; }
+.cd-date { font-size: 10.5px; color: var(--muted); text-align: center; flex: 1; }
 
 /* i prezzi che salgono: si dice, non si urla — il tono resta quello
    di chi ti accompagna, e la fonte è lì accanto perché è verificabile */
 .cd-infl {
-  font-size: 11.5px; color: var(--muted); margin-top: 9px;
-  line-height: 1.5; max-width: 300px; margin-inline: auto;
+  font-size: 9.5px; color: var(--muted); margin-top: 5px;
+  line-height: 1.4; max-width: 300px; margin-inline: auto;
 }
 .cd-infl b { color: var(--arancio); font-weight: 600; }
 .cd-infl small { display: block; color: var(--faint); font-size: 10.5px; margin-top: 3px; }
 .cd-infl[hidden] { display: none; }
 
-.progress-wrap { margin-top: 12px; }
+.progress-wrap { margin-top: 47px; }
 
-.bar { position: relative; height: 11px; border-radius: 6px; background: rgba(245,244,239,.1); overflow: hidden; }
+.bar { position: relative; height: 29px; border-radius: 10px; background: rgba(245,244,239,.1); overflow: hidden; }
 /* le tacche: una per mese di risparmio, perché si mette via al mese.
    La barra smette di essere astratta e diventa un calendario. */
 .bar-tacche { position: absolute; inset: 0; pointer-events: none; }
 .bar-fill {
-  height: 100%; border-radius: 5px; width: 0%;
+  height: 100%; border-radius: 9px; width: 0%;
   background: linear-gradient(90deg, var(--violet), var(--lime));
   transition: width 1s var(--ease);
 }
 
 .bar-nums {
-  display: flex; justify-content: space-between; margin-top: 8px;
-  font-size: 13px; font-variant-numeric: tabular-nums;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+  margin-top: 7px; font-size: 10.5px; font-variant-numeric: tabular-nums;
 }
+.bar-nums .bn { display: flex; flex-direction: column; gap: 1px; }
+.bar-nums .bn b { font-size: 14px; font-weight: 700; font-family: var(--font-display); }
+.bar-nums .bn small { font-size: 9.5px; color: var(--faint); }
+.bar-nums .bn.sx { text-align: left; }
+.bar-nums .bn.dx { text-align: right; }
+.bar-nums .bn.dx b { color: var(--paper); }
 .bar-nums b { color: var(--lime); }
 .bar-nums span { color: var(--faint); }
 
@@ -896,6 +942,24 @@ input[type=range]::-moz-range-thumb {
 
 /* ---------- tabbar ---------- */
 
+/* la banda dei maestri: piccola, scorre da sola, appoggiata sulle tappe */
+.ticker {
+  overflow: hidden; white-space: nowrap;
+  border-top: 1px solid var(--line);
+  background: rgba(11,11,18,.85); backdrop-filter: blur(10px);
+  padding: 6px 0; position: relative; z-index: 5;
+}
+.ticker[hidden] { display: none; }
+.ticker-track {
+  display: inline-block; white-space: nowrap;
+  animation: ticker-scorri 46s linear infinite;
+  font-size: 10px; letter-spacing: .04em; color: var(--muted);
+}
+.ticker-track b { color: var(--lime); font-weight: 600; }
+.ticker-track .tk-sep { color: var(--faint); margin: 0 10px; }
+@keyframes ticker-scorri { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
 .tabbar {
   display: flex; border-top: 1px solid var(--line);
   background: rgba(11,11,18,.92); backdrop-filter: blur(12px);
@@ -1095,23 +1159,35 @@ input[type=range]::-moz-range-thumb {
 
       <div class="bentornato" id="bentornato" hidden></div>
 
-      <div class="countdown">
-        <div class="cd-dream" id="cdEmoji">🗾</div>
-        <div class="cd-days" id="cdDays">—</div>
-        <div class="cd-label" id="cdLabel">giorni al Giappone</div>
-        <div class="cd-date" id="cdDate"></div>
-        <div class="cd-infl" id="cdInfl" hidden></div>
+      <div class="cd-infl" id="cdInfl" hidden style="display:none"></div>
+      <div class="testata">
+        <div class="countdown">
+          <div class="cd-dream" id="cdEmoji">🗾</div>
+          <div class="cd-days" id="cdDays">—</div>
+          <div class="cd-label" id="cdLabel">giorni al Giappone</div>
+        </div>
+        <div class="box-sogno" id="boxSogno"></div>
       </div>
 
       <div class="progress-wrap">
         <div class="bar"><div class="bar-fill" id="barFill"></div><div class="bar-tacche" id="barTacche"></div></div>
         <div class="bar-nums">
-          <span><b id="savedN">0 €</b> messi via</span>
-          <span id="costN">0 €</span>
+          <span class="bn sx"><b id="savedN">0 €</b><small>messi via</small></span>
+          <div class="cd-date" id="cdDate"></div>
+          <span class="bn dx"><b id="costN">0 €</b><small>mancanti</small></span>
         </div>
       </div>
 
-      <div class="salva" id="homeSalva" style="margin-top:8px"></div>
+      <div class="finestra-crescita" id="finestraCrescita" hidden></div>
+
+      <div class="spacer"></div>
+
+      <div class="fianchi">
+        <div class="sv-fianco risparmio" id="boxRisparmio"></div>
+        <div class="sv-fianco investimenti" id="boxInvest"></div>
+      </div>
+
+      <div class="spacer"></div>
 
       <div class="clessidra-box">
         <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
@@ -1125,10 +1201,6 @@ input[type=range]::-moz-range-thumb {
         <button class="add-voce" id="addSogno">+ Aggiungi un sogno</button>
       </div>
 
-      <blockquote class="citazione" id="citazione"></blockquote>
-
-      <div class="spacer"></div>
-      <button class="cta" id="goMoves">Vuoi accelerare ancora? →</button>
     </section>
 
     <!-- 4. AZIONE: il catalogo delle mosse -->
@@ -1188,6 +1260,10 @@ input[type=range]::-moz-range-thumb {
       <button class="cta" id="recapBack" style="margin-top:9px">Perfetto, si comincia 🌱</button>
     </section>
 
+  </div>
+
+  <div class="ticker" id="ticker" hidden aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack"></div>
   </div>
 
   <nav class="tabbar" id="tabbar" hidden>
@@ -1474,6 +1550,7 @@ input[type=range]::-moz-range-thumb {
     $("#tabbar").hidden = !fase || !state.voci;
     $$("#tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === fase));
     if (sfondoCrescita) sfondoCrescita.hidden = !(name === "home" && sfondoCrescita.dataset.pronto === "1");
+    $("#ticker").hidden = name !== "home";
     const sc = $(`.screen[data-screen="${name}"]`);
     if (sc) sc.scrollTop = 0;
     if (name === "home") renderHome();
@@ -1658,6 +1735,8 @@ input[type=range]::-moz-range-thumb {
      Il numero della BCE è lì sotto perché chiunque possa verificarlo. */
   function dilloDellInflazione() {
     const box = $("#cdInfl");
+    box.hidden = true;          /* tolta dalla Clessidra su richiesta */
+    if (box.hidden) return;
     const paese = state.plan && state.plan.country;
     const annuo = paese ? inflazioneDi(paese) : 0;
 
@@ -1670,10 +1749,10 @@ input[type=range]::-moz-range-thumb {
 
     box.hidden = false;
     box.innerHTML = persi > 0
-      ? `Mentre metti da parte, i prezzi salgono: l'inflazione allontana il traguardo di <b>${persi} giorn${persi === 1 ? "o" : "i"}</b>. È già contata qui sopra.
-         <small>${dove} · ${annuo}% annuo · dato BCE ${quando}</small>`
-      : `Inflazione al <b>${annuo}%</b>: a questo ritmo la stai già battendo.
-         <small>${dove} · dato BCE ${quando}</small>`;
+      ? `L'inflazione ti costa <b>${persi} giorn${persi === 1 ? "o" : "i"}</b>: già contati qui sopra.
+         <small>${dove} · ${annuo}% · BCE ${quando}</small>`
+      : `Inflazione al <b>${annuo}%</b>: la stai già battendo.
+         <small>${dove} · BCE ${quando}</small>`;
   }
 
   function renderHome() {
@@ -1684,7 +1763,7 @@ input[type=range]::-moz-range-thumb {
     const giorniPiccoli = tempoUmano(daysLeft());
     $("#cdLabel").textContent = (giorniPiccoli ? daysLeft() + " giorni" : "giorni") + " a « " + d.label.toLowerCase() + " »";
     $("#cdDays").classList.remove("testo");
-    $("#costN").textContent = euro(d.cost);
+    $("#costN").textContent = euro(Math.max(0, d.cost - messiVia));
     $("#savedN").textContent = euro(messiVia);
     const quota = d.cost > 0 ? messiVia / d.cost : 0;
     $("#barFill").style.width = Math.min(100, quota * 100) + "%";
@@ -1716,33 +1795,38 @@ input[type=range]::-moz-range-thumb {
       $("#cdDays").classList.add("testo");
       const when = new Date();
       when.setDate(when.getDate() + days);
-      $("#cdDate").textContent = "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" }) + " · " + euro(rate()) + "/mese";
+      $("#cdDate").textContent = "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
     } else {
       countTo($("#cdDays"), days);
       const when = new Date();
       when.setDate(when.getDate() + days);
       $("#cdDate").textContent = days === 0
         ? "Ci sei già. Ora scegli il prossimo."
-        : "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" }) + " · " + euro(rate()) + "/mese";
+        : "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
     }
 
     dilloDellInflazione();
     renderSogni();
 
-    /* i tre salvadanai, a colpo d'occhio */
+    /* i tre salvadanai, ognuno al suo posto: il sogno in alto a destra,
+       risparmio e investimenti ai fianchi della clessidra */
     if (state.voci) {
       const risp = risparmio();
       const inv = (state.voci.find((x) => x.id === "investimento") || {}).valore || 0;
       const perSogno = (state.voci.find((x) => x.id === "sogno") || {}).valore || 0;
-      $("#homeSalva").innerHTML = `
-        <div class="sv risparmio"><span class="sv-emoji">🌱</span><span class="sv-testo"><b>Risparmio</b></span><span class="sv-cifra">${euro(risp)}</span></div>
-        <div class="sv investimenti"><span class="sv-emoji">📈</span><span class="sv-testo"><b>Investimenti</b></span><span class="sv-cifra">${euro(inv)}</span></div>
-        <div class="sv sogno"><span class="sv-emoji">${d.emoji}</span><span class="sv-testo"><b>Sogno</b></span><span class="sv-cifra">${euro(perSogno)}</span></div>`;
+      $("#boxSogno").innerHTML = `
+        <div class="bs-nome">${d.emoji} Sogno</div>
+        <div class="bs-cifra">${euro(messiVia)}</div>
+        <div class="bs-sotto">messi via · +${euro(perSogno)}/mese</div>`;
+      $("#boxRisparmio").innerHTML = `<div class="sf-nome">🌱 Risparmio</div><div class="sf-cifra">${euro(risp)}</div>`;
+      $("#boxInvest").innerHTML = `<div class="sf-nome">📈 Investimenti</div><div class="sf-cifra">${euro(inv)}</div>`;
     }
 
-    /* col video a tutto schermo la card disegnata non serve più */
+    /* col video a tutto schermo la card disegnata non serve più:
+       al suo posto si apre la finestra nel flusso */
     const videoAttivo = sfondoCrescita && sfondoCrescita.dataset.pronto === "1";
     $(".clessidra-box").hidden = videoAttivo;
+    $("#finestraCrescita").hidden = true;
 
     /* La clessidra racconta a parole quello che disegna. */
     const perc = Math.round(quota * 100);
@@ -1750,11 +1834,8 @@ input[type=range]::-moz-range-thumb {
       ? `Hai già messo via <b>${euro(messiVia)}</b> di ${euro(d.cost)}: la sabbia scesa è tua. Ogni mese ne cade un'altra fetta, anche quando non ci pensi.`
       : `La sabbia comincia a scendere dal primo euro. Ogni mese ne cade una fetta da <b>${euro(Math.round(quotaDi(attivo)))}</b>, anche quando non ci pensi.`;
 
-    /* una voce dei maestri, stabile per tutta la giornata */
-    if (typeof TEACHERS !== "undefined") {
-      const t = TEACHERS[Math.floor(Date.now() / 864e5) % TEACHERS.length];
-      $("#citazione").innerHTML = `«${t.quote}»<b>${t.name} — ${t.rule}</b>`;
-    }
+    /* le voci dei maestri scorrono nella banda in basso */
+    riempiTicker();
   }
 
   /* ---------- la clessidra ----------
@@ -1865,7 +1946,9 @@ input[type=range]::-moz-range-thumb {
   function renderSogni() {
     const box = $("#sogniBox"), lista = $("#sogniLista");
     const l = sogni();
-    box.hidden = l.length < 1;
+    box.hidden = true;          /* sezione spenta su richiesta — la logica resta */
+    if (box.hidden) return;
+    void (l.length);
     if (!l.length) return;
 
     const tot = sommaPesi();
@@ -1958,6 +2041,12 @@ input[type=range]::-moz-range-thumb {
   (function () {
     const v = $("#crescita3d");
     if (!v || !sfondoCrescita) return;
+    /* Kling apre e chiude nel buio: il loop salta le code nere e gira
+       solo sul tratto in cui la clessidra si vede */
+    v.addEventListener("loadeddata", () => { v.currentTime = 0.6; });
+    v.addEventListener("timeupdate", () => {
+      if (v.currentTime >= v.duration - 0.7) v.currentTime = 0.6;
+    });
     v.addEventListener("loadeddata", () => {
       sfondoCrescita.dataset.pronto = "1";
       const attuale = $(".screen.on");
@@ -1967,6 +2056,16 @@ input[type=range]::-moz-range-thumb {
       }
     });
   })();
+
+  /* La banda dei maestri: le regole in otto parole, in cammino perpetuo.
+     Il contenuto è raddoppiato perché il giro ricominci senza strappi. */
+  let tickerPieno = false;
+  function riempiTicker() {
+    if (tickerPieno || typeof TICKER === "undefined") return;
+    const pezzo = TICKER.map(([r, chi]) => `<b>${r}</b> · ${chi}`).join('<span class="tk-sep">✦</span>');
+    $("#tickerTrack").innerHTML = pezzo + '<span class="tk-sep">✦</span>' + pezzo + '<span class="tk-sep">✦</span>';
+    tickerPieno = true;
+  }
 
   function countTo(el, to) {
     if (!isFinite(to)) { el.textContent = "∞"; shownDays = null; return; }
@@ -1981,7 +2080,6 @@ input[type=range]::-moz-range-thumb {
     })(t0);
   }
 
-  $("#goMoves").addEventListener("click", () => show("moves"));
 
   /* ---------- 4. mosse ---------- */
 
