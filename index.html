@@ -2705,7 +2705,40 @@ input[type=range]::-moz-range-thumb {
   const daZero = /[?&](nuovo|test|reset)\b/.test(location.search);
   if (daZero) { try { localStorage.removeItem(KEY); } catch (e) {} }
 
-  if (!daZero && RIPRENDI && load()) {
+  /* ?clessidra: un piano di prova già compilato (Tokyo, cifre tipo) e
+     dritti all'ultima schermata. Serve per verificare la Clessidra al volo
+     senza rifare il percorso. Vive solo in memoria: non tocca il piano
+     salvato finché non si modifica qualcosa. */
+  const allaClessidra = /[?&]clessidra\b/.test(location.search);
+  if (allaClessidra) {
+    state = Object.assign(state, {
+      dreamText: "andare a tokyo", dreamCost: 2600, dreamEmoji: "🗾",
+      baseRate: 225, saved: 0, cifraTua: false,
+      plan: { income: 1600, country: "IT", cityId: "milano", housing: "stanza",
+              vehicle: "mezzi", incomeType: "fisso", family: "solo",
+              goals: { short: null, mid: null, long: null } },
+      sogni: [{ id: "demo1", text: "andare a tokyo", emoji: "🗾", cost: 2600, saved: 0, peso: 1 }],
+      attivoId: "demo1", ultimoAccesso: Date.now(),
+      voci: [
+        { id: "casa", emoji: "🏠", nome: "Casa", hint: "affitto o mutuo", valore: 730, tipo: "fissa", ok: true },
+        { id: "bollette", emoji: "💡", nome: "Bollette", hint: "luce, gas, internet", valore: 50, tipo: "fissa", ok: true },
+        { id: "spesa", emoji: "🛒", nome: "Spesa", hint: "cibo e casa", valore: 320, tipo: "fissa", ok: true },
+        { id: "trasporti", emoji: "🚌", nome: "Trasporti", hint: "come ti muovi ogni giorno", valore: 40, tipo: "fissa", ok: true },
+        { id: "salute", emoji: "❤️", nome: "Salute", hint: "farmacia, visite", valore: 30, tipo: "fissa", ok: true },
+        { id: "abbonamenti", emoji: "📺", nome: "Abbonamenti", hint: "streaming, app, palestra", valore: 25, tipo: "variabile", ok: true },
+        { id: "hobby", emoji: "🎨", nome: "Hobby & uscite", hint: "sport, cene, divertimento", valore: 50, tipo: "variabile", ok: true },
+        { id: "shopping", emoji: "🛍️", nome: "Shopping", hint: "vestiti, sfizi", valore: 45, tipo: "variabile", ok: true },
+        { id: "sogno", emoji: "🗾", nome: "andare a tokyo", hint: "il salvadanaio del tuo sogno", valore: 225, tipo: "sogno", ok: true },
+        { id: "investimento", emoji: "📈", nome: "Investimenti", hint: "soldi che lavorano — massimo il 20%", valore: 85, tipo: "futuro", ok: true }
+      ]
+    });
+    migraSogni();
+    fillSelects();
+    dreamInput.value = state.dreamText;
+    costInput.value = state.dreamCost;
+    $("#dreamEmoji").textContent = state.dreamEmoji;
+    show("home");
+  } else if (!daZero && RIPRENDI && load()) {
     tempoTrascorso();
     fillSelects();
     dreamInput.value = state.dreamText || "";
