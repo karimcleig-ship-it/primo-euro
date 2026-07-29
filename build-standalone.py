@@ -122,7 +122,7 @@ def build_mobile(demo: bool = False) -> None:
     html = re.sub(r'\s*<link href="https://fonts\.googleapis[^>]*>', "", html)
     html = html.replace("<style>", f"<style>\n{fonts_css}\n", 1)
 
-    for name in ("europa", "data", "engine"):
+    for name in ("europa", "sogni", "data", "engine"):
         code = (ROOT / "js" / f"{name}.js").read_text(encoding="utf-8")
         html = html.replace(f'<script src="js/{name}.js"></script>', f"<script>\n{code}\n</script>")
 

@@ -45,6 +45,36 @@ Due famiglie, in due schede:
 Quando una rinuncia è troppo piccola per spostare il calendario, l'app non
 promette «−0 giorni»: dice quanto vale in un anno, che non è mai zero.
 
+## Il dizionario dei sogni
+
+**179 sogni, 824 parole chiave, 10 categorie.** Scrivi «viaggio alle Azzorre»,
+«aprire un chiosco sulla spiaggia» o «rifarmi i denti» e l'app risponde
+all'istante, senza chiamare nessun server e senza costare niente.
+
+Vive in **`sogni.csv`, che si apre con Excel**: una riga per sogno, sei colonne.
+
+| categoria | emoji | nome | costo | parole | priorita | nota |
+|---|---|---|---|---|---|---|
+| Viaggi | 🗾 | un viaggio in Giappone | 2600 | giappone\|tokyo\|kyoto | 0 | volo + 12 notti + JR Pass |
+
+- **costo** — in euro, oppure la parola `fondo` per le voci che si calcolano
+  sulle spese vere della persona (il cuscino per gli imprevisti)
+- **parole** — quelle che fanno scattare la voce, separate da `|`
+- **priorita** — normalmente 0. L'app sceglie la parola più lunga fra tutte
+  quelle che corrispondono («anticipo casa» batte «casa»); la priorità
+  ribalta il verdetto dove serve il buon senso: chi scrive «aprire un chiosco
+  **sulla spiaggia**» vuole un lavoro, non una vacanza al mare
+- **nota** — cosa comprende la cifra. Serve a noi quando fra sei mesi ci
+  chiederemo da dove è uscito quel numero
+
+L'ordine delle righe non conta: ordina il foglio come preferisci.
+
+```bash
+python3 costruisci-sogni.py
+```
+
+Legge il CSV, riscrive `js/sogni.js` e segnala i doppioni. Poi commit e push.
+
 ## I numeri veri dell'Europa
 
 L'app copre i **21 paesi dell'euro** e non inventa niente: ogni cifra viene da

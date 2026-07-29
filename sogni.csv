@@ -1,0 +1,180 @@
+categoria;emoji;nome;costo;parole;priorita;nota
+Viaggi;🗾;un viaggio in Giappone;2600;giappone|tokyo|kyoto|osaka|corea|cina|seoul;0;volo + 12 notti + JR Pass
+Viaggi;🗽;un viaggio a New York;2400;new york|manhattan|brooklyn;0;volo + 7 notti + spese in città
+Viaggi;🌋;un viaggio in Islanda;2200;islanda|reykjavik|aurora boreale|northern lights;0;volo + auto a noleggio + 8 notti
+Viaggi;🏝️;un viaggio alle Maldive;3200;maldive|seychelles|mauritius|polinesia|bora bora;0;volo + resort, 7 notti
+Viaggi;🦁;un safari in Africa;4500;safari|kenya|tanzania|sudafrica|namibia|botswana;0;volo + lodge + parchi, 10 giorni
+Viaggi;🕌;un viaggio in Marocco;900;marocco|marrakech|fes|sahara|deserto;0;volo + 7 notti in riad
+Viaggi;🐨;un viaggio in Australia;3800;australia|sydney|melbourne|nuova zelanda;0;volo lungo + 3 settimane
+Viaggi;🌺;un viaggio nelle isole atlantiche;1400;azzorre|madeira|capo verde|canarie|tenerife;0;volo + 8 notti
+Viaggi;🏛️;un viaggio in Grecia;1100;grecia|atene|santorini|creta|mykonos|rodi;0;volo + traghetti + 10 notti
+Viaggi;🐘;un viaggio nel sud-est asiatico;2200;thailandia|vietnam|indonesia|bali|cambogia|laos|sri lanka|filippine;0;volo + 3 settimane
+Viaggi;🇮🇳;un viaggio in India;2000;india|nepal|goa|rajasthan|himalaya;0;volo + 3 settimane
+Viaggi;🗿;un viaggio in Sud America;3000;peru|argentina|cile|brasile|colombia|patagonia|machu picchu|bolivia;0;volo + 3 settimane
+Viaggi;🌮;un viaggio in Messico;2300;messico|yucatan|cancun|citta del messico;0;volo + 2 settimane
+Viaggi;🍁;un viaggio in Canada;2800;canada|toronto|vancouver|montreal;0;volo + 2 settimane
+Viaggi;🇨🇺;un viaggio a Cuba o ai Caraibi;2200;cuba|caraibi|repubblica dominicana|giamaica|antille;0;volo + 2 settimane
+Viaggi;🏜️;un viaggio in Egitto o Giordania;1500;egitto|giordania|petra|piramidi|luxor|mar rosso;0;volo + 10 notti
+Viaggi;🇹🇷;un viaggio in Turchia;1000;turchia|istanbul|cappadocia;0;volo + 8 notti
+Viaggi;🏰;un viaggio in Scozia o Irlanda;1200;scozia|irlanda|edimburgo|dublino;0;volo + auto + 10 notti
+Viaggi;🏔️;un viaggio in Norvegia o nei fiordi;2400;norvegia|fiordi|svezia|finlandia|lapponia|danimarca;0;volo + 10 notti, Nord Europa
+Viaggi;🇵🇹;un viaggio in Portogallo o Spagna;800;portogallo|lisbona|porto|spagna|barcellona|madrid|andalusia;0;volo + 7 notti
+Viaggi;🇭🇷;un viaggio nei Balcani;700;croazia|albania|montenegro|slovenia|balcani|bosnia;0;volo o auto + 10 notti
+Viaggi;🚗;un viaggio on the road;2600;route 66|on the road|coast to coast|road trip america;0;volo + auto + 3 settimane
+Viaggi;🚢;una crociera;1600;crociera|nave da crociera|msc|costa crociere;0;cabina doppia, una settimana
+Viaggi;🎢;un viaggio a Disneyland o nei parchi;1800;disneyland|disney world|gardaland|parco divertimenti|universal;0;famiglia di quattro, 4 giorni
+Viaggi;🚆;un giro d'Europa in treno;1600;interrail|giro d'europa|eurail|treno per l'europa;0;pass 1 mese + ostelli
+Viaggi;🏔️;una settimana bianca;1200;settimana bianca|vacanza sulla neve|skipass|dolomiti;0;alloggio + skipass + noleggio
+Viaggi;⛵;una vacanza in barca a vela;1800;vacanza in barca|crociera in barca|catamarano|flottiglia;0;noleggio condiviso, una settimana
+Viaggi;🎒;sei mesi di viaggio zaino in spalla;9000;giro del mondo|zaino in spalla|backpacking|viaggio lungo;0;volo + spese, sei mesi
+Viaggi;🏖️;una vacanza al mare;900;vacanza al mare|estate al mare|spiaggia|ferie|villeggiatura;0;una settimana, Mediterraneo
+Viaggi;🎡;un weekend in una capitale;450;weekend|city break|tre giorni fuori|ponte;0;volo + 2 notti
+Viaggi;💒;partecipare a un matrimonio all'estero;1200;matrimonio di amici|matrimonio all'estero|invitato a un matrimonio;0;volo + 3 notti + regalo
+Viaggi;🎪;un festival musicale;600;festival|coachella|tomorrowland|primavera sound|glastonbury|sziget;0;biglietto + viaggio + campeggio
+Viaggi;⛺;un viaggio in van a noleggio;1500;viaggio in van|noleggio camper|vacanza in camper;0;noleggio 2 settimane + carburante
+Viaggi;🧭;un cammino a piedi;1000;cammino di santiago|pellegrinaggio|via francigena|trekking lungo;0;30 giorni, ostelli + attrezzatura
+Viaggi;🌍;un anno sabbatico in giro per il mondo;18000;anno sabbatico|sabbatico|un anno di viaggio;0;dodici mesi, spese medie
+Viaggi;✈️;un viaggio;1300;viaggio|viaggiare|vacanza|partire|volare|turismo;0;stima media per una settimana fuori
+Casa;🏠;l'anticipo per comprare casa;28000;anticipo casa|acconto casa|comprare casa|mutuo prima casa|acquisto casa|prima casa;1;20% su un immobile medio + notaio
+Casa;🌊;una seconda casa al mare o in montagna;60000;seconda casa|casa al mare|casa in montagna|casa vacanze;0;piccolo immobile, zone non di lusso
+Casa;🔑;la caparra per un affitto;2800;caparra|cauzione|deposito affitto|anticipo affitto|andare a vivere da sol|vivere da solo|vivere da sola|andarmene di casa|mia indipendenza;0;3 mensilità + agenzia
+Casa;🛋️;arredare casa da zero;9000;arredare|arredamento|mobili|mobilia;0;cucina + camera + soggiorno, fascia media
+Casa;🔨;ristrutturare casa;35000;ristrutturare|ristrutturazione|rifare casa|lavori in casa;0;70 mq, ristrutturazione completa
+Casa;🚿;rifare il bagno;7500;rifare il bagno|bagno nuovo|ristrutturare bagno;0;impianti + sanitari + piastrelle
+Casa;🍳;una cucina nuova;6500;cucina nuova|rifare la cucina|cucina componibile;0;fascia media, elettrodomestici inclusi
+Casa;🛏️;una camera da letto nuova;2200;camera da letto|letto nuovo|materasso|armadio;0;letto + materasso + armadio
+Casa;❄️;climatizzatore e riscaldamento;2500;condizionatore|climatizzatore|pompa di calore|caldaia|riscaldamento;0;impianto + installazione
+Casa;☀️;un impianto fotovoltaico;9500;fotovoltaico|pannelli solari|solare|batteria accumulo;0;3 kW + accumulo, incentivi esclusi
+Casa;🪟;infissi e serramenti;8000;infissi|finestre|serramenti|doppi vetri|persiane;0;appartamento medio
+Casa;🏗️;rifare il tetto;18000;tetto|rifare il tetto|copertura|coibentazione;0;casa indipendente media
+Casa;🌳;sistemare il giardino;6000;giardino|verde|terrazzo|pergolato|prato;0;progetto + piante + irrigazione
+Casa;🏊;una piscina;25000;piscina|idromassaggio|vasca esterna;0;interrata piccola
+Casa;🏡;un pezzo di terra o un orto;15000;terreno|orto|campagna|casetta|rifugio;0;piccolo lotto agricolo
+Casa;📦;un trasloco;1500;trasloco|traslocare|cambiare casa|trasferirsi;0;ditta + imballaggi + primo mese
+Casa;🧰;un garage o una cantina;12000;garage|box auto|cantina|posto auto;0;box in città media
+Casa;🚪;porta blindata e sicurezza;3000;porta blindata|antifurto|allarme|videocitofono|sicurezza casa;0;porta + impianto
+Veicoli;🚗;una prima auto usata;7500;prima auto|auto usata|macchina usata|comprare auto|automobile|utilitaria|macchina|prima macchina;1;5-8 anni + passaggio + assicurazione
+Veicoli;🚙;un'auto nuova;24000;auto nuova|macchina nuova|suv|berlina|station wagon;0;segmento B/C, allestimento medio
+Veicoli;⚡;un'auto elettrica;32000;auto elettrica|ev|tesla|elettrica nuova|ibrida;0;compatta elettrica, incentivi esclusi
+Veicoli;🛵;uno scooter o una moto;3200;motorino|scooter|moto|vespa|due ruote;0;125 cc nuovo o 500 cc usato
+Veicoli;🏍️;una moto grossa;9000;moto grossa|moto da viaggio|harley|ducati|maxi enduro|bmw gs;0;usata recente
+Veicoli;🚲;una bici elettrica;2200;bici elettrica|e-bike|ebike|bicicletta elettrica;0;fascia media, con accessori
+Veicoli;🚴;una bici;900;bici|bicicletta|mountain bike|bici da citta;0;fascia media
+Veicoli;🚵;una bici da corsa o gravel;2500;bici da corsa|gravel|ciclismo|bici in carbonio;0;telaio in carbonio, fascia media
+Veicoli;🛴;un monopattino elettrico;600;monopattino|monopattino elettrico;0;modello affidabile
+Veicoli;🚦;prendere la patente;1400;patente|patente b|scuola guida|esame di guida;1;teoria + 20 ore + esami
+Veicoli;🏍️;prendere la patente per la moto;900;patente a|patente moto|patente a2;0;corso + esami
+Veicoli;⛵;una barca;18000;barca|gommone|motoscafo|barca usata|natante;0;usata, 6-7 metri
+Veicoli;🚐;un van da attrezzare;25000;van|camper|furgone camperizzato|vanlife|camperizzare;0;furgone usato + allestimento
+Veicoli;🛞;manutenzione straordinaria dell'auto;1500;tagliando|gomme|revisione|frizione|riparazione auto;0;interventi rimandati da tempo
+Veicoli;🏎️;l'auto che ho sempre sognato;45000;auto sportiva|auto d'epoca|porsche|coupe|macchina dei sogni;0;usata di pregio
+Studio;🎓;l'università;9000;universita|iscrizione universita|laurea|tasse universitarie;0;tre anni, tasse + libri
+Studio;📜;un master;12000;master|specializzazione|mba|post laurea;0;master annuale
+Studio;🎓;un dottorato o una ricerca;15000;dottorato|phd|ricerca|assegno di ricerca;0;tre anni, integrazione al reddito
+Studio;🌍;studiare all'estero;8000;erasmus|studiare all'estero|semestre estero|scambio;0;un semestre, borsa esclusa
+Studio;🗣️;un corso di lingua;1500;corso di lingua|inglese|spagnolo|tedesco|cinese|francese|imparare una lingua;0;corso annuale o soggiorno studio
+Studio;🏫;un anno di scuola per i figli;3500;scuola dei figli|retta scolastica|scuola privata;0;retta media annuale
+Studio;💻;un corso di programmazione;7000;bootcamp|corso di programmazione|coding|imparare a programmare|sviluppatore;0;bootcamp intensivo
+Studio;🤖;un corso su intelligenza artificiale o dati;3500;intelligenza artificiale|data science|machine learning|corso ai;0;corso professionale
+Studio;🎨;un corso di design o arte;4000;corso di design|accademia|grafica|illustrazione|belle arti;0;corso annuale
+Studio;📖;una certificazione professionale;1200;certificazione|esame di stato|abilitazione|patentino;0;esame + preparazione
+Studio;🧑‍🍳;un corso di cucina;2500;corso di cucina|scuola di cucina|chef|pasticceria;0;corso professionale breve
+Studio;✍️;un corso di scrittura o teatro;1500;corso di scrittura|scuola di scrittura|teatro corso|recitazione|canto;0;corso annuale
+Studio;✈️;il brevetto di volo;12000;brevetto di volo|pilota|licenza di volo;0;PPL, ore di volo incluse
+Studio;🤿;un brevetto sub;800;brevetto sub|subacquea|immersioni|padi;0;open water + attrezzatura base
+Studio;🧘;un corso per insegnante di yoga;3000;insegnante di yoga|yoga teacher|corso yoga;0;200 ore certificate
+Studio;⛵;una patente nautica;1800;patente nautica|corso di vela|skipper;0;corso + esame
+Lavoro;🚀;aprire un'attività;25000;aprire un'attivita|avviare un'impresa|startup|impresa|mettermi in proprio;1;capitale iniziale per una micro-impresa
+Lavoro;🏪;aprire un negozio;45000;aprire un negozio|negozio|bottega|punto vendita;2;locale + allestimento + magazzino
+Lavoro;☕;aprire un bar o un chiosco;60000;bar|chiosco|caffetteria|locale|pub|birreria;2;licenza + arredi + attrezzature
+Lavoro;🍽️;aprire un ristorante;110000;ristorante|trattoria|pizzeria|osteria;2;locale + cucina professionale
+Lavoro;🚚;aprire un food truck;35000;food truck|street food|ape car|furgone cibo;2;mezzo attrezzato + licenze
+Lavoro;🛏️;aprire un bed and breakfast;30000;bed and breakfast|b&b|affittacamere|airbnb|casa vacanze attivita;2;ristrutturazione + arredi + pratiche
+Lavoro;💇;aprire un salone o uno studio;40000;parrucchiere|barbiere|estetista|centro estetico|nail;2;locale + attrezzature
+Lavoro;🎨;aprire uno studio di tatuaggi;25000;tatuaggi|tatuatore|studio tattoo|piercing;2;locale + attrezzature + autorizzazioni
+Lavoro;🏋️;aprire una palestra o uno studio;70000;aprire una palestra|studio di pilates|centro fitness|crossfit box;2;locale + macchinari
+Lavoro;🌾;avviare un'attività agricola;50000;agriturismo|azienda agricola|coltivare|vigna|allevamento;2;terreno + attrezzature
+Lavoro;💼;partire come libero professionista;6000;partita iva|freelance|libero professionista|consulente;0;attrezzatura + commercialista + cuscino
+Lavoro;🎬;attrezzatura per fotografia o video;7000;attrezzatura video|videomaker|cinepresa|luci|gimbal;0;corpo + ottiche + luci
+Lavoro;🎙️;uno studio di registrazione casalingo;3500;studio di registrazione|home studio|podcast|microfono professionale;0;scheda audio + microfoni + acustica
+Lavoro;🖥️;una postazione di lavoro completa;3000;postazione|scrivania|setup lavoro|home office|smart working;0;computer + monitor + sedia
+Lavoro;🛠️;attrezzatura da artigiano;8000;attrezzatura|utensili|laboratorio|officina|banco da lavoro;0;dotazione iniziale
+Lavoro;📦;avviare un e-commerce;5000;ecommerce|e-commerce|negozio online|vendere online|dropshipping;0;sito + magazzino + pubblicità
+Lavoro;🚛;un mezzo da lavoro;18000;furgone da lavoro|mezzo da lavoro|van commerciale|camion;0;usato recente
+Lavoro;💡;registrare un brevetto o un marchio;6000;brevetto|marchio|proprieta intellettuale|registrare marchio;0;deposito europeo + consulenza
+Lavoro;🎯;sei mesi senza stipendio per cambiare vita;12000;cambiare lavoro|cambiare vita|lasciare il lavoro|reinventarmi;0;sei mesi di spese coperte
+Lavoro;📣;lanciare il primo progetto;4000;lanciare|sito web|campagna pubblicitaria|pubblicita|marketing;0;sito + prime campagne
+Salute;🦷;rifarsi i denti;4500;denti|dentista|impianto dentale|implantologia|protesi dentale;0;due impianti o un'ortodonzia completa
+Salute;😁;un apparecchio ai denti;3500;apparecchio|ortodonzia|invisalign|allineatori;0;trattamento completo adulti
+Salute;👓;occhiali o lenti;400;occhiali|lenti|vista|oculista;0;montatura + lenti progressive
+Salute;👁️;operazione agli occhi;2500;operare gli occhi|laser occhi|miopia|chirurgia refrattiva;0;entrambi gli occhi
+Salute;🧠;un percorso di psicoterapia;2400;psicologo|psicoterapia|terapia|analisi|salute mentale|ansia|psicoterapeuta|andare in terapia;0;un anno, seduta settimanale
+Salute;🩺;un intervento non urgente;5000;operazione|intervento|chirurgia|ricovero;0;privato, degenza breve
+Salute;💇;un trapianto di capelli;4000;trapianto di capelli|capelli|calvizie|infoltimento;0;intervento completo
+Salute;✨;un intervento estetico;5000;chirurgia estetica|rinoplastica|estetica|liposuzione|medicina estetica;0;intervento singolo
+Salute;🤰;un percorso di fecondazione assistita;9000;fecondazione assistita|pma|fivet|inseminazione;0;due cicli in clinica privata
+Salute;💪;un anno di palestra e personal trainer;1800;palestra|personal trainer|allenamento|fitness;0;abbonamento + sedute
+Salute;🥗;un percorso con un nutrizionista;800;nutrizionista|dieta|dimagrire|alimentazione;0;un anno di controlli
+Salute;🧘;un ritiro di benessere;1500;ritiro|retreat|terme|benessere|detox;0;una settimana
+Salute;🚭;smettere di fumare;500;smettere di fumare|sigarette|tabacco|svapo;0;percorso assistito
+Salute;🦴;fisioterapia o riabilitazione;1500;fisioterapia|riabilitazione|schiena|osteopata|ginocchio;0;ciclo completo
+Salute;👂;apparecchi acustici;3000;apparecchio acustico|udito|sordita;0;coppia, fascia media
+Salute;🐕;le cure per un animale;1500;veterinario|cure per il cane|cure per il gatto|operazione animale;0;intervento + terapia
+Famiglia;💍;un matrimonio;22000;matrimonio|sposarmi|sposarsi|nozze|cerimonia;0;80 invitati, media europea contenuta
+Famiglia;💎;un anello di fidanzamento;2500;anello|fidanzamento|proposta|chiedere la mano;0;fascia media
+Famiglia;🌴;il viaggio di nozze;5500;viaggio di nozze|luna di miele|honeymoon;0;due settimane, destinazione lunga
+Famiglia;🍼;il primo anno di un figlio;8000;figlio|bambino|neonato|avere un figlio|maternita|gravidanza;0;attrezzatura + spese + asilo
+Famiglia;👶;attrezzatura per un neonato;2500;carrozzina|passeggino|culla|corredino|seggiolino;0;primo corredo completo
+Famiglia;🏫;un anno di asilo nido;5000;asilo nido|nido|tata|babysitter;0;retta media annuale
+Famiglia;🤝;un'adozione o un affido;8000;adozione|adottare un bambino|affido;0;pratiche + viaggi + spese legali
+Famiglia;🐶;prendere un cane o un gatto;1200;prendere un cane|prendere un gatto|adottare un animale|cucciolo|cane|gatto|animale domestico;0;primo anno completo
+Famiglia;🎂;una festa importante;3000;festa|compleanno importante|anniversario|battesimo|comunione;0;60 invitati
+Famiglia;👵;aiutare i genitori;10000;aiutare i genitori|badante|assistenza anziani|casa di riposo;0;un anno di assistenza parziale
+Famiglia;🕊️;un funerale;4500;funerale|esequie|sepoltura|lapide;0;servizio medio in Europa
+Famiglia;🎁;aiutare un figlio a partire;15000;aiutare i figli|regalo ai figli|universita dei figli|fondo per i figli|per i figli|futuro dei figli|mettere via per i figli;0;contributo iniziale
+Tempo libero;🎸;uno strumento musicale;1500;chitarra|violino|batteria|strumento musicale|basso|sassofono|tromba;0;strumento serio da studio
+Tempo libero;🎹;un pianoforte;4500;pianoforte|piano acustico|pianoforte verticale|coda;0;verticale nuovo o a coda usato
+Tempo libero;🎧;una consolle da dj;2000;dj|consolle|mixer|giradischi professionale;0;setup completo
+Tempo libero;💿;una collezione di dischi;1200;vinili|dischi|collezione musica|giradischi;0;impianto + prima collezione
+Tempo libero;🎮;una postazione da gaming;2500;gaming|pc da gioco|playstation|xbox|videogiochi|nintendo;0;pc + monitor + periferiche
+Tempo libero;📸;una macchina fotografica;2000;macchina fotografica|reflex|mirrorless|fotocamera|obiettivo;0;corpo + obiettivo
+Tempo libero;🎨;attrezzatura da pittura o ceramica;1200;pittura|ceramica|tornio|atelier|colori|scultura;0;dotazione iniziale
+Tempo libero;🧵;una macchina da cucire e tessuti;900;cucire|macchina da cucire|sartoria|tessuti|maglia;0;macchina + materiali
+Tempo libero;📚;una biblioteca personale;1000;libri|biblioteca|leggere|fumetti;0;un anno di acquisti
+Tempo libero;🎫;abbonamento a teatro o concerti;600;teatro|opera|concerti|stagione teatrale|balletto;0;abbonamento stagionale
+Tempo libero;🍷;un corso da sommelier;1200;sommelier|vino|degustazione|enologia;0;tre livelli
+Tempo libero;🍺;fare la birra in casa;800;birra in casa|birrificio casalingo|homebrewing|fermentazione;0;impianto + primi lotti
+Tempo libero;🔭;un telescopio;900;telescopio|astronomia|osservare le stelle;0;fascia amatoriale seria
+Tempo libero;🐝;un apiario o l'autoproduzione;2000;api|apicoltura|miele|autoproduzione|permacultura;0;arnie + attrezzatura
+Tempo libero;🚂;modellismo o collezionismo;1500;modellismo|collezione|modellini|lego|trenino;0;collezione seria
+Tempo libero;🏕️;attrezzatura da campeggio;800;tenda|campeggio|sacco a pelo|zaino da trekking;0;kit completo
+Tempo libero;🎿;attrezzatura da sci;1500;attrezzatura da sci|sci nuovi|scarponi|snowboard;0;sci + scarponi + abbigliamento
+Tempo libero;🏄;una tavola da surf;900;surf|tavola da surf|windsurf|kitesurf|sup;0;tavola + muta
+Tempo libero;🛶;un kayak o una canoa;1200;kayak|canoa|packraft|pagaia;0;imbarcazione + accessori
+Tempo libero;🤿;attrezzatura subacquea;1800;attrezzatura sub|muta|bombole|erogatore;0;set completo
+Tempo libero;🏃;una gara all'estero;1200;maratona|ironman|triathlon|ultratrail|gara podistica;0;iscrizione + viaggio + preparazione
+Tempo libero;🐎;un anno di equitazione;3000;equitazione|cavallo|maneggio;0;lezioni + attrezzatura
+Tempo libero;🥊;un anno di arti marziali;1000;boxe|arti marziali|judo|karate|mma|kickboxing;0;palestra + attrezzatura
+Tempo libero;🧗;attrezzatura da arrampicata;800;arrampicata|alpinismo|climbing|falesia;0;corda + imbrago + scarpette
+Tempo libero;🎾;un anno di tennis o padel;1200;tennis|padel|racchetta|circolo;0;circolo + lezioni + attrezzatura
+Tempo libero;⛳;un anno di golf;2500;golf|mazze da golf|green fee;0;circolo + attrezzatura
+Tempo libero;🛹;skate o pattini;500;skate|skateboard|pattini|longboard;0;tavola + protezioni
+Tecnologia;💻;un computer nuovo;1800;computer|laptop|portatile|macbook|pc nuovo|workstation;0;fascia professionale
+Tecnologia;📱;un telefono nuovo;900;telefono|smartphone|iphone|cellulare;0;fascia alta
+Tecnologia;⌚;uno smartwatch;400;smartwatch|apple watch|orologio smart|garmin;0;fascia media
+Tecnologia;🖥️;un monitor o una tv;900;televisione|tv|monitor|schermo|proiettore;0;fascia media, grande formato
+Tecnologia;🎧;cuffie o impianto audio;600;cuffie|impianto audio|casse|hi-fi|soundbar;0;fascia media
+Tecnologia;🤖;robot e domotica;1200;robot aspirapolvere|domotica|casa intelligente|smart home;0;kit completo
+Tecnologia;🛰️;un drone;1200;drone|dji|riprese aeree;0;fascia media, licenza inclusa
+Tecnologia;🖨️;una stampante 3D;800;stampante 3d|prototipazione|makerspace;0;fascia hobbistica-professionale
+Tecnologia;💾;un server o un archivio di casa;1500;nas|server|backup|archivio|hard disk;0;dischi + ridondanza
+Tecnologia;📖;un lettore di libri o un tablet;450;ereader|kindle|tablet|ipad;0;fascia media
+Sicurezza;🛟;il fondo per gli imprevisti;fondo;fondo emergenza|cuscinetto|imprevisti|paracadute|riserva|sicurezza|tre mesi di respiro|respiro|dormire tranquillo|stare tranquillo;1;tre mesi delle tue spese essenziali — calcolato sui tuoi numeri
+Sicurezza;🧯;tre mesi senza entrate;fondo;perdere il lavoro|senza lavoro|licenziamento|disoccupazione;0;lo stesso cuscino, visto da un'altra angolazione
+Sicurezza;💳;estinguere un debito;5000;estinguere debito|finanziamento|rata|prestito personale|debito;0;prestito medio residuo
+Sicurezza;🏦;il primo investimento;3000;investire|primo investimento|etf|azioni|borsa|fondi|primi 10.000|10.000 investiti|iniziare a investire|far fruttare;0;capitale per cominciare davvero
+Sicurezza;🛡️;una pensione integrativa;3600;pensione integrativa|fondo pensione|previdenza|assicurazione vita;0;un anno di versamenti
+Sicurezza;📋;riscattare gli anni di studio;15000;riscatto laurea|riscattare la laurea|contributi;0;riscatto agevolato, media
+Sicurezza;⚖️;una spesa legale;4000;avvocato|causa|divorzio|separazione|spese legali;0;pratica ordinaria
+Sicurezza;🎁;fare una donazione importante;1000;donare|beneficenza|donazione|aiutare qualcuno;0;quello che conta è farlo, non quanto
+Sicurezza;🏳️;trasferirsi in un altro paese;8000;trasferirmi|emigrare|espatriare|vivere all'estero|trasferirsi all'estero;0;volo + caparra + tre mesi di cuscino

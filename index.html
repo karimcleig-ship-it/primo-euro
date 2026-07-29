@@ -1113,6 +1113,7 @@ input[type=range]::-moz-range-thumb {
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
 <script src="js/europa.js"></script>
+<script src="js/sogni.js"></script>
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
 <script>
@@ -1124,45 +1125,34 @@ input[type=range]::-moz-range-thumb {
 
   /* ---------- contenuti ---------- */
 
-  /* Riconosce il sogno da come lo scrivi e propone una cifra media.
-     Resta sempre correggibile: la stima toglie l'attrito, non il controllo. */
-  const GUESSES = [
-    { k: ["giappone", "tokyo", "kyoto", "corea", "cina", "thailandia", "bali", "vietnam", "indonesia", "australia", "nuova zelanda"], emoji: "🗾", cost: 2500, what: "un viaggio dall'altra parte del mondo" },
-    { k: ["new york", "usa", "america", "stati uniti", "canada", "messico", "brasile", "argentina", "perù", "caraibi"], emoji: "🗽", cost: 2800, what: "un viaggio oltreoceano" },
-    { k: ["interrail", "giro d'europa", "europa"], emoji: "🚆", cost: 1500, what: "un giro per l'Europa" },
-    { k: ["viaggio", "viaggiare", "vacanza", "vacanze", "partire", "estate", "mare", "montagna", "weekend"], emoji: "✈️", cost: 1200, what: "un viaggio" },
-    { k: ["patente"], emoji: "🚦", cost: 1200, what: "prendere la patente" },
-    { k: ["motorino", "scooter", "moto"], emoji: "🛵", cost: 2500, what: "un motorino o una moto" },
-    { k: ["macchina", "auto", "automobile"], emoji: "🚗", cost: 4500, what: "una macchina" },
-    { k: ["comprare casa", "mutuo", "anticipo", "acconto casa", "acquistare casa"], emoji: "🏡", cost: 25000, what: "l'anticipo per comprare casa" },
-    { k: ["vivere da sol", "andare via di casa", "trasloco", "traslocare", "indipendenza", "appartamento", "affitto", "casa mia"], emoji: "🔑", cost: 5000, what: "andare a vivere per conto tuo" },
-    { k: ["matrimonio", "sposar", "nozze"], emoji: "💍", cost: 15000, what: "un matrimonio" },
-    { k: ["figli", "figlio", "figlia", "bambino", "bambina", "maternità", "paternità"], emoji: "🍼", cost: 6000, what: "prepararsi a un figlio" },
-    { k: ["master", "università", "universita", "laurea", "corso", "formazione", "certificazione", "inglese", "studiare", "studio"], emoji: "🎓", cost: 2500, what: "studiare o formarti" },
-    { k: ["attività", "attivita", "impresa", "azienda", "startup", "aprire", "business", "partita iva", "mettermi in proprio"], emoji: "🚀", cost: 15000, what: "avviare una tua attività" },
-    { k: ["investire", "investimenti", "etf", "azioni", "borsa", "rendita", "10.000", "10000"], emoji: "📈", cost: 10000, what: "il tuo primo capitale investito" },
-    { k: ["emergenza", "imprevisti", "cuscino", "sicurezza", "respiro", "tranquillità", "tranquillita", "fondo"], emoji: "🛟", cost: 0, what: "un fondo per dormire tranquillə", dynamic: "fondo" },
-    { k: ["pc", "computer", "macbook", "portatile", "notebook", "iphone", "telefono", "smartphone", "fotocamera", "reflex", "console", "playstation"], emoji: "💻", cost: 1200, what: "un dispositivo nuovo" },
-    { k: ["palestra", "sport", "bici", "bicicletta", "attrezzatura", "sci", "surf", "corsa"], emoji: "🏋️", cost: 800, what: "attrezzatura sportiva" },
-    { k: ["concerto", "festival", "evento", "biglietti"], emoji: "🎫", cost: 400, what: "concerti ed eventi" },
-    { k: ["cane", "gatto", "cucciolo", "animale"], emoji: "🐕", cost: 1000, what: "prendere un animale" },
-    { k: ["tatuaggio", "tattoo"], emoji: "🖤", cost: 500, what: "un tatuaggio" },
-    { k: ["dentista", "denti", "apparecchio", "operazione", "cure", "salute"], emoji: "🦷", cost: 2500, what: "cure mediche" },
-    { k: ["debito", "debiti", "prestito", "finanziamento", "estinguere"], emoji: "⛓️", cost: 3000, what: "chiudere un debito" },
-  ];
+  /* Il dizionario dei sogni vive in sogni.csv (si apre con Excel) e diventa
+     js/sogni.js con costruisci-sogni.py. Qui non c'è più niente da
+     modificare a mano: si cambia il foglio, si rilancia lo script. */
 
   const ESEMPI = [
     "Andare a Tokyo", "La mia prima macchina", "Andare a vivere da solə",
     "Tre mesi di respiro", "Un master", "I miei primi 10.000 investiti",
   ];
 
+  /* Via gli accenti: chi scrive "Perù" e chi scrive "peru" cerca la stessa cosa. */
+  const senzaAccenti = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+  /* Vince la parola più lunga, non la prima trovata: così "anticipo casa"
+     batte "casa" e "bici elettrica" batte "bici". La priorità del CSV
+     ribalta il verdetto dove serve il buon senso: chi scrive "aprire un
+     chiosco sulla spiaggia" vuole un lavoro, non una vacanza al mare. */
   function guessDream(text) {
-    const t = text.toLowerCase().trim();
+    const t = senzaAccenti(text).trim();
     if (t.length < 3) return null;
-    for (const g of GUESSES) {
-      if (g.k.some((k) => t.includes(k))) return g;
+
+    let vinta = null, meglio = 0;
+    for (const s of SOGNI) {
+      for (const k of s.k) {
+        const punti = k.length + (s.p || 0) * 6;
+        if (punti > meglio && t.includes(k)) { vinta = s; meglio = punti; }
+      }
     }
-    return null;
+    return vinta;
   }
 
   /* type: "once" = strutturale, la fai una volta e vale per sempre
