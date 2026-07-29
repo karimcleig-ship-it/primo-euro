@@ -33,6 +33,7 @@ body {
   background: #05050a;
   color: var(--paper);
   font-family: var(--font-ui);
+  min-height: 100vh;   /* ripiego per i browser vecchi */
   min-height: 100dvh;
   display: grid;
   place-items: center;
@@ -46,6 +47,7 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
 .phone {
   position: relative;
   width: min(430px, 100vw);
+  height: min(880px, 100vh);   /* ripiego */
   height: min(880px, 100dvh);
   background: var(--ink);
   overflow: hidden;
@@ -71,6 +73,12 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
 }
 /* la vignetta: il buio si chiude tutt'attorno e lascia respirare solo il
    centro, dove vive l'oggetto — i bordi del video smettono di esistere */
+/* sugli schermi corti (iPhone SE e simili) la clessidra salirebbe fin
+   sotto la barra: la si accompagna un po' più giù */
+@media (max-height: 750px) {
+  .sfondo-crescita video { transform: translateY(7%); }
+}
+
 .sfondo-crescita::before {
   content: ""; position: absolute; inset: 0;
   background: radial-gradient(ellipse 105% 78% at 50% 48%,
@@ -373,7 +381,8 @@ input[type=range]::-moz-range-thumb {
 .fianchi { display: flex; justify-content: space-between; align-items: center; }
 .sv-fianco {
   border-radius: 16px; padding: 11px 14px; max-width: 142px;
-  border: 1px solid var(--line); background: rgba(11,11,18,.55); backdrop-filter: blur(6px);
+  border: 1px solid var(--line); background: rgba(11,11,18,.55);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .sv-fianco .sf-nome { font-size: 12px; font-weight: 600; }
 .sv-fianco .sf-cifra { font-family: var(--font-display); font-size: 19px; font-weight: 700; margin-top: 3px; font-variant-numeric: tabular-nums; }
@@ -946,7 +955,8 @@ input[type=range]::-moz-range-thumb {
 .ticker {
   overflow: hidden; white-space: nowrap;
   border-top: 1px solid var(--line);
-  background: rgba(11,11,18,.85); backdrop-filter: blur(10px);
+  background: rgba(11,11,18,.85);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   padding: 6px 0; position: relative; z-index: 5;
 }
 .ticker[hidden] { display: none; }
@@ -962,7 +972,8 @@ input[type=range]::-moz-range-thumb {
 
 .tabbar {
   display: flex; border-top: 1px solid var(--line);
-  background: rgba(11,11,18,.92); backdrop-filter: blur(12px);
+  background: rgba(11,11,18,.92);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
   position: relative; z-index: 5;
 }
