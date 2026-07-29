@@ -370,8 +370,11 @@ input[type=range]::-moz-range-thumb {
 .bentornato b { color: var(--lime); }
 
 /* la testata: i testi impacchettati a sinistra, il sogno a destra */
-.testata { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 12px; margin-top: 6px; }
-.countdown { flex: 1 1 55%; min-width: 0; text-align: left; margin: 0; }
+.testata { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: space-between; gap: 10px 12px; margin-top: 6px; }
+/* il blocco emoji+cifra+sottocifra è alto esattamente quanto il box sogno:
+   stessa cima, stesso fondo, contenuto centrato in mezzo */
+.countdown { flex: 1 1 55%; min-width: 0; text-align: left; margin: 0;
+  display: flex; flex-direction: column; justify-content: center; }
 .cd-infl { margin-inline: 0; }
 
 /* il box del sogno: la cifra messa via, bene in vista */
@@ -1816,8 +1819,8 @@ input[type=range]::-moz-range-thumb {
       const perSogno = (state.voci.find((x) => x.id === "sogno") || {}).valore || 0;
       $("#boxSogno").innerHTML = `
         <div class="bs-nome">${d.emoji} Sogno</div>
-        <div class="bs-cifra">${euro(messiVia)}</div>
-        <div class="bs-sotto">messi via · +${euro(perSogno)}/mese</div>`;
+        <div class="bs-cifra">${euro(perSogno)}</div>
+        <div class="bs-sotto">da mettere via ogni mese</div>`;
       $("#boxRisparmio").innerHTML = `<div class="sf-nome">🌱 Risparmio</div><div class="sf-cifra">${euro(risp)}</div>`;
       $("#boxInvest").innerHTML = `<div class="sf-nome">📈 Investimenti</div><div class="sf-cifra">${euro(inv)}</div>`;
       /* i due box larghi uguali: Investimenti sta a filo del suo contenuto
