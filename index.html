@@ -340,6 +340,18 @@ input[type=range]::-moz-range-thumb {
 }
 
 .cd-label { font-family: var(--font-display); font-size: 15px; color: var(--muted); letter-spacing: .02em; }
+/* La clessidra sta dietro al numero, non accanto: è lo sfondo del tempo
+   che passa, e il numero resta il protagonista. */
+.countdown { position: relative; }
+.clessidra {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -44%);
+  width: 148px; height: 212px;
+  opacity: .55; pointer-events: none; z-index: 0;
+}
+.cd-dream, .cd-days, .cd-label, .cd-date, .cd-infl { position: relative; z-index: 1; }
+.cd-days { text-shadow: 0 2px 26px rgba(6,6,11,.85), 0 0 10px rgba(6,6,11,.7); }
+
 .cd-date { font-size: 13px; color: var(--faint); margin-top: 6px; }
 
 /* i prezzi che salgono: si dice, non si urla — il tono resta quello
@@ -625,6 +637,32 @@ input[type=range]::-moz-range-thumb {
   transition: border-color .25s, color .25s;
 }
 .add-voce:hover { border-color: var(--lime); color: var(--paper); }
+
+/* La scelta che conta: dove finiscono i soldi che avanzano. */
+.dividi { margin-top: 18px; border: 1px solid var(--line); background: var(--card); border-radius: 18px; padding: 16px; }
+.dividi[hidden] { display: none; }
+.dividi-titolo { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+.dividi-testo { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-top: 8px; }
+.dividi-testo b { color: var(--paper); font-weight: 600; }
+.dividi-scelte { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.scelta {
+  flex: 1 1 150px; text-align: left; padding: 11px 13px; border-radius: 14px;
+  border: 1px solid var(--line); background: transparent;
+  transition: border-color .2s, background .2s, transform .18s var(--ease);
+}
+.scelta:active { transform: scale(.97); }
+.scelta b { display: block; font-size: 13.5px; font-weight: 600; }
+.scelta small { display: block; font-size: 11px; color: var(--faint); margin-top: 3px; line-height: 1.4; }
+.scelta.on { border-color: var(--lime); background: var(--lime-dim); }
+.scelta.on b { color: var(--lime); }
+.dividi-allarme {
+  margin-top: 12px; padding: 11px 13px; border-radius: 13px;
+  border: 1px solid rgba(255,122,89,.4); background: rgba(255,122,89,.1);
+  font-size: 12px; color: #ffb59e; line-height: 1.55;
+}
+.dividi-allarme[hidden] { display: none; }
+.dividi-allarme b { color: #ff7a59; font-weight: 600; }
+.dividi-nota { font-size: 11px; color: var(--faint); line-height: 1.55; margin-top: 12px; }
 
 .resto {
   margin-top: 14px; border-radius: 14px; padding: 12px 14px;
@@ -966,6 +1004,31 @@ input[type=range]::-moz-range-thumb {
 
       <div class="resto" id="resto"></div>
 
+      <div class="dividi" id="dividi" hidden>
+        <p class="dividi-titolo">Quello che ti resta, come lo dividi?</p>
+        <p class="dividi-testo">
+          Solo il salvadanaio del <b>sogno</b> fa scendere il contatore. Il
+          <b>risparmio</b> è il cuscino che non si tocca, e gli
+          <b>investimenti</b> sono soldi che restano fermi per anni.
+          Puoi metterli lì, o puoi mettere tutto sul sogno: <b>decidi tu.</b>
+        </p>
+        <div class="dividi-scelte">
+          <button class="scelta" data-modo="sogno">
+            <b>Tutto quello che avanza</b><small>ci arrivi prima, senza rete</small>
+          </button>
+          <button class="scelta" data-modo="equilibrio">
+            <b>In tre parti uguali</b><small>sogno, cuscino, investimenti</small>
+          </button>
+        </div>
+        <p class="dividi-allarme" id="dividiAllarme" hidden></p>
+        <p class="dividi-nota">
+          La regola del 70/30 di Jim Rohn dice: 70% per vivere, 30% per il
+          futuro — diviso fra risparmio, investimenti e dono. Non è un obbligo
+          né un consiglio finanziario: è un esempio che funziona da
+          quarant'anni. Qualunque cifra puoi sempre riscriverla a mano qui sopra.
+        </p>
+      </div>
+
       <div class="spacer"></div>
       <button class="cta" id="confermaPiano" disabled>Conferma il piano</button>
       <button class="cta-ghost" id="cifreBack" style="margin-top:9px">← Cambio città, casa o entrate</button>
@@ -1015,6 +1078,7 @@ input[type=range]::-moz-range-thumb {
       <div class="bentornato" id="bentornato" hidden></div>
 
       <div class="countdown">
+        <canvas class="clessidra" id="clessidra" width="150" height="220" aria-hidden="true"></canvas>
         <div class="cd-dream" id="cdEmoji">🗾</div>
         <div class="cd-days" id="cdDays">—</div>
         <div class="cd-label" id="cdLabel">giorni al Giappone</div>
@@ -1112,10 +1176,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js"></script>
-<script src="js/sogni.js"></script>
-<script src="js/data.js"></script>
-<script src="js/engine.js"></script>
+<script src="js/europa.js?v=20260729b"></script>
+<script src="js/sogni.js?v=20260729b"></script>
+<script src="js/data.js?v=20260729b"></script>
+<script src="js/engine.js?v=20260729b"></script>
 <script>
 (function () {
   "use strict";
@@ -1256,7 +1320,7 @@ input[type=range]::-moz-range-thumb {
 
   /* Quanto corrono i prezzi dove vive l'utente, al mese. Dato ufficiale BCE. */
   function tassoMensile() {
-    const annuo = state.plan ? inflazione(state.plan.country) : 0;
+    const annuo = state.plan ? inflazioneDi(state.plan.country) : 0;
     return annuo > 0 ? Math.pow(1 + annuo / 100, 1 / 12) - 1 : 0;
   }
 
@@ -1454,7 +1518,7 @@ input[type=range]::-moz-range-thumb {
   function dilloDellInflazione() {
     const box = $("#cdInfl");
     const paese = state.plan && state.plan.country;
-    const annuo = paese ? inflazione(paese) : 0;
+    const annuo = paese ? inflazioneDi(paese) : 0;
 
     if (!annuo || !state.plan) { box.hidden = true; return; }
 
@@ -1477,7 +1541,9 @@ input[type=range]::-moz-range-thumb {
     $("#cdLabel").textContent = "giorni a « " + d.label.toLowerCase() + " »";
     $("#costN").textContent = euro(d.cost);
     $("#savedN").textContent = euro(state.saved);
-    $("#barFill").style.width = Math.min(100, (state.saved / d.cost) * 100) + "%";
+    const quota = d.cost > 0 ? state.saved / d.cost : 0;
+    $("#barFill").style.width = Math.min(100, quota * 100) + "%";
+    clessidra.mostra(quota);
 
     const days = daysLeft();
     const lontano = !isFinite(days) || days > TROPPO;
@@ -1526,6 +1592,106 @@ input[type=range]::-moz-range-thumb {
       $("#citazione").innerHTML = `«${t.quote}»<b>${t.name} — ${t.rule}</b>`;
     }
   }
+
+  /* ---------- la clessidra ----------
+     La sabbia caduta è quello che hai messo via davvero; quella sopra è
+     quello che manca. I granelli continuano a scendere anche quando non
+     guardi, perché il tempo passa comunque: è la moneta di questa app.
+     Non è decorazione — se il progresso non si muove, non si muove nemmeno
+     il livello, e si vede. */
+  const clessidra = (function () {
+    const c = $("#clessidra");
+    if (!c || !c.getContext) return { mostra() {} };
+
+    const ctx = c.getContext("2d");
+    const W = 148, H = 212, dpr = Math.min(2, window.devicePixelRatio || 1);
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.scale(dpr, dpr);
+
+    const fermo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const alto = 14, basso = H - 14, collo = H / 2, largo = 48, gola = 4;
+
+    /* mezza larghezza del vetro all'altezza y */
+    const mezza = (y) => y <= collo
+      ? gola + (largo - gola) * ((collo - y) / (collo - alto))
+      : gola + (largo - gola) * ((y - collo) / (basso - collo));
+
+    let obiettivo = 0, mostrato = 0;
+    const granelli = [];
+
+    function vetro() {
+      ctx.strokeStyle = "rgba(255,255,255,.20)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cxs(alto, -1), alto); ctx.lineTo(cxs(alto, 1), alto);
+      ctx.lineTo(cxs(collo, 1), collo); ctx.lineTo(cxs(basso, 1), basso);
+      ctx.lineTo(cxs(basso, -1), basso); ctx.lineTo(cxs(collo, -1), collo);
+      ctx.closePath(); ctx.stroke();
+    }
+    function cxs(y, verso) { return W / 2 + verso * mezza(y); }
+
+    function sabbiaSopra(f) {
+      if (f <= 0.005) return;
+      const sup = collo - f * (collo - alto);
+      ctx.beginPath();
+      ctx.moveTo(cxs(sup, -1), sup); ctx.lineTo(cxs(sup, 1), sup);
+      ctx.lineTo(cxs(collo, 1), collo); ctx.lineTo(cxs(collo, -1), collo);
+      ctx.closePath(); ctx.fill();
+    }
+
+    function sabbiaSotto(f) {
+      if (f <= 0.005) return;
+      const sup = basso - f * (basso - collo);
+      ctx.beginPath();
+      ctx.moveTo(cxs(basso, -1), basso);
+      ctx.lineTo(cxs(sup, -1), sup);
+      ctx.lineTo(W / 2, sup - 6);          /* il cono del mucchio */
+      ctx.lineTo(cxs(sup, 1), sup);
+      ctx.lineTo(cxs(basso, 1), basso);
+      ctx.closePath(); ctx.fill();
+    }
+
+    function disegna() {
+      ctx.clearRect(0, 0, W, H);
+      vetro();
+      ctx.fillStyle = "rgba(217,255,75,.42)";
+      sabbiaSopra(1 - mostrato);
+      sabbiaSotto(mostrato);
+
+      /* i granelli che cadono: pochi, sottili, mai spettacolari */
+      ctx.fillStyle = "rgba(217,255,75,.85)";
+      for (const g of granelli) {
+        ctx.fillRect(W / 2 + g.x - 0.6, g.y, 1.2, 3);
+      }
+    }
+
+    function passo() {
+      mostrato += (obiettivo - mostrato) * 0.06;
+
+      const fondo = basso - mostrato * (basso - collo) - 6;
+      for (const g of granelli) {
+        g.y += g.v; g.v += 0.06;
+        if (g.y >= fondo) { g.y = collo; g.v = 0.7 + Math.random() * 0.5; g.x = (Math.random() - 0.5) * 3.5; }
+      }
+      disegna();
+      if (!document.hidden) requestAnimationFrame(passo);
+    }
+
+    if (!fermo) {
+      for (let i = 0; i < 7; i++) {
+        granelli.push({ x: (Math.random() - 0.5) * 3.5, y: collo + Math.random() * 30, v: 0.7 + Math.random() * 0.5 });
+      }
+      requestAnimationFrame(passo);
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) requestAnimationFrame(passo); });
+    }
+
+    return {
+      mostra(p) {
+        obiettivo = Math.max(0, Math.min(1, p || 0));
+        if (fermo) { mostrato = obiettivo; disegna(); }
+      },
+    };
+  })();
 
   function countTo(el, to) {
     if (!isFinite(to)) { el.textContent = "∞"; shownDays = null; return; }
@@ -1743,7 +1909,7 @@ input[type=range]::-moz-range-thumb {
     const generico = "Soldi che lavorano al posto tuo: non li usi ora, ma tra anni valgono più di quanto hai messo.";
     if (typeof EUROPA === "undefined" || !state.plan) return generico;
 
-    const infl = inflazione(state.plan.country);
+    const infl = inflazioneDi(state.plan.country);
     const bce = EUROPA.tassi && EUROPA.tassi.deposito;
     if (!infl || !bce) return generico;
 
@@ -1788,6 +1954,15 @@ input[type=range]::-moz-range-thumb {
 
   /* ---------- 5. piano: il budget vero alimenta il contatore ---------- */
 
+  /* Rete di sicurezza. Ogni funzione del motore vive in un file a parte:
+     se una copia vecchia resta nella cache del browser, o un file non
+     arriva, senza questa protezione l'intera app muore in silenzio e la
+     persona ritrova la prima schermata col piano sparito. È successo
+     davvero durante i test. Meglio un'app con qualche stima in meno che
+     un'app rotta. */
+  const luoghiDi = (c) => (typeof luoghiDelPaese === "function" ? luoghiDelPaese(c) : CITIES);
+  const inflazioneDi = (c) => (typeof inflazione === "function" ? inflazione(c) : 0);
+
   /* i paesi dell'euro, con l'Italia in cima perché è da lì che veniamo
      e perché è l'unico con le città vere; gli altri in ordine alfabetico */
   const PAESI_EURO = () => {
@@ -1800,7 +1975,7 @@ input[type=range]::-moz-range-thumb {
   /* le città cambiano col paese: l'Italia ne ha 21 vere, gli altri
      una media nazionale scalata sui prezzi ufficiali Eurostat */
   function riempiCitta(paese, scelta) {
-    const luoghi = luoghiDelPaese(paese);
+    const luoghi = luoghiDi(paese);
     $("#pCity").innerHTML = luoghi.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
     if (scelta && luoghi.some((c) => c.id === scelta)) $("#pCity").value = scelta;
     /* con un posto solo il menu non serve: resta visibile ma non tocca a te */
@@ -1971,6 +2146,46 @@ input[type=range]::-moz-range-thumb {
     aggiornaResto();
   }
 
+  /* ---------- come dividi quello che ti resta ----------
+     Il punto più importante dell'app, e per un po' è stato sbagliato:
+     il contatore corre SOLO sul salvadanaio del sogno. Il risparmio è il
+     cuscino che non si tocca, gli investimenti sono soldi fermi per anni:
+     nessuno dei due compra il sogno. Chi vuole arrivarci prima può mettere
+     lì tutto quello che avanza, ed è una scelta legittima — la nostra parte
+     è dire cosa ci si guadagna e cosa ci si perde, non decidere al posto suo. */
+
+  const valoreVoce = (id) => (state.voci.find((x) => x.id === id) || {}).valore || 0;
+
+  /* tutto quello che non è già impegnato a vivere */
+  const avanzo = () => risparmio() + valoreVoce("sogno") + valoreVoce("investimento");
+
+  function dividi(modo) {
+    const tot = avanzo();
+    const set = (id, v) => {
+      const x = state.voci.find((y) => y.id === id);
+      if (x) { x.valore = Math.max(0, Math.round(v)); x.ok = true; }
+    };
+
+    if (modo === "sogno") {
+      /* tutto al sogno: il risparmio resta a zero perché è quello che ha scelto */
+      set("investimento", 0);
+      set("sogno", tot);
+    } else {
+      /* tre parti uguali, con il tetto del 20% sugli investimenti */
+      const terzo = Math.floor(tot / 3);
+      set("investimento", Math.min(terzo, maxInvestimento()));
+      set("sogno", terzo);
+      /* il resto diventa risparmio da solo: è ciò che avanza */
+    }
+
+    state.dividiModo = modo;
+    save();
+    renderVoci();
+  }
+
+  $$("#dividi .scelta").forEach((b) =>
+    b.addEventListener("click", () => dividi(b.dataset.modo)));
+
   function aggiornaResto() {
     const tot = state.voci.length;
     const fatte = state.voci.filter((x) => x.ok).length;
@@ -1984,6 +2199,20 @@ input[type=range]::-moz-range-thumb {
     const rispEl = $("#risparmioVal");
     if (rispEl) rispEl.textContent = euro(r);
 
+    /* il pannello della divisione compare solo quando c'è qualcosa da dividere */
+    const resta = avanzo();
+    $("#dividi").hidden = resta <= 0;
+    $$("#dividi .scelta").forEach((b) => b.classList.toggle("on", b.dataset.modo === state.dividiModo));
+
+    /* Mettere tutto sul sogno si può, ma senza cuscino basta una lavatrice
+       rotta per far saltare il piano. Non lo vietiamo: lo diciamo. */
+    const rete = risparmio() + valoreVoce("investimento");
+    const allarme = $("#dividiAllarme");
+    allarme.hidden = !(resta > 0 && rete <= 0);
+    if (!allarme.hidden) {
+      allarme.innerHTML = `<b>Occhio:</b> così non ti resta niente per gli imprevisti. Basta una lavatrice che si rompe o un dente da curare e il piano salta — e riparti da zero, che è la cosa che scoraggia di più. Per qualche mese ha senso; come regola fissa, meno. Se ti va, lascia da parte anche solo <b>1&nbsp;€</b>.`;
+    }
+
     const sforo = sommaVoci() - state.plan.income;
     const box = $("#resto");
     if (sforo > 0) {
@@ -1995,7 +2224,8 @@ input[type=range]::-moz-range-thumb {
     } else {
       box.className = "resto";
       const inv = (state.voci.find((x) => x.id === "investimento") || {}).valore || 0;
-      box.innerHTML = `Ti restano <b>${euro(r)}</b> al mese di risparmio${inv ? ` più <b>${euro(inv)}</b> investiti` : ""}. Il risparmio costruisce il futuro <b>a prescindere</b> dal sogno: il sogno ha già il suo salvadanaio.`;
+      const sog = valoreVoce("sogno");
+      box.innerHTML = `Sul sogno vanno <b>${euro(sog)}</b> al mese${r ? `, di cuscino ne restano <b>${euro(r)}</b>` : ""}${inv ? ` e <b>${euro(inv)}</b> lavorano` : ""}. <b>Solo i soldi del sogno fanno scendere il contatore</b> — gli altri costruiscono il futuro a prescindere.`;
     }
   }
 
@@ -2013,7 +2243,7 @@ input[type=range]::-moz-range-thumb {
   });
 
   $("#confermaPiano").addEventListener("click", () => {
-    state.baseRate = risparmio() + ((state.voci.find((x) => x.id === "investimento") || {}).valore || 0);
+    state.baseRate = planRate();
     save();
     renderTruth();
     show("truth");
@@ -2023,11 +2253,19 @@ input[type=range]::-moz-range-thumb {
   $("#toAction").addEventListener("click", () => show("moves"));
   $("#toEdit").addEventListener("click", () => show("cifre"));
 
-  /* quanto libera il piano ogni mese: risparmio + investimenti,
-     entrambi calcolati sulle cifre che l'utente ha confermato */
+  /* QUANTO AVVICINA IL SOGNO OGNI MESE.
+     Solo il salvadanaio del sogno, niente altro.
+
+     Prima qui c'erano risparmio e investimenti, ed era sbagliato in modo
+     grave: quei soldi non comprano il sogno. Il risparmio è il cuscino che
+     non si tocca, gli investimenti sono soldi che devono restare fermi per
+     anni. Contarli faceva scendere un contatore che non corrispondeva a
+     niente — e prometteva una data che non sarebbe mai arrivata.
+     Chi mette tutto sul sogno arriva subito; chi divide arriva più tardi
+     ma con un cuscino: è una scelta, e deve essere sua. */
   function planRate() {
     if (!state.voci) return 0;
-    return risparmio() + ((state.voci.find((x) => x.id === "investimento") || {}).valore || 0);
+    return (state.voci.find((x) => x.id === "sogno") || {}).valore || 0;
   }
 
   /* la tabella da fotografare: l'ordine è quello in cui si eseguono
