@@ -2279,22 +2279,36 @@ input[type=range]::-moz-range-thumb {
       const fill = () => slider.style.setProperty("--fill", (slider.value / slider.max) * 100 + "%");
       fill();
 
+      /* Mostra un avviso sotto il nome della voce, poi torna com'era. */
+      const avvisa = (testo, colore) => {
+        const hint = $(".voce-nome small", row);
+        hint.textContent = testo;
+        hint.style.color = colore;
+        clearTimeout(hint._t);
+        hint._t = setTimeout(() => { hint.textContent = state.voci[i].hint; hint.style.color = ""; }, 3200);
+      };
+
       const applica = (val, daSlider) => {
-        const invest = state.voci[i].id === "investimento";
-        /* Due tetti: gli investimenti non oltre il 20%, e NESSUNA voce può
-           portare la somma oltre le entrate. Le levette si fermano dove
-           finiscono i soldi veri: prima l'app lasciava sforare e poi
-           avvisava, ma un piano che spende soldi che non esistono non è
-           un piano, è un altro modo di illudersi. */
+        const id = state.voci[i].id;
         const altre = sommaVoci() - state.voci[i].valore;
-        const capReddito = Math.max(0, (state.plan ? state.plan.income : 0) - altre);
-        const cap = Math.min(invest ? maxInvestimento() : 99999, capReddito);
-        const v = Math.max(0, Math.min(cap, val));
-        if (val > cap && !daSlider) {
-          /* a chi scrive a mano una cifra oltre il tetto lo si dice */
-          const hint = row.querySelector(".voce-hint");
-          if (hint) { hint.textContent = `più di così sfori le entrate: massimo ${euro(cap)}`; hint.classList.add("flash"); setTimeout(() => hint.classList.remove("flash"), 1600); }
+        const liberi = Math.max(0, (state.plan ? state.plan.income : 0) - altre);
+        let v = Math.max(0, val);
+
+        /* Le SPESE si scrivono come sono, sempre: sono la realtà, e se la
+           realtà sfora le entrate l'app deve dirlo, non nasconderlo dietro
+           un campo bloccato. Il tetto vale solo per ciò che si sceglie:
+           il sogno e gli investimenti si alzano con i soldi che ci sono. */
+        if (id === "sogno") {
+          if (v > liberi) { v = liberi; avvisa(`di più non ce n'è: dopo le spese restano ${euro(liberi)}. Per alzare il sogno, abbassa qualcosa.`, "var(--lime)"); }
+        } else if (id === "investimento") {
+          const cap = Math.min(maxInvestimento(), liberi);
+          if (v > cap) { v = cap; avvisa(cap === maxInvestimento() ? `il massimo è il 20%: ${euro(cap)}` : `dopo le spese restano ${euro(cap)}`, "var(--arancio)"); }
+        } else {
+          /* spesa reale: nessun tetto, ma se il mese va sotto lo si vede subito */
+          const sforo = altre + v - (state.plan ? state.plan.income : 0);
+          if (sforo > 0) avvisa(`⚠️ così sfori di ${euro(sforo)}: abbassa qualche voce o alza le entrate`, "#ff7a59");
         }
+
         state.voci[i].valore = v;
         state.voci[i].ok = true;
         row.classList.add("ok");
@@ -2304,19 +2318,7 @@ input[type=range]::-moz-range-thumb {
         } else {
           slider.value = Math.min(v, +slider.max);
           fill();
-          /* il tetto ha morso: mostralo subito, e spiega perché */
-          if (v !== val) {
-            campo.value = v;
-            if (invest) {
-              const hint = $(".voce-nome small", row);
-              hint.textContent = `il massimo è il 20%: ${euro(cap)}`;
-              hint.style.color = "var(--lime)";
-              setTimeout(() => {
-                hint.textContent = "soldi che lavorano — massimo il 20%";
-                hint.style.color = "";
-              }, 2600);
-            }
-          }
+          if (v !== val) campo.value = v;
         }
         aggiornaResto();
         save();
