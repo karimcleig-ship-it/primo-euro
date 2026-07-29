@@ -1137,19 +1137,42 @@ input[type=range]::-moz-range-thumb {
   /* Via gli accenti: chi scrive "Perù" e chi scrive "peru" cerca la stessa cosa. */
   const senzaAccenti = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
-  /* Vince la parola più lunga, non la prima trovata: così "anticipo casa"
-     batte "casa" e "bici elettrica" batte "bici". La priorità del CSV
-     ribalta il verdetto dove serve il buon senso: chi scrive "aprire un
-     chiosco sulla spiaggia" vuole un lavoro, non una vacanza al mare. */
+  /* Parole che non aiutano a capire cosa vuole una persona. */
+  const VUOTE = new Set(["di","del","dei","della","delle","dello","da","dal","in","nel","il","lo",
+    "la","le","gli","un","uno","una","per","con","su","sul","sulla","al","alla","ai","alle","e",
+    "a","o","mio","mia","miei","mie","the","of","for","my"]);
+
+  const inParole = (t) => (senzaAccenti(t).match(/[a-z0-9]+/g) || []).filter((p) => !VUOTE.has(p));
+
+  /* Due parole si somigliano se una comincia come l'altra: così "viaggi"
+     trova "viaggio" e "denti" trova "dente". Sotto le cinque lettere no,
+     altrimenti "casa" aggancerebbe "casalingo". */
+  function somiglia(chiave, scritta) {
+    if (chiave === scritta) return true;
+    if (chiave.length < 5 || scritta.length < 5) return false;
+    return scritta.startsWith(chiave) || chiave.startsWith(scritta);
+  }
+
+  /* Cerca per PAROLE, non per stringhe: l'ordine e la lingua non contano.
+     Chi scrive "studio recording" e chi scrive "recording studio" vuole la
+     stessa cosa, e nessuno dei due scrive come sta scritto nel dizionario.
+
+     Vince la chiave che azzecca più parole; a parità, la più lunga; e la
+     priorità del CSV ribalta il verdetto dove serve il buon senso — chi
+     scrive "aprire un chiosco sulla spiaggia" vuole un lavoro, non il mare. */
   function guessDream(text) {
-    const t = senzaAccenti(text).trim();
-    if (t.length < 3) return null;
+    const scritte = inParole(text);
+    if (!scritte.length || senzaAccenti(text).trim().length < 3) return null;
 
     let vinta = null, meglio = 0;
     for (const s of SOGNI) {
       for (const k of s.k) {
-        const punti = k.length + (s.p || 0) * 6;
-        if (punti > meglio && t.includes(k)) { vinta = s; meglio = punti; }
+        const chiavi = inParole(k);
+        if (!chiavi.length) continue;
+        if (!chiavi.every((c) => scritte.some((p) => somiglia(c, p)))) continue;
+
+        const punti = chiavi.length * 100 + k.length + (s.p || 0) * 60;
+        if (punti > meglio) { vinta = s; meglio = punti; }
       }
     }
     return vinta;

@@ -1170,7 +1170,9 @@ const SOGNI = [
    "avviare un'impresa",
    "startup",
    "impresa",
-   "mettermi in proprio"
+   "mettermi in proprio",
+   "business",
+   "avviare un business"
   ],
   "p": 1,
   "cost": 25000,
@@ -1342,7 +1344,13 @@ const SOGNI = [
    "studio di registrazione",
    "home studio",
    "podcast",
-   "microfono professionale"
+   "microfono professionale",
+   "studio recording",
+   "recording studio",
+   "home recording",
+   "studio musicale",
+   "sala prove",
+   "studio audio"
   ],
   "cost": 3500,
   "nota": "scheda audio + microfoni + acustica"
@@ -1356,7 +1364,9 @@ const SOGNI = [
    "scrivania",
    "setup lavoro",
    "home office",
-   "smart working"
+   "smart working",
+   "workstation",
+   "scrivania da lavoro"
   ],
   "cost": 3000,
   "nota": "computer + monitor + sedia"
@@ -1573,7 +1583,9 @@ const SOGNI = [
    "palestra",
    "personal trainer",
    "allenamento",
-   "fitness"
+   "fitness",
+   "gym",
+   "abbonamento palestra"
   ],
   "cost": 1800,
   "nota": "abbonamento + sedute"
@@ -1887,7 +1899,9 @@ const SOGNI = [
    "playstation",
    "xbox",
    "videogiochi",
-   "nintendo"
+   "nintendo",
+   "gaming setup",
+   "postazione gaming"
   ],
   "cost": 2500,
   "nota": "pc + monitor + periferiche"
@@ -2156,7 +2170,9 @@ const SOGNI = [
    "tennis",
    "padel",
    "racchetta",
-   "circolo"
+   "circolo",
+   "campo da padel",
+   "racchette"
   ],
   "cost": 1200,
   "nota": "circolo + lezioni + attrezzatura"
@@ -2196,7 +2212,9 @@ const SOGNI = [
    "portatile",
    "macbook",
    "pc nuovo",
-   "workstation"
+   "workstation",
+   "notebook",
+   "pc portatile"
   ],
   "cost": 1800,
   "nota": "fascia professionale"
@@ -2452,5 +2470,43 @@ const SOGNI = [
   ],
   "cost": 8000,
   "nota": "volo + caparra + tre mesi di cuscino"
+ },
+ {
+  "cat": "Lavoro",
+  "emoji": "🎚️",
+  "what": "comprare uno studio di registrazione",
+  "k": [
+   "comprare studio registrazione",
+   "comprare studio recording",
+   "comprare recording studio",
+   "aprire studio registrazione",
+   "aprire studio recording",
+   "acquistare studio registrazione",
+   "comprare sala prove",
+   "aprire sala prove",
+   "comprare studio musicale",
+   "aprire studio musicale"
+  ],
+  "p": 2,
+  "cost": 85000,
+  "nota": "immobile piccolo + insonorizzazione + regia e attrezzature"
+ },
+ {
+  "cat": "Lavoro",
+  "emoji": "🏢",
+  "what": "comprare un locale o un ufficio",
+  "k": [
+   "comprare un locale",
+   "comprare locale",
+   "comprare ufficio",
+   "comprare un ufficio",
+   "comprare capannone",
+   "comprare laboratorio",
+   "acquistare un locale",
+   "comprare studio fotografico"
+  ],
+  "p": 2,
+  "cost": 90000,
+  "nota": "immobile commerciale piccolo in città media"
  }
 ];

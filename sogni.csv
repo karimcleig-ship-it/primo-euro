@@ -84,7 +84,7 @@ Studio;✈️;il brevetto di volo;12000;brevetto di volo|pilota|licenza di volo;
 Studio;🤿;un brevetto sub;800;brevetto sub|subacquea|immersioni|padi;0;open water + attrezzatura base
 Studio;🧘;un corso per insegnante di yoga;3000;insegnante di yoga|yoga teacher|corso yoga;0;200 ore certificate
 Studio;⛵;una patente nautica;1800;patente nautica|corso di vela|skipper;0;corso + esame
-Lavoro;🚀;aprire un'attività;25000;aprire un'attivita|avviare un'impresa|startup|impresa|mettermi in proprio;1;capitale iniziale per una micro-impresa
+Lavoro;🚀;aprire un'attività;25000;aprire un'attivita|avviare un'impresa|startup|impresa|mettermi in proprio|business|avviare un business;1;capitale iniziale per una micro-impresa
 Lavoro;🏪;aprire un negozio;45000;aprire un negozio|negozio|bottega|punto vendita;2;locale + allestimento + magazzino
 Lavoro;☕;aprire un bar o un chiosco;60000;bar|chiosco|caffetteria|locale|pub|birreria;2;licenza + arredi + attrezzature
 Lavoro;🍽️;aprire un ristorante;110000;ristorante|trattoria|pizzeria|osteria;2;locale + cucina professionale
@@ -96,8 +96,8 @@ Lavoro;🏋️;aprire una palestra o uno studio;70000;aprire una palestra|studio
 Lavoro;🌾;avviare un'attività agricola;50000;agriturismo|azienda agricola|coltivare|vigna|allevamento;2;terreno + attrezzature
 Lavoro;💼;partire come libero professionista;6000;partita iva|freelance|libero professionista|consulente;0;attrezzatura + commercialista + cuscino
 Lavoro;🎬;attrezzatura per fotografia o video;7000;attrezzatura video|videomaker|cinepresa|luci|gimbal;0;corpo + ottiche + luci
-Lavoro;🎙️;uno studio di registrazione casalingo;3500;studio di registrazione|home studio|podcast|microfono professionale;0;scheda audio + microfoni + acustica
-Lavoro;🖥️;una postazione di lavoro completa;3000;postazione|scrivania|setup lavoro|home office|smart working;0;computer + monitor + sedia
+Lavoro;🎙️;uno studio di registrazione casalingo;3500;studio di registrazione|home studio|podcast|microfono professionale|studio recording|recording studio|home recording|studio musicale|sala prove|studio audio;0;scheda audio + microfoni + acustica
+Lavoro;🖥️;una postazione di lavoro completa;3000;postazione|scrivania|setup lavoro|home office|smart working|workstation|scrivania da lavoro;0;computer + monitor + sedia
 Lavoro;🛠️;attrezzatura da artigiano;8000;attrezzatura|utensili|laboratorio|officina|banco da lavoro;0;dotazione iniziale
 Lavoro;📦;avviare un e-commerce;5000;ecommerce|e-commerce|negozio online|vendere online|dropshipping;0;sito + magazzino + pubblicità
 Lavoro;🚛;un mezzo da lavoro;18000;furgone da lavoro|mezzo da lavoro|van commerciale|camion;0;usato recente
@@ -113,7 +113,7 @@ Salute;🩺;un intervento non urgente;5000;operazione|intervento|chirurgia|ricov
 Salute;💇;un trapianto di capelli;4000;trapianto di capelli|capelli|calvizie|infoltimento;0;intervento completo
 Salute;✨;un intervento estetico;5000;chirurgia estetica|rinoplastica|estetica|liposuzione|medicina estetica;0;intervento singolo
 Salute;🤰;un percorso di fecondazione assistita;9000;fecondazione assistita|pma|fivet|inseminazione;0;due cicli in clinica privata
-Salute;💪;un anno di palestra e personal trainer;1800;palestra|personal trainer|allenamento|fitness;0;abbonamento + sedute
+Salute;💪;un anno di palestra e personal trainer;1800;palestra|personal trainer|allenamento|fitness|gym|abbonamento palestra;0;abbonamento + sedute
 Salute;🥗;un percorso con un nutrizionista;800;nutrizionista|dieta|dimagrire|alimentazione;0;un anno di controlli
 Salute;🧘;un ritiro di benessere;1500;ritiro|retreat|terme|benessere|detox;0;una settimana
 Salute;🚭;smettere di fumare;500;smettere di fumare|sigarette|tabacco|svapo;0;percorso assistito
@@ -136,7 +136,7 @@ Tempo libero;🎸;uno strumento musicale;1500;chitarra|violino|batteria|strument
 Tempo libero;🎹;un pianoforte;4500;pianoforte|piano acustico|pianoforte verticale|coda;0;verticale nuovo o a coda usato
 Tempo libero;🎧;una consolle da dj;2000;dj|consolle|mixer|giradischi professionale;0;setup completo
 Tempo libero;💿;una collezione di dischi;1200;vinili|dischi|collezione musica|giradischi;0;impianto + prima collezione
-Tempo libero;🎮;una postazione da gaming;2500;gaming|pc da gioco|playstation|xbox|videogiochi|nintendo;0;pc + monitor + periferiche
+Tempo libero;🎮;una postazione da gaming;2500;gaming|pc da gioco|playstation|xbox|videogiochi|nintendo|gaming setup|postazione gaming;0;pc + monitor + periferiche
 Tempo libero;📸;una macchina fotografica;2000;macchina fotografica|reflex|mirrorless|fotocamera|obiettivo;0;corpo + obiettivo
 Tempo libero;🎨;attrezzatura da pittura o ceramica;1200;pittura|ceramica|tornio|atelier|colori|scultura;0;dotazione iniziale
 Tempo libero;🧵;una macchina da cucire e tessuti;900;cucire|macchina da cucire|sartoria|tessuti|maglia;0;macchina + materiali
@@ -156,10 +156,10 @@ Tempo libero;🏃;una gara all'estero;1200;maratona|ironman|triathlon|ultratrail
 Tempo libero;🐎;un anno di equitazione;3000;equitazione|cavallo|maneggio;0;lezioni + attrezzatura
 Tempo libero;🥊;un anno di arti marziali;1000;boxe|arti marziali|judo|karate|mma|kickboxing;0;palestra + attrezzatura
 Tempo libero;🧗;attrezzatura da arrampicata;800;arrampicata|alpinismo|climbing|falesia;0;corda + imbrago + scarpette
-Tempo libero;🎾;un anno di tennis o padel;1200;tennis|padel|racchetta|circolo;0;circolo + lezioni + attrezzatura
+Tempo libero;🎾;un anno di tennis o padel;1200;tennis|padel|racchetta|circolo|campo da padel|racchette;0;circolo + lezioni + attrezzatura
 Tempo libero;⛳;un anno di golf;2500;golf|mazze da golf|green fee;0;circolo + attrezzatura
 Tempo libero;🛹;skate o pattini;500;skate|skateboard|pattini|longboard;0;tavola + protezioni
-Tecnologia;💻;un computer nuovo;1800;computer|laptop|portatile|macbook|pc nuovo|workstation;0;fascia professionale
+Tecnologia;💻;un computer nuovo;1800;computer|laptop|portatile|macbook|pc nuovo|workstation|notebook|pc portatile;0;fascia professionale
 Tecnologia;📱;un telefono nuovo;900;telefono|smartphone|iphone|cellulare;0;fascia alta
 Tecnologia;⌚;uno smartwatch;400;smartwatch|apple watch|orologio smart|garmin;0;fascia media
 Tecnologia;🖥️;un monitor o una tv;900;televisione|tv|monitor|schermo|proiettore;0;fascia media, grande formato
@@ -178,3 +178,5 @@ Sicurezza;📋;riscattare gli anni di studio;15000;riscatto laurea|riscattare la
 Sicurezza;⚖️;una spesa legale;4000;avvocato|causa|divorzio|separazione|spese legali;0;pratica ordinaria
 Sicurezza;🎁;fare una donazione importante;1000;donare|beneficenza|donazione|aiutare qualcuno;0;quello che conta è farlo, non quanto
 Sicurezza;🏳️;trasferirsi in un altro paese;8000;trasferirmi|emigrare|espatriare|vivere all'estero|trasferirsi all'estero;0;volo + caparra + tre mesi di cuscino
+Lavoro;🎚️;comprare uno studio di registrazione;85000;comprare studio registrazione|comprare studio recording|comprare recording studio|aprire studio registrazione|aprire studio recording|acquistare studio registrazione|comprare sala prove|aprire sala prove|comprare studio musicale|aprire studio musicale;2;immobile piccolo + insonorizzazione + regia e attrezzature
+Lavoro;🏢;comprare un locale o un ufficio;90000;comprare un locale|comprare locale|comprare ufficio|comprare un ufficio|comprare capannone|comprare laboratorio|acquistare un locale|comprare studio fotografico;2;immobile commerciale piccolo in città media
