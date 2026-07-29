@@ -338,6 +338,11 @@ input[type=range]::-moz-range-thumb {
   -webkit-background-clip: text; background-clip: text; color: transparent;
   margin-top: 6px;
 }
+/* quando il tempo si dice a parole ("1 anno e 3 mesi") il corpo scende
+   ma il peso resta: è sempre il protagonista della schermata */
+.cd-days.testo { font-size: 46px; letter-spacing: -.02em; line-height: 1.1; padding: 14px 0; }
+#movesDays.testo { font-size: 22px; }
+#recapDays.testo { font-size: 26px; }
 
 .cd-label { font-family: var(--font-display); font-size: 15px; color: var(--muted); letter-spacing: .02em; }
 /* La clessidra sta dietro al numero, non accanto: è lo sfondo del tempo
@@ -1644,7 +1649,9 @@ input[type=range]::-moz-range-thumb {
     const attivo = sognoAttivo();
     const messiVia = attivo ? (attivo.saved || 0) : state.saved;
     $("#cdEmoji").textContent = d.emoji;
-    $("#cdLabel").textContent = "giorni a « " + d.label.toLowerCase() + " »";
+    const giorniPiccoli = tempoUmano(daysLeft());
+    $("#cdLabel").textContent = (giorniPiccoli ? daysLeft() + " giorni" : "giorni") + " a « " + d.label.toLowerCase() + " »";
+    $("#cdDays").classList.remove("testo");
     $("#costN").textContent = euro(d.cost);
     $("#savedN").textContent = euro(messiVia);
     const quota = d.cost > 0 ? messiVia / d.cost : 0;
@@ -1658,6 +1665,13 @@ input[type=range]::-moz-range-thumb {
       shownDays = null;
       $("#cdDays").textContent = "—";
       $("#cdDate").innerHTML = "Con questo ritmo servirebbe troppo tempo. <b style='color:var(--lime)'>Le azioni qui sotto lo cambiano.</b>";
+    } else if (tempoUmano(days)) {
+      shownDays = null;
+      $("#cdDays").textContent = tempoUmano(days);
+      $("#cdDays").classList.add("testo");
+      const when = new Date();
+      when.setDate(when.getDate() + days);
+      $("#cdDate").textContent = "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" }) + " · " + euro(rate()) + "/mese";
     } else {
       countTo($("#cdDays"), days);
       const when = new Date();
@@ -1817,7 +1831,7 @@ input[type=range]::-moz-range-thumb {
         <span class="sg-emoji">${s.emoji || "✨"}</span>
         <button class="sg-corpo" data-vai="${s.id}">
           <span class="sg-nome">${s.text || "un sogno"}</span>
-          <span class="sg-meta">${lontano ? "serve ancora tempo" : "<b>" + g + " giorni</b>"} · ${euro(q)}/mese · ${euro(s.cost)}</span>
+          <span class="sg-meta">${lontano ? "serve ancora tempo" : "<b>" + (tempoUmano(g) || g + " giorni") + "</b>"} · ${euro(q)}/mese · ${euro(s.cost)}</span>
         </button>
         <span class="sg-peso">
           <button data-meno="${s.id}" aria-label="Meno peso">−</button>
@@ -1872,6 +1886,19 @@ input[type=range]::-moz-range-thumb {
     show("dream");
     dreamInput.focus();
   });
+
+  /* Oltre l'anno, i giorni smettono di parlare: "745 giorni" spaventa,
+     "2 anni" si capisce. Fino a 365 il numero grosso resta in giorni;
+     oltre, il grosso diventa anni e mesi e i giorni scivolano in piccolo. */
+  function tempoUmano(days) {
+    if (!isFinite(days) || days <= 365) return null;
+    let anni = Math.floor(days / 365);
+    let mesi = Math.round((days - anni * 365) / 30.4);
+    if (mesi >= 12) { anni++; mesi = 0; }
+    const a = anni === 1 ? "1 anno" : anni + " anni";
+    const m = mesi === 0 ? "" : mesi === 1 ? " e 1 mese" : ` e ${mesi} mesi`;
+    return a + m;
+  }
 
   function countTo(el, to) {
     if (!isFinite(to)) { el.textContent = "∞"; shownDays = null; return; }
@@ -1975,7 +2002,10 @@ input[type=range]::-moz-range-thumb {
     $("#movesEmoji").textContent = lontano ? "🧭" : d.emoji;
     $("#movesLabel").textContent = lontano ? "continua a liberare spazio" : `giorni a « ${d.label.toLowerCase()} »`;
     const el = $("#movesDays");
-    el.textContent = lontano ? "—" : days;
+    const umano = tempoUmano(days);
+    el.textContent = lontano ? "—" : (umano || days);
+    el.classList.toggle("testo", !!umano && !lontano);
+    if (umano && !lontano) $("#movesLabel").textContent = `${days} giorni a « ${d.label.toLowerCase()} »`;
     if (scatta) {
       el.classList.add("scatto");
       setTimeout(() => el.classList.remove("scatto"), 320);
@@ -2020,10 +2050,12 @@ input[type=range]::-moz-range-thumb {
       : "Sai dove sei, sai dove vuoi arrivare e sai come arrivarci. È più di quanto faccia la maggior parte delle persone.";
 
     /* il colpo d'occhio finale: quanto manca, quanto metti via, dove sarai */
-    $("#recapDays").textContent = lontano ? "—" : days;
+    const umanoR = tempoUmano(days);
+    $("#recapDays").textContent = lontano ? "—" : (umanoR || days);
+    $("#recapDays").classList.toggle("testo", !!umanoR && !lontano);
     $("#recapLabel").textContent = lontano
       ? "il traguardo è ancora lontano"
-      : `giorni a « ${d.label.toLowerCase()} »`;
+      : `${umanoR ? days + " giorni" : "giorni"} a « ${d.label.toLowerCase()} »`;
 
     const quando = new Date();
     quando.setDate(quando.getDate() + (isFinite(days) ? days : 0));
