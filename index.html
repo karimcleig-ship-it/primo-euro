@@ -388,9 +388,7 @@ input[type=range]::-moz-range-thumb {
 .fianchi { display: flex; justify-content: space-between; align-items: center; }
 .sv-fianco {
   border-radius: 16px; padding: 11px 14px;
-  /* larghezza fissa uguale per tutti e due: comanda il più lungo
-     («Investimenti»), l'altro si adegua */
-  width: 142px; box-sizing: border-box;
+  box-sizing: border-box;
   border: 1px solid var(--line); background: rgba(11,11,18,.55);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
@@ -1812,6 +1810,12 @@ input[type=range]::-moz-range-thumb {
         <div class="bs-sotto">messi via · +${euro(perSogno)}/mese</div>`;
       $("#boxRisparmio").innerHTML = `<div class="sf-nome">🌱 Risparmio</div><div class="sf-cifra">${euro(risp)}</div>`;
       $("#boxInvest").innerHTML = `<div class="sf-nome">📈 Investimenti</div><div class="sf-cifra">${euro(inv)}</div>`;
+      /* i due box larghi uguali: Investimenti sta a filo del suo contenuto
+         (bordo attaccato all'emoji) e la sua misura comanda anche Risparmio */
+      const bi = $("#boxInvest"), br = $("#boxRisparmio");
+      bi.style.width = br.style.width = "";
+      const filo = Math.ceil(bi.getBoundingClientRect().width);
+      if (filo) bi.style.width = br.style.width = filo + "px";
     }
 
     /* col video a tutto schermo la card disegnata non serve più:
