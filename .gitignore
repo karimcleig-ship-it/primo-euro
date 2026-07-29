@@ -1,0 +1,4 @@
+# il file unico da mandare via WhatsApp si rigenera con build-standalone.py
+dist/
+
+.DS_Store

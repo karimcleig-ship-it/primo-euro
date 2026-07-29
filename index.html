@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>PRIMO EURO — quanto dista il tuo sogno</title>
+<meta name="description" content="Dimmi cosa sogni, ti dico quanto dista. E ogni settimana ti do tre mosse per avvicinarlo." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #0b0b12;
+  --ink-2: #14141f;
+  --paper: #f5f4ef;
+  --muted: rgba(245, 244, 239, 0.55);
+  --faint: rgba(245, 244, 239, 0.3);
+  --lime: #d9ff4b;
+  --lime-dim: rgba(217, 255, 75, 0.13);
+  --arancio: #ff9d4d;          /* il colore degli investimenti */
+  --arancio-dim: rgba(255, 157, 77, 0.14);
+  --violet: #7c5cff;
+  --line: rgba(245, 244, 239, 0.1);
+  --card: rgba(255, 255, 255, 0.04);
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-ui: "Inter", system-ui, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #05050a;
+  color: var(--paper);
+  font-family: var(--font-ui);
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+button { font-family: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
+
+/* cornice telefono: su desktop mostra il prototipo come sta in mano */
+.phone {
+  position: relative;
+  width: min(430px, 100vw);
+  height: min(880px, 100dvh);
+  background: var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 500px) and (min-height: 900px) {
+  .phone { border-radius: 42px; border: 1px solid rgba(245,244,239,0.14); box-shadow: 0 40px 120px -30px #000; }
+}
+
+/* l'orizzonte: onde lente che riempiono il basso della schermata.
+   Non è decorazione — è la distanza da attraversare, resa visibile. */
+.orizzonte {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(90% 50% at 15% 0%, rgba(124, 92, 255, 0.3), transparent 60%),
+    radial-gradient(70% 40% at 100% 15%, rgba(75, 216, 196, 0.14), transparent 60%),
+    radial-gradient(90% 50% at 50% 100%, rgba(217, 255, 75, 0.09), transparent 65%);
+  pointer-events: none;
+}
+
+/* ---------- schermate ---------- */
+
+.screens { position: relative; flex: 1; min-height: 0; z-index: 1; }
+
+.screen {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 22px 14px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease), visibility 0s .4s;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.screen.on {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
+}
+
+/* ---------- tipografia ---------- */
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--lime);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1;
+  text-wrap: balance;
+}
+
+.sub { color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+
+/* ---------- onboarding ---------- */
+
+/* le tre fasi: una riga di scanso in alto, allineata al testo.
+   Sono un indice, non un bottone — quindi niente pillole in evidenza. */
+.phases {
+  display: flex; align-items: center; gap: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 11px;
+}
+
+.phases li {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-display); font-size: 10.5px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--faint);
+  padding-right: 14px; margin-right: 14px;
+  border-right: 1px solid var(--line);
+}
+.phases li:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+
+.phases li span {
+  width: 17px; height: 17px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: transparent; color: var(--faint);
+  border: 1px solid var(--line);
+  font-size: 9.5px;
+}
+
+.phases li.on { color: var(--paper); }
+.phases li.on span { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+
+.phases li.done span { border-color: rgba(217,255,75,.5); color: var(--lime); }
+
+/* il cuore della schermata sta al centro, non appiccicato in alto.
+   `safe` evita che il contenuto sbordi sopra quando lo schermo è corto. */
+.dream-core {
+  flex: 1;
+  display: flex; flex-direction: column;
+  justify-content: safe center;
+  gap: 2px;
+  padding: 12px 0;
+}
+
+/* il titolo è l'ancora della pagina: grande, a bandiera, con la
+   seconda riga in controluce — la domanda è il soggetto, non l'app */
+.dream-title {
+  font-size: clamp(38px, 12vw, 52px);
+  line-height: .94;
+  letter-spacing: -.035em;
+}
+
+.dream-title em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--lime);
+}
+
+.dream-sub { margin-top: 16px; max-width: 34ch; font-size: 14px; }
+
+.phase-hint {
+  font-size: 11px; color: var(--faint); margin-top: 12px;
+  line-height: 1.45; letter-spacing: .01em;
+}
+
+/* la barra è il vero protagonista: niente scatola, una riga su cui
+   si scrive — come quando appunti un desiderio su un foglio */
+.search {
+  display: flex; align-items: center; gap: 13px; margin-top: 26px;
+  border: none; border-bottom: 2px solid rgba(245,244,239,.22);
+  background: none; border-radius: 0; padding: 10px 2px 13px;
+  transition: border-color .3s var(--ease);
+}
+.search:focus-within { border-bottom-color: var(--lime); }
+.search-emoji {
+  font-size: 27px; flex: none;
+  transition: transform .3s var(--ease);
+  animation: respiro 4.5s ease-in-out infinite;
+}
+.search:focus-within .search-emoji { transform: scale(1.12) rotate(-6deg); animation: none; }
+
+@keyframes respiro {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(-4deg); }
+}
+
+/* la schermata si compone da sola, un pezzo alla volta */
+.screen.on .anima { animation: sali .7s var(--ease) backwards; }
+.screen.on .anima:nth-child(1) { animation-delay: .05s; }
+.screen.on .anima:nth-child(2) { animation-delay: .13s; }
+.screen.on .anima:nth-child(3) { animation-delay: .21s; }
+.screen.on .anima:nth-child(4) { animation-delay: .27s; }
+.screen.on .anima:nth-child(5) { animation-delay: .31s; }
+.screen.on .anima:nth-child(6) { animation-delay: .39s; }
+.screen.on .anima:nth-child(7) { animation-delay: .47s; }
+
+@keyframes sali {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.search input {
+  flex: 1; min-width: 0; background: none; border: none; outline: none;
+  color: var(--paper); font-family: var(--font-display);
+  font-size: 21px; font-weight: 600; letter-spacing: -.01em;
+}
+.search input::placeholder { color: var(--faint); font-weight: 400; }
+
+/* gira mentre l'AI stima quanto costa il sogno */
+.search-spin {
+  width: 17px; height: 17px; flex: none; border-radius: 50%;
+  border: 2px solid var(--line); border-top-color: var(--lime);
+  animation: spin .8s linear infinite;
+}
+.search-spin[hidden] { display: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.guess {
+  margin-top: 14px; border: 1px solid rgba(217,255,75,.3);
+  background: var(--lime-dim); border-radius: 17px; padding: 14px 16px;
+  animation: pop .35s var(--ease);
+}
+.guess-label { font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.guess-label b { color: var(--paper); }
+.guess-row { margin-top: 10px; }
+.guess-note { font-size: 11.5px; color: var(--faint); margin-top: 8px; line-height: 1.45; }
+
+.examples-title {
+  margin-top: 26px; font-family: var(--font-display);
+  font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint);
+}
+
+.examples { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+
+.ex {
+  border: 1px solid var(--line); background: var(--card);
+  border-radius: 999px; padding: 9px 14px; font-size: 13.5px;
+  transition: border-color .2s, background .2s, transform .2s var(--ease);
+}
+.ex:active { transform: scale(.96); }
+.ex:hover { border-color: var(--faint); }
+
+.rate-box { margin-top: 26px; display: grid; gap: 16px; }
+
+.rate-display {
+  display: flex; align-items: baseline; justify-content: center; gap: 6px;
+  font-family: var(--font-display);
+}
+.rate-display b {
+  font-size: 62px; font-weight: 700; letter-spacing: -.03em; color: var(--lime);
+  font-variant-numeric: tabular-nums;
+}
+.rate-display span { font-size: 16px; color: var(--muted); }
+
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 30px; background: transparent;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--lime) var(--fill, 30%), rgba(245,244,239,.13) var(--fill, 30%));
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--paper); border: 7px solid var(--ink);
+  box-shadow: 0 0 0 2px var(--lime); margin-top: -11px;
+}
+input[type=range]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--paper); border: 7px solid var(--ink); box-shadow: 0 0 0 2px var(--lime);
+}
+
+.marks { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+.spacer { flex: 1; min-height: 14px; }
+
+.cta {
+  background: var(--lime); color: var(--ink);
+  font-family: var(--font-display); font-weight: 700; font-size: 16.5px;
+  border-radius: 999px; padding: 17px 24px; width: 100%;
+  transition: transform .2s var(--ease), opacity .2s;
+}
+.cta:active { transform: scale(.97); }
+.cta:disabled { opacity: .3; }
+
+.cta-ghost {
+  border: 1px solid var(--line); color: var(--muted);
+  border-radius: 999px; padding: 13px 20px; font-size: 14px; width: 100%;
+}
+
+/* ---------- home ---------- */
+
+.home-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+.home-azioni { display: flex; align-items: center; gap: 7px; }
+
+.ricomincia {
+  width: 30px; height: 30px; flex: none; border-radius: 50%;
+  border: 1px solid var(--line); color: var(--faint);
+  font-size: 15px; line-height: 1;
+  transition: color .25s, border-color .25s, transform .35s var(--ease);
+}
+.ricomincia:hover { color: var(--paper); border-color: var(--faint); transform: rotate(-180deg); }
+
+/* il saluto di chi torna: quello che è successo mentre eri via */
+.bentornato {
+  margin-top: 14px; padding: 12px 15px;
+  border: 1px solid rgba(217,255,75,.35); background: var(--lime-dim);
+  border-radius: 15px; font-size: 13px; line-height: 1.55; color: var(--muted);
+  animation: sali .6s var(--ease) backwards .1s;
+}
+.bentornato[hidden] { display: none; }
+.bentornato b { color: var(--lime); }
+
+.countdown { text-align: center; margin: 4px 0 2px; }
+
+.cd-dream { font-size: 44px; line-height: 1; }
+
+.cd-days {
+  font-family: var(--font-display);
+  font-size: 88px; font-weight: 700; letter-spacing: -.05em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, var(--paper), #b9c47a);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-top: 6px;
+}
+
+.cd-label { font-family: var(--font-display); font-size: 15px; color: var(--muted); letter-spacing: .02em; }
+.cd-date { font-size: 13px; color: var(--faint); margin-top: 6px; }
+
+.progress-wrap { margin-top: 18px; }
+
+.bar { height: 9px; border-radius: 5px; background: rgba(245,244,239,.1); overflow: hidden; }
+.bar-fill {
+  height: 100%; border-radius: 5px; width: 0%;
+  background: linear-gradient(90deg, var(--violet), var(--lime));
+  transition: width 1s var(--ease);
+}
+
+.bar-nums {
+  display: flex; justify-content: space-between; margin-top: 8px;
+  font-size: 13px; font-variant-numeric: tabular-nums;
+}
+.bar-nums b { color: var(--lime); }
+.bar-nums span { color: var(--faint); }
+
+.week {
+  margin-top: 20px; border: 1px solid var(--line); background: var(--card);
+  border-radius: 20px; padding: 16px;
+}
+
+.week-title {
+  font-family: var(--font-display); font-size: 11.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+
+.week-list { display: grid; gap: 8px; }
+
+.wm {
+  display: flex; align-items: center; gap: 11px;
+  border: 1px solid var(--line); border-radius: 14px; padding: 11px 13px;
+  font-size: 14px; text-align: left; width: 100%;
+  transition: border-color .2s, background .2s, transform .2s var(--ease);
+}
+.wm:active { transform: scale(.985); }
+.wm-emoji { font-size: 19px; }
+.wm-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.wm-name { font-weight: 500; line-height: 1.25; }
+.wm-gain { font-size: 11.5px; color: var(--lime); font-variant-numeric: tabular-nums; }
+/* da dove nasce la cifra: è il tuo numero, non una stima da manuale */
+.wm-su { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.wm-check {
+  width: 24px; height: 24px; border-radius: 50%; flex: none;
+  border: 1.5px solid var(--faint); display: grid; place-items: center;
+  font-size: 13px; color: transparent; transition: all .25s var(--ease);
+}
+.wm.done { border-color: rgba(217,255,75,.35); background: var(--lime-dim); }
+.wm.done .wm-check { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.wm.done .wm-name { color: var(--muted); text-decoration: line-through; }
+
+/* ---------- mosse ---------- */
+
+/* il contatore resta sotto gli occhi mentre scegli: ogni tocco lo muove */
+.mini-conta {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-top: 15px; padding: 11px 14px;
+  border: 1px solid rgba(217,255,75,.3); background: var(--lime-dim);
+  border-radius: 14px;
+}
+.mini-emoji { font-size: 17px; }
+.mini-conta b {
+  font-family: var(--font-display); font-weight: 700; font-size: 27px;
+  color: var(--lime); letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+  transition: transform .3s var(--ease);
+}
+.mini-conta b.scatto { transform: scale(1.16); }
+.mini-conta span:last-child { font-size: 12.5px; color: var(--muted); }
+
+.tabs { display: flex; gap: 7px; margin: 16px 0 14px; }
+
+.tab {
+  flex: 1; border: 1px solid var(--line); border-radius: 999px; padding: 9px 8px;
+  font-size: 12.5px; font-weight: 600; font-family: var(--font-display); color: var(--muted);
+  transition: all .25s;
+}
+.tab.on { background: var(--lime-dim); border-color: var(--lime); color: var(--paper); }
+
+/* i suggerimenti stanno a bosco, come i sogni: si leggono a colpo
+   d'occhio e se ne prende uno senza scorrere mezzo schermo */
+.moves { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 6px; }
+
+/* stessa pastiglia degli esempi del sogno: una riga sola, si dispongono
+   da sole e la riga frastagliata invita a scorrere con l'occhio */
+.move {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line); background: var(--card);
+  border-radius: 999px; padding: 9px 15px 9px 12px; text-align: left;
+  transition: border-color .2s, background .2s, transform .2s var(--ease);
+}
+.move:active { transform: scale(.96); }
+.move:hover { border-color: var(--faint); }
+
+.move-emoji { font-size: 15px; flex: none; }
+.move-name { font-size: 13.5px; font-weight: 500; }
+
+.move-cifra {
+  font-size: 11.5px; color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+/* la cifra nata dai tuoi numeri è più accesa di una stima */
+.move.misura .move-cifra { color: var(--muted); }
+
+.move-gain {
+  font-size: 11.5px; color: var(--lime); font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.move.done {
+  border-color: rgba(217,255,75,.45); background: var(--lime-dim);
+}
+.move.done .move-name { color: var(--muted); }
+.move.done .move-cifra { color: var(--faint); }
+
+.hint {
+  font-size: 12.5px; color: var(--faint); line-height: 1.55;
+  border-left: 2px solid var(--line); padding-left: 11px; margin-bottom: 4px;
+}
+
+/* ---------- piano ---------- */
+
+.field { margin-top: 16px; display: flex; flex-direction: column; gap: 7px; }
+
+.field label {
+  font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); font-family: var(--font-display);
+}
+
+.field select, .field-money {
+  border: 1px solid var(--line); background: var(--card); color: var(--paper);
+  border-radius: 14px; padding: 13px 15px; font-size: 15px; font-family: inherit;
+  width: 100%; appearance: none;
+}
+
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center;
+}
+.field select option { background: var(--ink-2); }
+
+.field-money { display: flex; align-items: center; gap: 6px; padding: 0 15px; }
+.field-money input {
+  flex: 1; background: none; border: none; outline: none; color: var(--paper);
+  font-family: var(--font-display); font-weight: 700; font-size: 26px;
+  padding: 12px 0; font-variant-numeric: tabular-nums; width: 100%;
+}
+.field-money span { font-size: 17px; color: var(--lime); font-weight: 700; }
+
+.check {
+  display: flex; align-items: flex-start; gap: 10px; margin-top: 18px;
+  font-size: 14px; line-height: 1.4; cursor: pointer;
+}
+.check input { width: 21px; height: 21px; accent-color: var(--lime); flex: none; margin-top: 1px; }
+.check small { display: block; color: var(--faint); font-size: 11.5px; margin-top: 2px; }
+
+.truth-box {
+  display: flex; align-items: center; gap: 14px; margin-top: 20px;
+  border: 1px solid rgba(217,255,75,.3); background: var(--lime-dim);
+  border-radius: 18px; padding: 15px 17px;
+}
+.truth-dream { font-size: 32px; }
+.truth-days { font-family: var(--font-display); font-size: 15px; color: var(--muted); }
+.truth-days b {
+  font-size: 34px; color: var(--paper); letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums; margin-right: 4px;
+}
+.truth-label { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+/* ---------- le tue cifre (fase 2b) ---------- */
+
+.conferma-barra { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; }
+
+.conferma-bar {
+  flex: 1; height: 5px; border-radius: 3px;
+  background: rgba(245,244,239,.1); overflow: hidden;
+}
+.conferma-fill {
+  height: 100%; width: 0%; border-radius: 3px;
+  background: var(--lime); transition: width .35s var(--ease);
+}
+.conferma-n {
+  font-family: var(--font-display); font-size: 11.5px; color: var(--muted);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+.voci { display: grid; gap: 7px; }
+
+.voce {
+  display: grid;
+  grid-template-columns: 26px 1fr auto auto;
+  grid-template-areas: "emoji nome campo check" "emoji slider slider slider";
+  align-items: center; gap: 7px 9px;
+  border: 1px solid var(--line); background: var(--card);
+  border-radius: 15px; padding: 11px 13px;
+  transition: border-color .3s, background .3s;
+}
+
+.voce.ok { border-color: rgba(217,255,75,.32); background: var(--lime-dim); }
+
+.voce-emoji { grid-area: emoji; font-size: 19px; text-align: center; }
+.voce-nome { grid-area: nome; min-width: 0; display: flex; flex-direction: column; }
+.voce-nome b { font-size: 14px; font-weight: 500; line-height: 1.25; }
+.voce-nome small { font-size: 10.5px; color: var(--faint); line-height: 1.3; }
+
+.voce-campo {
+  grid-area: campo;
+  display: flex; align-items: center; gap: 2px;
+  background: rgba(245,244,239,.08);
+  border: 1px solid rgba(245,244,239,.18);
+  border-radius: 10px; padding: 5px 9px;
+  transition: border-color .2s, background .2s;
+}
+.voce-campo:focus-within { border-color: var(--lime); background: rgba(217,255,75,.16); }
+.voce-campo input {
+  width: 46px; background: none; border: none; outline: none; color: var(--paper);
+  font-family: var(--font-display); font-weight: 700; font-size: 14.5px;
+  text-align: right; font-variant-numeric: tabular-nums; padding: 0;
+}
+.voce-campo span { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.voce-check {
+  grid-area: check;
+  width: 27px; height: 27px; border-radius: 50%; flex: none;
+  border: 1.5px solid var(--faint); display: grid; place-items: center;
+  font-size: 13px; color: transparent; background: none;
+  transition: all .25s var(--ease);
+}
+.voce.ok .voce-check { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+
+.voce .range { grid-area: slider; height: 20px; }
+.voce .range::-webkit-slider-runnable-track { height: 4px; }
+.voce .range::-webkit-slider-thumb { width: 17px; height: 17px; border-width: 5px; margin-top: -7px; }
+
+/* risparmio e investimenti chiudono la lista: sono il risultato */
+.voce.futuro { border-style: dashed; }
+.voce.futuro.ok { border-style: solid; }
+
+/* il salvadanaio del sogno porta il verde dell'app, ma pieno e con
+   un alone: così non si confonde con il lime tenue del "confermato" */
+.voce.sogno {
+  border-color: var(--lime); background: rgba(217,255,75,.16);
+  box-shadow: 0 0 22px -8px rgba(217,255,75,.55);
+}
+.voce.sogno .voce-nome b { color: var(--lime); font-weight: 600; }
+.voce.sogno .voce-check { border-color: var(--lime); }
+
+/* gli investimenti sono arancioni */
+.voce.futuro { border-color: rgba(255,157,77,.4); background: var(--arancio-dim); }
+.voce.futuro .voce-nome b { color: var(--arancio); }
+.voce.futuro .voce-check { border-color: rgba(255,157,77,.65); }
+.voce.futuro.ok .voce-check { background: var(--arancio); border-color: var(--arancio); }
+.voce.futuro .range::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--arancio) var(--fill, 50%), rgba(245,244,239,.13) var(--fill, 50%));
+}
+.voce.futuro .range::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--arancio); }
+
+/* il risparmio è violetto: è il risultato di tutto il resto */
+.voce-risparmio {
+  display: flex; align-items: center; gap: 11px;
+  border: 1px solid rgba(124,92,255,.45); background: rgba(124,92,255,.1);
+  border-radius: 15px; padding: 13px;
+}
+.voce-risparmio b {
+  margin-left: auto; font-family: var(--font-display); font-weight: 700;
+  font-size: 21px; color: #b09dff; font-variant-numeric: tabular-nums;
+}
+
+.add-voce {
+  margin-top: 9px; width: 100%;
+  border: 1px dashed var(--faint); border-radius: 14px; padding: 12px;
+  font-size: 13.5px; color: var(--muted);
+  transition: border-color .25s, color .25s;
+}
+.add-voce:hover { border-color: var(--lime); color: var(--paper); }
+
+.resto {
+  margin-top: 14px; border-radius: 14px; padding: 12px 14px;
+  font-size: 12.5px; line-height: 1.55; color: var(--muted);
+  border: 1px solid var(--line);
+}
+.resto b { color: var(--paper); }
+.resto.male { border-color: rgba(255,92,114,.4); background: rgba(255,92,114,.08); }
+.resto.male b { color: #ff5c72; }
+
+.truth-actions { display: flex; gap: 8px; margin-top: 9px; }
+.truth-actions .cta-ghost { flex: 1; }
+
+/* la tabella da fotografare o copiare */
+.done-table {
+  margin-top: 18px; border: 1px solid rgba(217,255,75,.3);
+  background: rgba(6,6,11,.6); border-radius: 17px; padding: 15px 16px;
+}
+.dt-title {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--lime); margin-bottom: 10px;
+}
+.dt-row {
+  display: flex; align-items: baseline; gap: 9px;
+  padding: 6px 0; font-size: 13px; line-height: 1.4;
+  border-bottom: 1px dashed rgba(245,244,239,.08);
+}
+.dt-row:last-of-type { border-bottom: none; }
+.dt-n {
+  width: 19px; height: 19px; flex: none; border-radius: 50%;
+  background: rgba(245,244,239,.1); color: var(--muted);
+  display: grid; place-items: center; font-size: 10px; font-weight: 700;
+  font-family: var(--font-display); transform: translateY(3px);
+}
+.dt-row.lime .dt-n { background: var(--lime); color: var(--ink); }
+.dt-name { flex: 1; min-width: 0; color: var(--muted); }
+.dt-name b { color: var(--paper); font-weight: 500; }
+.dt-val {
+  font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dt-row.lime .dt-val { color: var(--lime); }
+.dt-foot { font-size: 11px; color: var(--faint); margin-top: 10px; line-height: 1.45; }
+
+/* ---------- riepilogo ---------- */
+
+/* la chiusura: un colpo d'occhio che deve dare coraggio, non dati */
+.chiusura {
+  margin-top: 20px; border: 1px solid rgba(217,255,75,.35);
+  background: var(--lime-dim); border-radius: 20px; padding: 18px;
+}
+
+.chiusura-riga { display: flex; align-items: center; gap: 15px; }
+
+.chiusura-n {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 52px; line-height: .9; color: var(--lime);
+  letter-spacing: -.035em; font-variant-numeric: tabular-nums;
+}
+.chiusura-riga b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; }
+.chiusura-riga small { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.chiusura-sotto {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 16px; padding-top: 15px;
+  border-top: 1px solid rgba(217,255,75,.22);
+}
+.chiusura-sotto b {
+  display: block; font-family: var(--font-display); font-weight: 700;
+  font-size: 20px; font-variant-numeric: tabular-nums;
+}
+.chiusura-sotto small { display: block; font-size: 11px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+
+/* i tre salvadanai: risparmio, investimenti e — in arancione — il sogno */
+.salva { display: grid; gap: 8px; margin-top: 11px; }
+
+.sv {
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid var(--line); border-radius: 15px; padding: 12px 14px;
+}
+.sv-emoji { font-size: 20px; flex: none; }
+.sv-testo { flex: 1; min-width: 0; }
+.sv-testo b { display: block; font-size: 14px; font-weight: 600; line-height: 1.25; }
+.sv-testo small { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+.sv-cifra {
+  font-family: var(--font-display); font-weight: 700; font-size: 19px;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+.sv.risparmio { border-color: rgba(124,92,255,.45); background: rgba(124,92,255,.1); }
+.sv.risparmio .sv-cifra, .sv.risparmio .sv-testo b { color: #b09dff; }
+
+.sv.investimenti { border-color: rgba(255,157,77,.5); background: var(--arancio-dim); }
+.sv.investimenti .sv-cifra, .sv.investimenti .sv-testo b { color: var(--arancio); }
+
+/* il sogno prende il verde dell'app: è lui il protagonista */
+.sv.sogno {
+  border-color: var(--lime); background: rgba(217,255,75,.16);
+  box-shadow: 0 0 26px -10px rgba(217,255,75,.6);
+}
+.sv.sogno .sv-cifra, .sv.sogno .sv-testo b { color: var(--lime); }
+
+.salva-nota { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-top: 12px; }
+.salva-nota b { color: var(--paper); }
+
+/* nella home i salvadanai stanno in fila, compatti */
+#homeSalva { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+#homeSalva .sv { flex-direction: column; align-items: flex-start; gap: 3px; padding: 11px; }
+#homeSalva .sv-testo b { font-size: 11px; font-weight: 500; }
+#homeSalva .sv-testo small { display: none; }
+#homeSalva .sv-cifra { font-size: 16px; }
+#homeSalva .sv-emoji { font-size: 15px; }
+
+/* una voce dei maestri, sempre la stessa per tutta la giornata */
+.citazione {
+  margin-top: 18px; padding: 14px 16px;
+  border-left: 2px solid var(--lime);
+  font-size: 13.5px; line-height: 1.6; color: var(--muted);
+}
+.citazione b {
+  display: block; margin-top: 7px;
+  font-family: var(--font-display); font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--lime); font-weight: 600;
+}
+
+.recap-tips { display: grid; gap: 7px; margin-top: 18px; }
+
+.tip {
+  display: flex; gap: 10px; align-items: baseline;
+  border: 1px solid var(--line); border-radius: 13px; padding: 11px 13px;
+  font-size: 13px; line-height: 1.5; color: var(--muted);
+}
+.tip b { color: var(--paper); }
+.tip.lime { border-color: rgba(217,255,75,.3); background: var(--lime-dim); }
+.tip.lime b { color: var(--lime); }
+
+.pact {
+  margin-top: 20px; border: 1px solid rgba(124,92,255,.4);
+  background: rgba(124,92,255,.1); border-radius: 20px; padding: 17px;
+}
+.pact-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+.pact-text { font-size: 13px; color: var(--muted); line-height: 1.55; margin: 7px 0 14px; }
+.pact-note { font-size: 12px; color: var(--faint); margin-top: 10px; line-height: 1.5; text-align: center; }
+.pact-note.ok { color: var(--lime); }
+
+.plan-big { display: flex; align-items: baseline; gap: 9px; margin-top: 6px; }
+.plan-big b {
+  font-family: var(--font-display); font-size: 54px; font-weight: 700;
+  letter-spacing: -.03em; color: var(--lime); font-variant-numeric: tabular-nums;
+}
+.plan-big span { font-size: 13px; color: var(--muted); }
+
+.plan-rows { display: grid; gap: 7px; margin-top: 12px; }
+
+.pr {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  grid-template-areas: "num name val" "num slider slider";
+  align-items: center;
+  gap: 7px 10px;
+  border: 1px solid var(--line); border-radius: 14px; padding: 11px 13px;
+  font-size: 13.5px;
+}
+.pr-num {
+  grid-area: num;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(245,244,239,.1); color: var(--muted);
+  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+  font-family: var(--font-display);
+}
+.pr-name { grid-area: name; min-width: 0; }
+.pr b { grid-area: val; font-family: var(--font-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* il campo deve sembrare un campo: si tocca e si scrive */
+.pr-edit {
+  grid-area: val;
+  display: flex; align-items: center; gap: 2px;
+  background: rgba(245,244,239,.08);
+  border: 1px solid rgba(245,244,239,.18);
+  border-radius: 11px; padding: 5px 10px;
+  transition: border-color .2s, background .2s;
+}
+.pr-edit:focus-within { border-color: var(--lime); background: var(--lime-dim); }
+.pr-edit input {
+  width: 52px; background: none; border: none; outline: none; color: var(--paper);
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  text-align: right; font-variant-numeric: tabular-nums; padding: 0;
+}
+.pr-edit span { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+
+.pr-range { grid-area: slider; width: 100%; height: 22px; margin-top: -2px; }
+.pr-range::-webkit-slider-runnable-track { height: 4px; }
+.pr-range::-webkit-slider-thumb { width: 18px; height: 18px; border-width: 5px; margin-top: -7px; }
+.pr-range::-moz-range-thumb { width: 10px; height: 10px; border-width: 5px; }
+.pr.lime { border-color: rgba(217,255,75,.35); background: var(--lime-dim); }
+.pr.lime b { color: var(--lime); }
+.pr.lime .pr-num { background: var(--lime); color: var(--ink); }
+.pr.tax { border-color: rgba(255,92,114,.35); background: rgba(255,92,114,.07); }
+.pr.tax b { color: #ff5c72; }
+
+/* ---------- tabbar ---------- */
+
+.tabbar {
+  display: flex; border-top: 1px solid var(--line);
+  background: rgba(11,11,18,.92); backdrop-filter: blur(12px);
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+  position: relative; z-index: 5;
+}
+
+.tabbar button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 7px 4px; font-size: 10.5px; color: var(--faint);
+  transition: color .25s;
+}
+.tabbar button i { font-size: 19px; font-style: normal; }
+.tabbar button.on { color: var(--lime); }
+.tabbar button.on i { filter: drop-shadow(0 0 9px rgba(217,255,75,.55)); transform: translateY(-1px); }
+.tabbar button i { transition: transform .25s var(--ease), filter .25s; }
+.tabbar[hidden] { display: none; }
+
+@keyframes pop { from { opacity: 0; transform: scale(.86) translateY(16px) } }
+
+/* il contatore respira: il tempo che passa, reso visibile */
+.cd-days { animation: pulsa 5s ease-in-out infinite; }
+
+@keyframes pulsa {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .93; transform: scale(1.014); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="glow"></div>
+  <canvas class="orizzonte" id="orizzonte" aria-hidden="true"></canvas>
+
+  <div class="screens">
+
+    <!-- 1. che cosa sogni: scrivilo con parole tue -->
+    <section class="screen on" data-screen="dream">
+      <ol class="phases" aria-label="Le tre fasi">
+        <li class="on"><span>1</span>Sogno</li>
+        <li><span>2</span>Risveglio</li>
+        <li><span>3</span>Azione</li>
+      </ol>
+
+      <div class="dream-core">
+        <h1 class="dream-title anima">Cosa vuoi,<br /><em>davvero?</em></h1>
+        <p class="sub dream-sub anima">Scrivilo con parole tue.<br />Da qui in poi ogni euro che metti via ha un motivo e un nome.</p>
+
+        <div class="search anima">
+          <span class="search-emoji" id="dreamEmoji">✨</span>
+          <input id="dreamInput" type="text" autocomplete="off" placeholder="Andare a Tokyo…" aria-label="Il tuo sogno" />
+          <span class="search-spin" id="dreamSpin" hidden></span>
+        </div>
+
+      <div class="guess" id="guess" hidden>
+        <p class="guess-label" id="guessLabel"></p>
+        <div class="guess-row">
+          <div class="field-money" style="flex:1"><input id="dreamCost" type="text" inputmode="numeric" maxlength="7" /><span>€</span></div>
+        </div>
+        <p class="guess-note">Non è la tua cifra? Cambiala: il conto alla rovescia si basa su questa.</p>
+      </div>
+
+        <p class="examples-title anima">Oppure parti da qui</p>
+        <div class="examples anima" id="examples"></div>
+      </div>
+
+      <div class="spacer"></div>
+      <button class="cta" id="toRate" disabled>Continua</button>
+      <p class="phase-hint">Poi guardiamo i tuoi numeri, e infine passiamo all'azione.</p>
+    </section>
+
+    <!-- 2. RISVEGLIO: i numeri veri -->
+    <section class="screen" data-screen="wake">
+      <ol class="phases" aria-label="Le tre fasi">
+        <li class="done"><span>✓</span>Sogno</li>
+        <li class="on"><span>2</span>Risveglio</li>
+        <li><span>3</span>Azione</li>
+      </ol>
+      <h1 style="margin-top:14px">Adesso i numeri<br />veri.</h1>
+      <p class="sub" style="margin-top:10px">Niente stime a caso. Dimmi due cose sulla tua vita e calcoliamo insieme quanto puoi metterne via davvero, sui costi reali della tua città.</p>
+
+      <div class="field">
+        <label for="pIncome">Quanto ti entra al mese, netto</label>
+        <div class="field-money"><input id="pIncome" type="text" inputmode="numeric" value="1500" maxlength="6" /><span>€</span></div>
+      </div>
+
+      <div class="field">
+        <label for="pCity">Dove vivi</label>
+        <select id="pCity"></select>
+      </div>
+
+      <div class="field">
+        <label for="pHousing">Come vivi</label>
+        <select id="pHousing"></select>
+      </div>
+
+      <div class="field">
+        <label for="pVehicle">Come ti muovi</label>
+        <select id="pVehicle"></select>
+      </div>
+
+      <label class="check"><input type="checkbox" id="pPiva" /> <span>Ho la partita IVA <small>metà di ogni incasso va da parte per il fisco</small></span></label>
+
+      <div class="spacer"></div>
+      <button class="cta" id="pCalc" style="margin-top:18px">Vediamo i miei numeri</button>
+      <button class="cta-ghost" id="backDream" style="margin-top:9px">← Cambio sogno</button>
+    </section>
+
+    <!-- 2b. LE TUE CIFRE: il vero risveglio si scrive a mano -->
+    <section class="screen" data-screen="cifre">
+      <ol class="phases" aria-label="Le tre fasi">
+        <li class="done"><span>✓</span>Sogno</li>
+        <li class="on"><span>2</span>Risveglio</li>
+        <li><span>3</span>Azione</li>
+      </ol>
+      <h1 style="margin-top:14px">Le tue cifre.<br />Una per una.</h1>
+      <p class="sub" style="margin-top:10px">Ho messo delle stime per partire, ma <b>sono mie, non tue</b>. Correggile o confermale: è qui che si aprono gli occhi.</p>
+
+      <div class="conferma-barra">
+        <div class="conferma-bar"><div class="conferma-fill" id="confermaFill"></div></div>
+        <span class="conferma-n" id="confermaN">0 di 0</span>
+      </div>
+
+      <div class="voci" id="vociList"></div>
+
+      <button class="add-voce" id="addVoce">+ Aggiungi una voce mia</button>
+
+      <div class="resto" id="resto"></div>
+
+      <div class="spacer"></div>
+      <button class="cta" id="confermaPiano" disabled>Conferma il piano</button>
+      <button class="cta-ghost" id="cifreBack" style="margin-top:9px">← Cambio città, casa o entrate</button>
+      <button class="cta-ghost" id="resetAll" style="margin-top:9px;opacity:.5">Ricomincia da capo</button>
+    </section>
+
+    <!-- 3. la verità: il momento di presa di coscienza -->
+    <section class="screen" data-screen="truth">
+      <ol class="phases" aria-label="Le tre fasi">
+        <li class="done"><span>✓</span>Sogno</li>
+        <li class="on"><span>2</span>Risveglio</li>
+        <li><span>3</span>Azione</li>
+      </ol>
+      <h1 style="margin-top:14px">Ecco il tuo punto<br />di partenza.</h1>
+      <div class="plan-big" style="margin-top:18px"><b id="truthRate">0 €</b><span>al mese<br />puoi metterli via</span></div>
+      <p class="sub" id="truthNote" style="margin-top:12px"></p>
+
+      <div class="truth-box">
+        <span class="truth-dream" id="truthEmoji">🗾</span>
+        <div>
+          <div class="truth-days"><b id="truthDays">0</b> giorni</div>
+          <div class="truth-label" id="truthLabel"></div>
+        </div>
+      </div>
+
+      <p class="hint" id="truthPush"></p>
+
+      <div class="done-table" id="truthTable"></div>
+
+      <div class="spacer"></div>
+      <button class="cta" id="toAction">Ok, adesso agiamo →</button>
+      <div class="truth-actions">
+        <button class="cta-ghost" id="copiaTabella">📋 Copia</button>
+        <button class="cta-ghost" id="toEdit">✏️ Correggi</button>
+      </div>
+    </section>
+
+    <!-- 3. home: il conto alla rovescia -->
+    <section class="screen" data-screen="home">
+      <div class="home-head">
+        <p class="eyebrow">Il tuo sogno</p>
+        <div class="home-azioni">
+          <button class="ricomincia" id="homeReset" aria-label="Ricomincia da capo" title="Ricomincia da capo">↺</button>
+        </div>
+      </div>
+
+      <div class="bentornato" id="bentornato" hidden></div>
+
+      <div class="countdown">
+        <div class="cd-dream" id="cdEmoji">🗾</div>
+        <div class="cd-days" id="cdDays">—</div>
+        <div class="cd-label" id="cdLabel">giorni al Giappone</div>
+        <div class="cd-date" id="cdDate"></div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+        <div class="bar-nums">
+          <span><b id="savedN">0 €</b> messi via</span>
+          <span id="costN">0 €</span>
+        </div>
+      </div>
+
+      <div class="salva" id="homeSalva" style="margin-top:18px"></div>
+
+      <div class="week">
+        <p class="week-title">Se vuoi accelerare</p>
+        <div class="week-list" id="weekList"></div>
+      </div>
+
+      <blockquote class="citazione" id="citazione"></blockquote>
+
+      <div class="spacer"></div>
+      <button class="cta" id="goMoves">Vedi tutti i suggerimenti</button>
+    </section>
+
+    <!-- 4. AZIONE: il catalogo delle mosse -->
+    <section class="screen" data-screen="moves">
+      <ol class="phases" aria-label="Le tre fasi">
+        <li class="done"><span>✓</span>Sogno</li>
+        <li class="done"><span>✓</span>Risveglio</li>
+        <li class="on"><span>3</span>Azione</li>
+      </ol>
+      <h1 style="margin-top:14px">Come si accorcia<br />la distanza.</h1>
+      <p class="sub" style="margin-top:10px">Non sono compiti: sono <b>esempi</b> di cosa funziona. Tocca quelli che ti somigliano e guarda il contatore.</p>
+
+      <div class="mini-conta">
+        <span class="mini-emoji" id="movesEmoji">🎯</span>
+        <b id="movesDays">—</b>
+        <span id="movesLabel">giorni al traguardo</span>
+      </div>
+      <div class="tabs">
+        <button class="tab on" data-tab="once">Una volta e basta</button>
+        <button class="tab" data-tab="week">Ogni settimana</button>
+      </div>
+      <p class="hint" id="movesHint"></p>
+      <div class="moves" id="movesList"></div>
+      <button class="cta" id="closeWeek" style="margin-top:16px">Ho scelto, tira le somme →</button>
+    </section>
+
+    <!-- 6. il patto: qui il cerchio si chiude e comincia l'abitudine -->
+    <section class="screen" data-screen="recap">
+      <p class="eyebrow" id="recapEyebrow">Ci siamo</p>
+      <h1 style="margin-top:12px" id="recapTitle">Il piano è tuo.</h1>
+      <p class="sub" id="recapSub" style="margin-top:10px"></p>
+
+      <div class="chiusura">
+        <div class="chiusura-riga">
+          <span class="chiusura-n" id="recapDays">0</span>
+          <div>
+            <b id="recapLabel">giorni al traguardo</b>
+            <small id="recapQuando"></small>
+          </div>
+        </div>
+      </div>
+
+      <p class="week-title" style="margin-top:22px">I tre salvadanai che contano</p>
+      <div class="salva" id="recapSalva"></div>
+      <p class="salva-nota">Insieme fanno <b id="recapMese">0 €</b> al mese: <b id="recapAnno">0 €</b> in un anno. Sono i soldi che <b>costruiscono il futuro e realizzano il sogno</b> — tutto il resto serve a vivere.</p>
+
+      <div class="recap-tips" id="recapTips"></div>
+
+      <div class="pact">
+        <p class="pact-title">📅 Da qui in poi bastano trenta secondi a settimana</p>
+        <p class="pact-text">La domenica riapri l'app, confermi cosa hai rispettato e il contatore scende. Nient'altro. È così che un piano diventa un'abitudine — e un'abitudine diventa un viaggio.</p>
+        <button class="cta" id="notifyBtn">🔔 Ricordamelo domenica</button>
+        <p class="pact-note" id="notifyNote"></p>
+      </div>
+
+      <div class="spacer"></div>
+      <button class="cta" id="recapBack" style="margin-top:14px">Perfetto, si comincia 🌱</button>
+    </section>
+
+  </div>
+
+  <nav class="tabbar" id="tabbar" hidden>
+    <button data-go="home" class="on"><i>🎯</i>Sogno</button>
+    <button data-go="cifre"><i>💡</i>Risveglio</button>
+    <button data-go="moves"><i>⚡</i>Azione</button>
+  </nav>
+
+</div>
+
+<!-- lo stesso motore della versione desktop: costi delle città,
+     partita IVA, regola 70/30. Niente duplicati. -->
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script>
+(function () {
+  "use strict";
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const euro = (v) => new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(Math.round(v));
+
+  /* ---------- contenuti ---------- */
+
+  /* Riconosce il sogno da come lo scrivi e propone una cifra media.
+     Resta sempre correggibile: la stima toglie l'attrito, non il controllo. */
+  const GUESSES = [
+    { k: ["giappone", "tokyo", "kyoto", "corea", "cina", "thailandia", "bali", "vietnam", "indonesia", "australia", "nuova zelanda"], emoji: "🗾", cost: 2500, what: "un viaggio dall'altra parte del mondo" },
+    { k: ["new york", "usa", "america", "stati uniti", "canada", "messico", "brasile", "argentina", "perù", "caraibi"], emoji: "🗽", cost: 2800, what: "un viaggio oltreoceano" },
+    { k: ["interrail", "giro d'europa", "europa"], emoji: "🚆", cost: 1500, what: "un giro per l'Europa" },
+    { k: ["viaggio", "viaggiare", "vacanza", "vacanze", "partire", "estate", "mare", "montagna", "weekend"], emoji: "✈️", cost: 1200, what: "un viaggio" },
+    { k: ["patente"], emoji: "🚦", cost: 1200, what: "prendere la patente" },
+    { k: ["motorino", "scooter", "moto"], emoji: "🛵", cost: 2500, what: "un motorino o una moto" },
+    { k: ["macchina", "auto", "automobile"], emoji: "🚗", cost: 4500, what: "una macchina" },
+    { k: ["comprare casa", "mutuo", "anticipo", "acconto casa", "acquistare casa"], emoji: "🏡", cost: 25000, what: "l'anticipo per comprare casa" },
+    { k: ["vivere da sol", "andare via di casa", "trasloco", "traslocare", "indipendenza", "appartamento", "affitto", "casa mia"], emoji: "🔑", cost: 5000, what: "andare a vivere per conto tuo" },
+    { k: ["matrimonio", "sposar", "nozze"], emoji: "💍", cost: 15000, what: "un matrimonio" },
+    { k: ["figli", "figlio", "figlia", "bambino", "bambina", "maternità", "paternità"], emoji: "🍼", cost: 6000, what: "prepararsi a un figlio" },
+    { k: ["master", "università", "universita", "laurea", "corso", "formazione", "certificazione", "inglese", "studiare", "studio"], emoji: "🎓", cost: 2500, what: "studiare o formarti" },
+    { k: ["attività", "attivita", "impresa", "azienda", "startup", "aprire", "business", "partita iva", "mettermi in proprio"], emoji: "🚀", cost: 15000, what: "avviare una tua attività" },
+    { k: ["investire", "investimenti", "etf", "azioni", "borsa", "rendita", "10.000", "10000"], emoji: "📈", cost: 10000, what: "il tuo primo capitale investito" },
+    { k: ["emergenza", "imprevisti", "cuscino", "sicurezza", "respiro", "tranquillità", "tranquillita", "fondo"], emoji: "🛟", cost: 0, what: "un fondo per dormire tranquillə", dynamic: "fondo" },
+    { k: ["pc", "computer", "macbook", "portatile", "notebook", "iphone", "telefono", "smartphone", "fotocamera", "reflex", "console", "playstation"], emoji: "💻", cost: 1200, what: "un dispositivo nuovo" },
+    { k: ["palestra", "sport", "bici", "bicicletta", "attrezzatura", "sci", "surf", "corsa"], emoji: "🏋️", cost: 800, what: "attrezzatura sportiva" },
+    { k: ["concerto", "festival", "evento", "biglietti"], emoji: "🎫", cost: 400, what: "concerti ed eventi" },
+    { k: ["cane", "gatto", "cucciolo", "animale"], emoji: "🐕", cost: 1000, what: "prendere un animale" },
+    { k: ["tatuaggio", "tattoo"], emoji: "🖤", cost: 500, what: "un tatuaggio" },
+    { k: ["dentista", "denti", "apparecchio", "operazione", "cure", "salute"], emoji: "🦷", cost: 2500, what: "cure mediche" },
+    { k: ["debito", "debiti", "prestito", "finanziamento", "estinguere"], emoji: "⛓️", cost: 3000, what: "chiudere un debito" },
+  ];
+
+  const ESEMPI = [
+    "Andare a Tokyo", "La mia prima macchina", "Andare a vivere da solə",
+    "Tre mesi di respiro", "Un master", "I miei primi 10.000 investiti",
+  ];
+
+  function guessDream(text) {
+    const t = text.toLowerCase().trim();
+    if (t.length < 3) return null;
+    for (const g of GUESSES) {
+      if (g.k.some((k) => t.includes(k))) return g;
+    }
+    return null;
+  }
+
+  /* type: "once" = strutturale, la fai una volta e vale per sempre
+           "week" = rinuncia, la ripeti ogni settimana
+
+     `su` e `quota` sono il punto: la mossa non vale una cifra da manuale,
+     vale una fetta della TUA voce di spesa. Se hai scritto 60 € di
+     abbonamenti, disdirne uno vale 21 € — non i 10 € di una stima media.
+     Le mosse senza `su` restano stime: non c'è una voce che le racconti. */
+  const MOVES = [
+    { id: "abbo",    type: "once", emoji: "📺", name: "Disdici un abbonamento", meta: "streaming, app, riviste", perMonth: 10, su: "abbonamenti", quota: .35 },
+    { id: "palestra",type: "once", emoji: "🏋️", name: "Palestra a ingressi", meta: "se ci vai meno di 2 volte", perMonth: 20, su: "abbonamenti", quota: .40 },
+    { id: "luce",    type: "once", emoji: "⚡", name: "Cambia gestore luce e gas", meta: "20 minuti sul comparatore", perMonth: 18, su: "bollette", quota: .18 },
+    { id: "internet",type: "once", emoji: "📶", name: "Rinegozia internet di casa", meta: "una telefonata al gestore", perMonth: 12, su: "bollette", quota: .12 },
+    { id: "tel",     type: "once", emoji: "📱", name: "Cambia piano telefonico", meta: "stessi giga, metà prezzo", perMonth: 8, su: "bollette", quota: .10 },
+    { id: "assic",   type: "once", emoji: "🛵", name: "Riconfronta l'assicurazione", meta: "auto o moto, alla scadenza", perMonth: 15, su: "trasporti", quota: .12 },
+    { id: "conto",   type: "once", emoji: "🏦", name: "Conto a zero spese", meta: "il canone se ne va", perMonth: 7 },
+    { id: "banca",   type: "once", emoji: "💳", name: "Taglia le commissioni", meta: "carte e conti doppioni", perMonth: 9 },
+    { id: "vendi",   type: "once", emoji: "🛍️", name: "Vendi 5 cose che non usi", meta: "una tantum, subito da parte", oneShot: 120 },
+    { id: "vestiti", type: "week", emoji: "👕", name: "Niente vestiti nuovi", meta: "l'armadio è già pieno", perMonth: 50, su: "shopping", quota: .60 },
+    { id: "impulso", type: "week", emoji: "⏳", name: "Regola delle 48 ore", meta: "se lo vuoi ancora, compralo", perMonth: 55, su: "shopping", quota: .35 },
+    { id: "consegne",type: "week", emoji: "🛵", name: "Niente cibo a domicilio", meta: "le commissioni pesano più del cibo", perMonth: 45, su: "hobby", quota: .20 },
+    { id: "cena",    type: "week", emoji: "🍕", name: "Una cena fuori in meno", meta: "cucinata insieme conta uguale", perMonth: 35, su: "hobby", quota: .18 },
+    { id: "aperi",   type: "week", emoji: "🍹", name: "Un aperitivo in meno", meta: "o a casa, stessi amici", perMonth: 40, su: "hobby", quota: .15 },
+    { id: "lista",   type: "week", emoji: "🛒", name: "Spesa solo con la lista", meta: "niente impulsi", perMonth: 40, su: "spesa", quota: .12 },
+    { id: "taxi",    type: "week", emoji: "🚕", name: "Zero taxi", meta: "mezzi, bici o due fermate a piedi", perMonth: 25, su: "trasporti", quota: .20 },
+    { id: "pranzo",  type: "week", emoji: "🥪", name: "Pranzo da casa 3 volte", meta: "questa settimana", perMonth: 60 },
+    { id: "caffe",   type: "week", emoji: "☕", name: "Un caffè al bar in meno", meta: "al giorno", perMonth: 26 },
+  ];
+
+  /* ---------- stato ---------- */
+
+  const KEY = "primo-mobile-v1";
+  let state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, once: [], week: [], plan: null };
+
+  const save = () => {
+    state.ultimoAccesso = Date.now();
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  };
+  const load = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.dreamText) { state = Object.assign(state, s); return true; } } catch (e) {} return false; };
+
+  const dream = () => ({
+    emoji: state.dreamEmoji || "✨",
+    label: state.dreamText || "il tuo sogno",
+    cost: state.dreamCost || 1500,
+  });
+  const move = (id) => MOVES.find((m) => m.id === id);
+
+  /* La mossa vista attraverso i tuoi numeri. Finché non hai compilato le
+     cifre resta la stima media; da lì in poi parla la tua vita. */
+  function mossa(m) {
+    const voce = m.su && state.voci ? state.voci.find((x) => x.id === m.su) : null;
+    if (!voce || !voce.valore) {
+      return { perMonth: m.perMonth || 0, oneShot: m.oneShot, nota: m.meta, reale: false };
+    }
+    return {
+      perMonth: Math.max(1, Math.round(voce.valore * m.quota)),
+      oneShot: undefined,
+      nota: `dai tuoi ${euro(voce.valore)} di ${voce.nome.toLowerCase()}`,
+      reale: true,
+    };
+  }
+
+  /* proporre "disdici un abbonamento" a chi ha scritto 0 di abbonamenti
+     sarebbe una presa in giro: quella mossa sparisce e basta */
+  function applicabile(m) {
+    if (!m.su || !state.voci) return true;
+    const voce = state.voci.find((x) => x.id === m.su);
+    if (!voce) return true;
+    return Math.round(voce.valore * m.quota) >= 3;
+  }
+
+  /* il ritmo mensile cresce con ogni mossa strutturale fatta */
+  const rate = () => state.baseRate + state.once.reduce((s, id) => {
+    const m = move(id);
+    return s + (m ? mossa(m).perMonth || 0 : 0);
+  }, 0);
+
+  const daysLeft = (extraSaved = 0, extraRate = 0) => {
+    const missing = Math.max(0, dream().cost - state.saved - extraSaved);
+    const r = rate() + extraRate;
+    if (missing === 0) return 0;
+    if (r <= 0) return Infinity;
+    return Math.ceil((missing / r) * 30.4);
+  };
+
+  /* ---------- navigazione ---------- */
+
+  function show(name) {
+    $$(".screen").forEach((s) => s.classList.toggle("on", s.dataset.screen === name));
+    /* la barra resta accesa anche nelle schermate figlie di una fase,
+       così si capisce sempre in che punto del percorso sei */
+    const FASE = { home: "home", moves: "moves", recap: "moves", cifre: "cifre", truth: "cifre" };
+    const fase = FASE[name];
+    $("#tabbar").hidden = !fase;
+    $$("#tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === fase));
+    const sc = $(`.screen[data-screen="${name}"]`);
+    if (sc) sc.scrollTop = 0;
+    if (name === "home") renderHome();
+    if (name === "moves") renderMoves();
+    if (name === "cifre") renderVoci();
+  }
+
+  $$("#tabbar button").forEach((b) => b.addEventListener("click", () => show(b.dataset.go)));
+
+  /* ---------- 1. sogno ---------- */
+
+  const dreamInput = $("#dreamInput");
+  const costInput = $("#dreamCost");
+
+  /* gli esempi non sono decorazione: fanno capire che si scrive libero */
+  $("#examples").innerHTML = ESEMPI.map((e) => `<button class="ex">${e}</button>`).join("");
+  $$("#examples .ex").forEach((b) => b.addEventListener("click", () => {
+    dreamInput.value = b.textContent;
+    onDreamTyped();
+    dreamInput.focus();
+  }));
+
+  /* Chiede all'AI quanto costa davvero il sogno scritto a mano.
+     Il dizionario qui sopra resta la rete di sicurezza: se il servizio
+     non è configurato o non risponde, l'app funziona lo stesso. */
+  let aiTimer = null, aiRichiesta = 0;
+  const aiCache = new Map();
+
+  /* Il motore AI è spento: l'app stima i sogni con il suo dizionario interno
+     e non chiama nessun server. Così il sito è un file solo, si carica
+     ovunque e non consuma niente. Per riaccenderlo un giorno, basta
+     rimettere qui l'indirizzo del servizio. */
+  const MOTORE_AI = null;
+
+  function chiediStimaAI(text) {
+    if (!MOTORE_AI) return;          /* motore spento: resta il dizionario */
+    clearTimeout(aiTimer);
+    const chiave = text.toLowerCase();
+
+    if (aiCache.has(chiave)) { applicaStima(aiCache.get(chiave), text); return; }
+
+    aiTimer = setTimeout(async () => {
+      const mia = ++aiRichiesta;
+      $("#dreamSpin").hidden = false;
+      try {
+        const r = await fetch(MOTORE_AI, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ sogno: text }),
+        });
+        if (!r.ok) throw new Error(r.status);
+        const stima = await r.json();
+        aiCache.set(chiave, stima);
+        if (mia === aiRichiesta) applicaStima(stima, text);
+      } catch (e) {
+        /* silenzio: la stima del dizionario è già a schermo */
+      } finally {
+        if (mia === aiRichiesta) $("#dreamSpin").hidden = true;
+      }
+    }, 700);
+  }
+
+  function applicaStima(stima, text) {
+    if (dreamInput.value.trim() !== text) return;   // ha continuato a scrivere
+    state.dreamEmoji = stima.emoji || state.dreamEmoji;
+    $("#dreamEmoji").textContent = state.dreamEmoji;
+    $("#guessLabel").innerHTML = stima.nota;
+    if (document.activeElement !== costInput) {
+      state.dreamCost = stima.costo;
+      costInput.value = stima.costo;
+    }
+  }
+
+  function onDreamTyped() {
+    const text = dreamInput.value.trim();
+    state.dreamText = text;
+    const g = guessDream(text);
+
+    if (!text) {
+      clearTimeout(aiTimer);
+      aiRichiesta++;
+      $("#dreamSpin").hidden = true;
+      $("#guess").hidden = true;
+      $("#dreamEmoji").textContent = "✨";
+      $("#toRate").disabled = true;
+      return;
+    }
+
+    /* il fondo emergenza dipende da quanto spendi, non da un listino */
+    let cost = g ? g.cost : 1500;
+    if (g && g.dynamic === "fondo") {
+      cost = state.plan ? Math.max(1500, Math.round(computeBudget(state.plan).essenziali * 3 / 50) * 50) : 3600;
+    }
+
+    state.dreamEmoji = g ? g.emoji : "✨";
+    $("#dreamEmoji").textContent = state.dreamEmoji;
+
+    $("#guess").hidden = false;
+    $("#guessLabel").innerHTML = g
+      ? `Di solito <b>${g.what}</b> costa più o meno così:`
+      : `Non conosco questo sogno, e va benissimo. <b>Quanto ti serve, all'incirca?</b>`;
+
+    if (document.activeElement !== costInput) {
+      state.dreamCost = cost;
+      costInput.value = cost;
+    }
+    $("#toRate").disabled = false;
+
+    /* la stima del dizionario è già a schermo; se un giorno il motore AI
+       sarà acceso, la raffinerà un attimo dopo */
+    chiediStimaAI(text);
+  }
+
+  dreamInput.addEventListener("input", onDreamTyped);
+  costInput.addEventListener("focus", () => costInput.select());
+  costInput.addEventListener("input", () => {
+    state.dreamCost = Math.max(1, parseInt(costInput.value.replace(/\D/g, ""), 10) || 0);
+  });
+  costInput.addEventListener("blur", () => { costInput.value = state.dreamCost || 1500; });
+
+  $("#toRate").addEventListener("click", () => { save(); show("wake"); });
+  $("#backDream").addEventListener("click", () => show("dream"));
+
+  /* ---------- 3. home ---------- */
+
+  let shownDays = null;
+
+  function renderHome() {
+    const d = dream();
+    $("#cdEmoji").textContent = d.emoji;
+    $("#cdLabel").textContent = "giorni a « " + d.label.toLowerCase() + " »";
+    $("#costN").textContent = euro(d.cost);
+    $("#savedN").textContent = euro(state.saved);
+    $("#barFill").style.width = Math.min(100, (state.saved / d.cost) * 100) + "%";
+
+    const days = daysLeft();
+    const lontano = !isFinite(days) || days > TROPPO;
+
+    if (lontano) {
+      shownDays = null;
+      $("#cdDays").textContent = "—";
+      $("#cdDate").innerHTML = "Con questo ritmo servirebbe troppo tempo. <b style='color:var(--lime)'>Le azioni qui sotto lo cambiano.</b>";
+    } else {
+      countTo($("#cdDays"), days);
+      const when = new Date();
+      when.setDate(when.getDate() + days);
+      $("#cdDate").textContent = days === 0
+        ? "Ci sei già. Ora scegli il prossimo."
+        : "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" }) + " · " + euro(rate()) + "/mese";
+    }
+
+    /* i tre salvadanai, a colpo d'occhio */
+    if (state.voci) {
+      const risp = risparmio();
+      const inv = (state.voci.find((x) => x.id === "investimento") || {}).valore || 0;
+      const perSogno = (state.voci.find((x) => x.id === "sogno") || {}).valore || 0;
+      $("#homeSalva").innerHTML = `
+        <div class="sv risparmio"><span class="sv-emoji">🌱</span><span class="sv-testo"><b>Risparmio</b></span><span class="sv-cifra">${euro(risp)}</span></div>
+        <div class="sv investimenti"><span class="sv-emoji">📈</span><span class="sv-testo"><b>Investimenti</b></span><span class="sv-cifra">${euro(inv)}</span></div>
+        <div class="sv sogno"><span class="sv-emoji">${d.emoji}</span><span class="sv-testo"><b>Sogno</b></span><span class="sv-cifra">${euro(perSogno)}</span></div>`;
+    }
+
+    /* Tre suggerimenti, e sono i tuoi: prima le strutturali (nessuna
+       rinuncia), dentro ogni gruppo quelle che sulle tue cifre valgono
+       di più. Chi ha 200 € di abbonamenti non si sente dire "vendi
+       cinque cose in soffitta". */
+    const libere = (t) => MOVES.filter((m) => m.type === t && !fatta(m) && applicabile(m))
+      .sort(perPeso);
+    const pool = libere("once").concat(libere("week"));
+    const list = $("#weekList");
+    list.innerHTML = "";
+    pool.slice(0, 3).forEach((m) => list.appendChild(moveRow(m, "wm")));
+    if (!pool.length) list.innerHTML = `<p class="sub">Le hai prese tutte. Da qui in poi conta una cosa sola: tenere il ritmo.</p>`;
+
+    /* una voce dei maestri, stabile per tutta la giornata */
+    if (typeof TEACHERS !== "undefined") {
+      const t = TEACHERS[Math.floor(Date.now() / 864e5) % TEACHERS.length];
+      $("#citazione").innerHTML = `«${t.quote}»<b>${t.name} — ${t.rule}</b>`;
+    }
+  }
+
+  function countTo(el, to) {
+    if (!isFinite(to)) { el.textContent = "∞"; shownDays = null; return; }
+    const from = shownDays === null ? to : shownDays;
+    shownDays = to;
+    if (from === to) { el.textContent = to; return; }
+    const t0 = performance.now(), dur = 900;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  $("#goMoves").addEventListener("click", () => show("moves"));
+
+  /* ---------- 4. mosse ---------- */
+
+  let tab = "once";
+
+  $$(".tab").forEach((t) => t.addEventListener("click", () => {
+    tab = t.dataset.tab;
+    $$(".tab").forEach((x) => x.classList.toggle("on", x === t));
+    renderMoves();
+  }));
+
+  const fatta = (m) => (state.once.includes(m.id) || state.week.includes(m.id) ? 1 : 0);
+
+  /* Promettere "−0 giorni" è peggio che non promettere niente: quando una
+     rinuncia settimanale è troppo piccola per spostare il calendario, si
+     dice cosa vale davvero — la somma di un anno, che non è mai zero. */
+  function guadagno(m, x, gain) {
+    if (gain >= 1) return "−" + gain + (gain === 1 ? " giorno" : " giorni");
+    return euro(valoreAnnuo(m)) + " in un anno";
+  }
+
+  /* quanto vale in un anno: serve a ordinare anche le mosse che sul
+     calendario non spostano ancora niente */
+  function valoreAnnuo(m) {
+    const x = mossa(m);
+    return x.oneShot || (x.perMonth || 0) * 12;
+  }
+
+  /* le più grosse per te davanti, e a parità di giorni vince l'importo */
+  const perPeso = (a, b) => (gainOf(b) - gainOf(a)) || (valoreAnnuo(b) - valoreAnnuo(a));
+
+  function gainOf(m) {
+    const x = mossa(m);
+    const before = daysLeft();
+    const after = x.oneShot ? daysLeft(x.oneShot, 0)
+      : m.type === "once" ? daysLeft(0, x.perMonth)
+      : daysLeft(x.perMonth / 4.3, 0);   /* una settimana di quella rinuncia */
+    return Math.max(0, before - after);
+  }
+
+  function moveRow(m, cls) {
+    const done = !!fatta(m);
+    const x = mossa(m);
+    const b = document.createElement("button");
+    b.className = cls + (done ? " done" : "") + (x.reale ? " misura" : "");
+    const gain = done ? 0 : gainOf(m);
+    const cifra = x.oneShot ? euro(x.oneShot) : euro(x.perMonth) + "/mese";
+    if (cls === "wm") {
+      /* qui c'è spazio: si dice anche da dove nasce la cifra */
+      b.innerHTML = `<span class="wm-emoji">${m.emoji}</span>
+        <span class="wm-body"><span class="wm-name">${m.name}</span>
+        <span class="wm-gain">${done ? "fatto ✓" : guadagno(m, x, gain) + " · " + cifra}</span>
+        <span class="wm-su">${x.nota}</span></span>
+        <span class="wm-check">✓</span>`;
+    } else {
+      /* pastiglia da una riga sola, come gli esempi del sogno */
+      b.title = x.reale ? "calcolata sui " + x.nota.replace("dai tuoi ", "") : m.meta;
+      b.innerHTML = `<span class="move-emoji">${m.emoji}</span>
+        <span class="move-name">${m.name}</span>
+        <span class="move-cifra">${cifra}</span>
+        <span class="move-gain">${done ? "✓" : guadagno(m, x, gain)}</span>`;
+    }
+    if (!done) b.addEventListener("click", () => doMove(m, gain));
+    return b;
+  }
+
+  function renderMoves() {
+    const list = $("#movesList");
+    list.innerHTML = "";
+    /* le più grosse per te davanti: chi si ferma alla prima riga
+       ha comunque visto le due che gli cambiano di più il calendario */
+    MOVES.filter((m) => m.type === tab && applicabile(m))
+      .sort((a, b) => (fatta(a) - fatta(b)) || perPeso(a, b))
+      .forEach((m) => list.appendChild(moveRow(m, "move")));
+    $("#movesHint").textContent = tab === "once"
+      ? "Si fanno una volta sola e valgono per sempre: nessuna rinuncia, solo soldi che smetti di regalare."
+      : "Costano un po' di disciplina ogni settimana. Guardale solo dopo aver preso le altre.";
+    aggiornaMiniConta(false);
+  }
+
+  /* il contatore in cima alla schermata: scatta a ogni scelta */
+  function aggiornaMiniConta(scatta) {
+    const d = dream();
+    const days = daysLeft();
+    const lontano = !isFinite(days) || days > TROPPO;
+    $("#movesEmoji").textContent = lontano ? "🧭" : d.emoji;
+    $("#movesLabel").textContent = lontano ? "continua a liberare spazio" : `giorni a « ${d.label.toLowerCase()} »`;
+    const el = $("#movesDays");
+    el.textContent = lontano ? "—" : days;
+    if (scatta) {
+      el.classList.add("scatto");
+      setTimeout(() => el.classList.remove("scatto"), 320);
+    }
+  }
+
+  function doMove(m, gain) {
+    const x = mossa(m);
+    if (m.type === "once") {
+      state.once.push(m.id);
+      if (x.oneShot) state.saved += x.oneShot;
+    } else {
+      state.week.push(m.id);
+      state.saved += Math.round(x.perMonth / 4.3);
+    }
+    save();
+    renderMoves();
+    aggiornaMiniConta(true);
+  }
+
+  /* ---------- 6. riepilogo: cosa hai guadagnato, e il patto ---------- */
+
+  let daysAtStart = null;   /* quanti giorni mancavano a inizio sessione */
+
+  $("#closeWeek").addEventListener("click", () => { renderRecap(); show("recap"); });
+  $("#recapBack").addEventListener("click", () => show("home"));
+
+  function renderRecap() {
+    const d = dream();
+    const days = daysLeft();
+    const lontano = !isFinite(days) || days > TROPPO;
+    const gained = daysAtStart != null && isFinite(days) && isFinite(daysAtStart)
+      ? Math.max(0, daysAtStart - days) : 0;
+    const rate = planRate();
+
+    $("#recapEyebrow").textContent = gained > 0 ? "Guarda cos'hai fatto" : "Ci siamo";
+    $("#recapTitle").innerHTML = gained > 0
+      ? `Hai tagliato <em>${gained} giorn${gained === 1 ? "o" : "i"}</em>.`
+      : "Il piano è tuo.";
+    $("#recapSub").textContent = gained > 0
+      ? "In una sola sessione — e queste scelte continuano a lavorare ogni mese, anche quando non ci pensi."
+      : "Sai dove sei, sai dove vuoi arrivare e sai come arrivarci. È più di quanto faccia la maggior parte delle persone.";
+
+    /* il colpo d'occhio finale: quanto manca, quanto metti via, dove sarai */
+    $("#recapDays").textContent = lontano ? "—" : days;
+    $("#recapLabel").textContent = lontano
+      ? "il traguardo è ancora lontano"
+      : `giorni a « ${d.label.toLowerCase()} »`;
+
+    const quando = new Date();
+    quando.setDate(quando.getDate() + (isFinite(days) ? days : 0));
+    $("#recapQuando").textContent = lontano
+      ? "libera altro spazio e si avvicina"
+      : "cioè " + quando.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
+
+    /* i tre salvadanai che costruiscono il futuro, spiegati */
+    const risp = state.voci ? risparmio() : 0;
+    const inv = state.voci ? (state.voci.find((x) => x.id === "investimento") || {}).valore || 0 : 0;
+    const perSogno = state.voci ? (state.voci.find((x) => x.id === "sogno") || {}).valore || 0 : 0;
+
+    $("#recapSalva").innerHTML = `
+      <div class="sv risparmio">
+        <span class="sv-emoji">🌱</span>
+        <span class="sv-testo"><b>Risparmio</b><small>Il tuo cuscino: ti protegge dagli imprevisti e non si tocca. Cresce e basta.</small></span>
+        <span class="sv-cifra">${euro(risp)}</span>
+      </div>
+      <div class="sv investimenti">
+        <span class="sv-emoji">📈</span>
+        <span class="sv-testo"><b>Investimenti</b><small>Soldi che lavorano al posto tuo: non li usi ora, ma tra anni valgono più di quanto hai messo.</small></span>
+        <span class="sv-cifra">${euro(inv)}</span>
+      </div>
+      <div class="sv sogno">
+        <span class="sv-emoji">${d.emoji}</span>
+        <span class="sv-testo"><b>${d.label}</b><small>Il salvadanaio del sogno: si riempie da solo, mese dopo mese, finché non parti.</small></span>
+        <span class="sv-cifra">${euro(perSogno)}</span>
+      </div>`;
+
+    const totale = risp + inv + perSogno;
+    $("#recapMese").textContent = euro(totale);
+    $("#recapAnno").textContent = euro(totale * 12);
+
+    /* due righe che danno coraggio, non compiti: cosa hai già in mano
+       e cosa potresti fare se un giorno ne avrai voglia */
+    const tips = [];
+    if (risp > 0) {
+      tips.push({ cls: "lime", emoji: "🌱", html: `Oltre al sogno, ogni mese <b>${euro(risp)}</b> restano tuoi comunque: quello è il futuro che ti costruisci a prescindere.` });
+    } else {
+      tips.push({ cls: "lime", emoji: "🌱", html: "Anche <b>1 € al mese</b> è un inizio vero: non è la cifra, è l'abitudine — e l'abitudine cresce con le entrate." });
+    }
+
+    const restanti = MOVES.filter((m) => m.type === "once" && !fatta(m) && applicabile(m))
+      .sort(perPeso);
+    if (restanti.length) {
+      const next = restanti[0];
+      const x = mossa(next);
+      const quanto = x.oneShot ? euro(x.oneShot) : euro(x.perMonth) + " al mese";
+      tips.push({ emoji: next.emoji, html: `Se un giorno vuoi accelerare, «${next.name}» vale <b>${quanto}</b>${x.reale ? " " + x.nota : ""} e si fa una volta sola. Nessuna fretta.` });
+    } else {
+      tips.push({ emoji: "🏆", html: "Hai già preso <b>tutte</b> le scorciatoie disponibili. Da qui in poi conta una cosa sola: tenere il ritmo." });
+    }
+    $("#recapTips").innerHTML = tips.map((t) => `<div class="tip ${t.cls || ""}"><span>${t.emoji}</span><p>${t.html}</p></div>`).join("");
+
+    paintNotify();
+    daysAtStart = isFinite(days) ? days : null;
+  }
+
+  /* il promemoria della domenica */
+  function paintNotify() {
+    const note = $("#notifyNote"), btn = $("#notifyBtn");
+    note.classList.remove("ok");
+    if (!("Notification" in window)) {
+      btn.hidden = true;
+      note.textContent = "Su questo dispositivo le notifiche non sono disponibili: mettiti una sveglia ricorrente la domenica sera, funziona uguale.";
+      return;
+    }
+    if (Notification.permission === "granted") {
+      btn.hidden = true;
+      note.textContent = "✓ Promemoria attivo. Ci sentiamo domenica sera.";
+      note.classList.add("ok");
+    } else if (Notification.permission === "denied") {
+      btn.hidden = true;
+      note.textContent = "Le notifiche sono bloccate: puoi riattivarle dalle impostazioni del browser, oppure metterti una sveglia ricorrente la domenica.";
+    } else {
+      btn.hidden = false;
+      note.textContent = "Su iPhone aggiungi prima l'app alla schermata Home, così il promemoria arriva anche a schermo spento.";
+    }
+  }
+
+  $("#notifyBtn").addEventListener("click", async () => {
+    try {
+      const res = await Notification.requestPermission();
+      if (res === "granted") {
+        new Notification("Ci vediamo domenica 👋", { body: "Ti ricorderò di confermare le tue mosse: bastano trenta secondi." });
+      }
+      paintNotify();
+    } catch (e) {
+      $("#notifyNote").textContent = "Non è stato possibile attivare il promemoria da qui.";
+    }
+  });
+
+  /* ---------- 5. piano: il budget vero alimenta il contatore ---------- */
+
+  /* i menu si costruiscono dagli stessi dati della versione desktop */
+  function fillSelects() {
+    $("#pCity").innerHTML = CITIES.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+    $("#pHousing").innerHTML = HOUSING.map((h) => `<option value="${h.id}">${h.emoji} ${h.label}</option>`).join("");
+    $("#pVehicle").innerHTML = VEHICLES.map((v) => `<option value="${v.id}">${v.emoji} ${v.label}</option>`).join("");
+    if (state.plan) {
+      $("#pIncome").value = state.plan.income;
+      $("#pCity").value = state.plan.cityId;
+      $("#pHousing").value = state.plan.housing;
+      $("#pVehicle").value = state.plan.vehicle;
+      $("#pPiva").checked = state.plan.incomeType === "piva";
+    }
+  }
+
+  $("#pIncome").addEventListener("focus", (e) => e.target.select());
+
+  /* il risveglio: le stime servono solo ad ancorare — poi le cifre
+     le scrive l'utente, una per una. È lì che si aprono gli occhi. */
+  $("#pCalc").addEventListener("click", () => {
+    state.plan = {
+      income: Math.max(0, parseInt($("#pIncome").value.replace(/\D/g, ""), 10) || 0),
+      cityId: $("#pCity").value,
+      housing: $("#pHousing").value,
+      vehicle: $("#pVehicle").value,
+      incomeType: $("#pPiva").checked ? "piva" : "fisso",
+      family: "solo",
+      goals: { short: null, mid: null, long: null },
+    };
+    state.cats = null;
+    costruisciVoci();
+    save();
+    renderVoci();
+    show("cifre");
+  });
+
+  $("#cifreBack").addEventListener("click", () => show("wake"));
+
+  /* ---------- 2b. le tue cifre ---------- */
+
+  /* Macro uguali per tutti + il salvadanaio col nome del tuo sogno + le micro
+     che aggiungi tu. Risparmio e investimenti chiudono la lista: sono
+     il risultato di tutto il resto, non una spesa. */
+  function costruisciVoci() {
+    const b = computeBudget(state.plan);
+    const v = {};
+    b.cats.forEach((c) => (v[c.id] = c.val));
+    const d = dream();
+
+    const voci = [];
+    const add = (id, emoji, nome, hint, valore, tipo) =>
+      voci.push({ id, emoji, nome, hint, valore: Math.round(valore) || 0, tipo, ok: false });
+
+    if (b.isPiva) add("tasse", "🏛️", "Fisco", "metà di ogni incasso: non è tuo", v.tasse, "fissa");
+    add("casa", "🏠", "Casa", state.plan.housing === "genitori" ? "vivi coi genitori" : "affitto o mutuo", v.casa, "fissa");
+    add("bollette", "💡", "Bollette", "luce, gas, internet", v.bollette, "fissa");
+    add("spesa", "🛒", "Spesa", "cibo e casa", v.spesa, "fissa");
+    add("trasporti", (VEHICLES.find((x) => x.id === state.plan.vehicle) || {}).emoji || "🚌", "Trasporti", "come ti muovi ogni giorno", v.trasporti, "fissa");
+    add("salute", "❤️", "Salute", "farmacia, visite", v.salute, "fissa");
+    add("abbonamenti", "📺", "Abbonamenti", "streaming, app, palestra", v.abbonamenti, "variabile");
+    add("hobby", "🎨", "Hobby & uscite", "sport, cene, divertimento", v.hobby, "variabile");
+    add("shopping", "🛍️", "Shopping", "vestiti, sfizi", v.shopping, "variabile");
+
+    /* il salvadanaio del sogno prende il posto della categoria generica */
+    add("sogno", d.emoji, d.label, "il salvadanaio del tuo sogno", v.viaggi, "sogno");
+
+    add("investimento", "📈", "Investimenti", "soldi che lavorano — massimo il 20%", v.investimento, "futuro");
+
+    state.voci = voci;
+  }
+
+  const spendibile = () => {
+    if (!state.plan) return 0;
+    const b = computeBudget(state.plan);
+    return b.spendibile;
+  };
+
+  const maxInvestimento = () => Math.round(spendibile() * 0.2);
+
+  const sommaVoci = () => (state.voci || []).reduce((s, x) => s + (x.valore || 0), 0);
+
+  const risparmio = () => Math.max(0, (state.plan ? state.plan.income : 0) - sommaVoci());
+
+  function renderVoci() {
+    if (!state.voci) { show("wake"); return; }
+    const lista = $("#vociList");
+    const max = Math.max(200, state.plan.income);
+
+    lista.innerHTML = state.voci.map((x, i) => {
+      const cap = x.id === "investimento" ? maxInvestimento() : max;
+      return `<div class="voce ${x.ok ? "ok" : ""} ${x.tipo === "futuro" ? "futuro" : ""} ${x.tipo === "sogno" ? "sogno" : ""}" data-i="${i}">
+        <span class="voce-emoji">${x.emoji}</span>
+        <span class="voce-nome"><b>${x.nome}</b><small>${x.hint}</small></span>
+        <span class="voce-campo"><input type="text" inputmode="numeric" maxlength="5" value="${x.valore}" aria-label="${x.nome} in euro" /><span>€</span></span>
+        <button class="voce-check" aria-label="Confermo ${x.nome}">✓</button>
+        <input class="range" type="range" min="0" max="${cap}" step="5" value="${Math.min(x.valore, cap)}" aria-label="${x.nome} (cursore)" />
+      </div>`;
+    }).join("") +
+    `<div class="voce-risparmio">
+       <span style="font-size:19px">🌱</span>
+       <span><b style="display:block;font-size:14px;font-weight:500">Risparmio</b><small style="font-size:10.5px;color:var(--faint)">il futuro, a prescindere dal sogno</small></span>
+       <b id="risparmioVal">${euro(risparmio())}</b>
+     </div>`;
+
+    $$("#vociList .voce").forEach((row) => {
+      const i = +row.dataset.i;
+      const campo = $(".voce-campo input", row);
+      const slider = $(".range", row);
+      const fill = () => slider.style.setProperty("--fill", (slider.value / slider.max) * 100 + "%");
+      fill();
+
+      const applica = (val, daSlider) => {
+        const invest = state.voci[i].id === "investimento";
+        const cap = invest ? maxInvestimento() : 99999;
+        const v = Math.max(0, Math.min(cap, val));
+        state.voci[i].valore = v;
+        state.voci[i].ok = true;
+        row.classList.add("ok");
+
+        if (daSlider) {
+          campo.value = v;
+        } else {
+          slider.value = Math.min(v, +slider.max);
+          fill();
+          /* il tetto ha morso: mostralo subito, e spiega perché */
+          if (v !== val) {
+            campo.value = v;
+            if (invest) {
+              const hint = $(".voce-nome small", row);
+              hint.textContent = `il massimo è il 20%: ${euro(cap)}`;
+              hint.style.color = "var(--lime)";
+              setTimeout(() => {
+                hint.textContent = "soldi che lavorano — massimo il 20%";
+                hint.style.color = "";
+              }, 2600);
+            }
+          }
+        }
+        aggiornaResto();
+        save();
+      };
+
+      campo.addEventListener("focus", () => campo.select());
+      campo.addEventListener("input", () => applica(parseInt(campo.value.replace(/\D/g, ""), 10) || 0, false));
+      campo.addEventListener("blur", () => { campo.value = state.voci[i].valore; });
+      campo.addEventListener("keydown", (e) => { if (e.key === "Enter") campo.blur(); });
+      slider.addEventListener("input", () => { fill(); applica(+slider.value, true); });
+      $(".voce-check", row).addEventListener("click", () => {
+        state.voci[i].ok = !state.voci[i].ok;
+        row.classList.toggle("ok", state.voci[i].ok);
+        aggiornaResto();
+        save();
+      });
+    });
+
+    aggiornaResto();
+  }
+
+  function aggiornaResto() {
+    const tot = state.voci.length;
+    const fatte = state.voci.filter((x) => x.ok).length;
+    $("#confermaFill").style.width = (fatte / tot) * 100 + "%";
+    $("#confermaN").textContent = `${fatte} di ${tot}`;
+    $("#confermaPiano").disabled = fatte < tot;
+    $("#confermaPiano").textContent = fatte < tot
+      ? `Mancano ${tot - fatte} voci` : "Conferma il piano ✓";
+
+    const r = risparmio();
+    const rispEl = $("#risparmioVal");
+    if (rispEl) rispEl.textContent = euro(r);
+
+    const sforo = sommaVoci() - state.plan.income;
+    const box = $("#resto");
+    if (sforo > 0) {
+      box.className = "resto male";
+      box.innerHTML = `Così esci di <b>${euro(sforo)}</b> dal mese. Non è una bocciatura: è l'informazione che ti serviva. Abbassa qualche voce — le azioni della fase 3 ti daranno una mano.`;
+    } else if (r === 0) {
+      box.className = "resto";
+      box.innerHTML = `Tutto assegnato, <b>zero</b> di risparmio. Prova a liberare anche solo <b>1&nbsp;€</b>: conta più di quanto sembri.`;
+    } else {
+      box.className = "resto";
+      const inv = (state.voci.find((x) => x.id === "investimento") || {}).valore || 0;
+      box.innerHTML = `Ti restano <b>${euro(r)}</b> al mese di risparmio${inv ? ` più <b>${euro(inv)}</b> investiti` : ""}. Il risparmio costruisce il futuro <b>a prescindere</b> dal sogno: il sogno ha già il suo salvadanaio.`;
+    }
+  }
+
+  /* le micro-categorie non le indoviniamo: le aggiungi tu */
+  $("#addVoce").addEventListener("click", () => {
+    const nome = prompt("Che voce ti manca?\n(es. Cane, Rata prestito, Aiuto famiglia, Terapia)");
+    if (!nome || !nome.trim()) return;
+    const quanto = parseInt((prompt(`Quanto ti costa "${nome.trim()}" al mese, in euro?`) || "").replace(/\D/g, ""), 10) || 0;
+    state.voci.splice(state.voci.length - 1, 0, {
+      id: "custom-" + Date.now(), emoji: "📌", nome: nome.trim().slice(0, 28),
+      hint: "voce tua", valore: quanto, tipo: "variabile", ok: true,
+    });
+    save();
+    renderVoci();
+  });
+
+  $("#confermaPiano").addEventListener("click", () => {
+    state.baseRate = risparmio() + ((state.voci.find((x) => x.id === "investimento") || {}).valore || 0);
+    save();
+    renderTruth();
+    show("truth");
+  });
+
+  /* dal piano si va dritti ai suggerimenti: è lì che si accelera */
+  $("#toAction").addEventListener("click", () => show("moves"));
+  $("#toEdit").addEventListener("click", () => show("cifre"));
+
+  /* quanto libera il piano ogni mese: risparmio + investimenti,
+     entrambi calcolati sulle cifre che l'utente ha confermato */
+  function planRate() {
+    if (!state.voci) return 0;
+    return risparmio() + ((state.voci.find((x) => x.id === "investimento") || {}).valore || 0);
+  }
+
+  /* la tabella da fotografare: l'ordine è quello in cui si eseguono
+     le mosse, con risparmio e investimenti in coda perché sono ciò
+     che resta quando tutto il resto ha già un posto */
+  function righeTabella() {
+    const righe = state.voci
+      .filter((x) => x.valore > 0)
+      .map((x) => ({ nome: x.nome, val: x.valore, lime: x.tipo === "futuro" || x.tipo === "sogno", emoji: x.emoji }));
+    const r = risparmio();
+    if (r > 0) righe.push({ nome: "Risparmio", val: r, lime: true, emoji: "🌱" });
+    return righe;
+  }
+
+  function renderTabella(el) {
+    const righe = righeTabella();
+    const mese = new Date().toLocaleDateString("it-IT", { month: "long" });
+    el.innerHTML =
+      `<p class="dt-title">Quando entrano i soldi, in quest'ordine</p>` +
+      righe.map((r, i) => `
+        <div class="dt-row ${r.lime ? "lime" : ""}">
+          <span class="dt-n">${i + 1}</span>
+          <span class="dt-name">${r.emoji} <b>${r.nome}</b></span>
+          <span class="dt-val">${euro(r.val)}</span>
+        </div>`).join("") +
+      `<p class="dt-foot">Vale per ${mese} e per ogni mese finché non cambia qualcosa. Fanne uno screenshot o copiala in una nota: deve stare dove la vedi.</p>`;
+  }
+
+  $("#copiaTabella").addEventListener("click", async () => {
+    const righe = righeTabella();
+    const mese = new Date().toLocaleDateString("it-IT", { month: "long", year: "numeric" });
+    const testo = [
+      `IL MIO PIANO — ${mese}`,
+      `${euro(state.plan.income)} al mese · ${dream().label}`,
+      ``,
+      `Quando entrano i soldi:`,
+      ...righe.map((r, i) => `${i + 1}. ${r.nome}: ${euro(r.val)}`),
+      ``,
+      `Ogni euro conta. Anche uno.`,
+    ].join("\n");
+    const btn = $("#copiaTabella");
+    try {
+      await navigator.clipboard.writeText(testo);
+      btn.textContent = "✓ Copiata";
+      setTimeout(() => (btn.textContent = "📋 Copia"), 1800);
+    } catch (e) {
+      prompt("Copia il piano:", testo);
+    }
+  });
+
+  /* oltre i dieci anni il numero non aiuta più nessuno: dice solo
+     che da qui non si passa, e serve una strada diversa */
+  const TROPPO = 3650;
+
+  function renderTruth() {
+    const budget = computeBudget(state.plan);
+    const perMonth = planRate();
+    const d = dream();
+    const days = daysLeft();
+    const lontano = !isFinite(days) || days > TROPPO;
+
+    $("#truthRate").textContent = euro(perMonth);
+    $("#truthEmoji").textContent = lontano ? "🧭" : d.emoji;
+    $("#truthDays").textContent = lontano ? "—" : days;
+    $("#truthLabel").textContent = lontano
+      ? "con questo ritmo « " + d.label.toLowerCase() + " » resta troppo lontano"
+      : "ti separano da « " + d.label.toLowerCase() + " »";
+
+    const city = budget.city.name;
+    $("#truthNote").innerHTML = lontano
+      ? `A ${city} le spese si prendono quasi tutto. <b>Non è un tuo fallimento</b>: è il motivo per cui esiste questa app. Correggi le voci qui sotto se non ti tornano, poi liberiamo spazio insieme.`
+      : budget.isPiva
+        ? `Al netto del <b>50% messo via per il fisco</b> e delle spese reali di ${city}.`
+        : `Calcolato sulle spese reali di ${city}: affitto, spesa, trasporti. Se qualche cifra non è la tua, la correggi tu.`;
+
+    daysAtStart = isFinite(days) && days <= TROPPO ? days : null;
+
+    renderTabella($("#truthTable"));
+
+    $("#truthPush").innerHTML = lontano
+      ? "Prima mossa: controlla che le spese siano davvero le tue — spesso la stima è più alta della realtà. Poi guarda le <b>azioni</b>: ce ne sono che liberano 50-80&nbsp;€ al mese senza farti rinunciare a niente."
+      : days > 400
+        ? "Sembra lontano, vero? Ecco perché esiste la prossima schermata: <b>ci sono azioni che tagliano mesi interi</b>, e la maggior parte non ti costa nessuna rinuncia."
+        : "Ora sai da dove parti. Le azioni della prossima schermata servono ad accorciare ancora.";
+  }
+
+
+  $("#resetAll").addEventListener("click", () => ricomincia());
+
+  /* ---------- l'orizzonte che si muove sempre ---------- */
+
+  (function orizzonte() {
+    const cv = $("#orizzonte");
+    const ctx = cv.getContext("2d");
+    const fermo = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let w = 0, h = 0, raf = null, t = 0;
+
+    /* Tre aloni di luce che derivano lentissimi, come nuvole viste da
+       lontano. Niente forme riconoscibili: solo profondità e calore
+       dietro al testo, che è il vero protagonista. */
+    const aloni = [
+      { x: .22, y: .18, r: .62, col: "124,92,255", op: .30, vx: .00021, vy: .00013 },
+      { x: .82, y: .30, r: .50, col: "75,216,196", op: .16, vx: -.00016, vy: .00019 },
+      { x: .55, y: .92, r: .78, col: "217,255,75", op: .13, vx: .00012, vy: -.00009 },
+    ];
+
+    function dimensiona() {
+      const r = cv.getBoundingClientRect();
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      w = r.width; h = r.height;
+      cv.width = Math.max(2, w * dpr);
+      cv.height = Math.max(2, h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function disegna() {
+      ctx.clearRect(0, 0, w, h);
+      const lato = Math.max(w, h);
+
+      for (const a of aloni) {
+        /* derivano su una traiettoria lenta e mai identica a sé stessa */
+        const cx = (a.x + Math.sin(t * a.vx) * .12) * w;
+        const cy = (a.y + Math.cos(t * a.vy * 1.3) * .10) * h;
+        const rr = lato * a.r * (1 + Math.sin(t * .0004 + a.x * 9) * .07);
+
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr);
+        g.addColorStop(0, `rgba(${a.col},${a.op})`);
+        g.addColorStop(.55, `rgba(${a.col},${a.op * .28})`);
+        g.addColorStop(1, `rgba(${a.col},0)`);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      }
+    }
+
+    function passo() {
+      t += 1;
+      disegna();
+      raf = requestAnimationFrame(passo);
+    }
+
+    dimensiona();
+    disegna();
+    if (!fermo) raf = requestAnimationFrame(passo);
+
+    addEventListener("resize", () => { dimensiona(); disegna(); });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
+      else if (!fermo && !raf) raf = requestAnimationFrame(passo);
+    });
+  })();
+
+  /* ---------- avvio ---------- */
+
+  function ricomincia() {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, once: [], week: [], plan: null, voci: null };
+    dreamInput.value = "";
+    costInput.value = "";
+    daysAtStart = null;
+    onDreamTyped();
+    show("dream");
+  }
+
+  $("#homeReset").addEventListener("click", ricomincia);
+
+  fillSelects();
+
+  /* Chi ha già un piano lo ritrova (è il suo, ci torna la domenica);
+     chi arriva nuovo parte dal Sogno. La build di anteprima mette
+     questo a false per mostrare sempre il percorso dall'inizio. */
+  const RIPRENDI = true;
+
+  /* Mentre l'app era chiusa il tempo è passato lo stesso: chi torna
+     dopo una settimana trova i soldi maturati e i giorni già scesi.
+     È il motivo per cui vale la pena riaprirla la domenica. */
+  function tempoTrascorso() {
+    if (!state.ultimoAccesso) return;
+    const giorni = Math.floor((Date.now() - state.ultimoAccesso) / 864e5);
+    if (giorni < 1) return;
+
+    const prima = daysLeft();
+    const maturato = Math.round((rate() / 30.4) * giorni);
+    state.saved += maturato;
+    const dopo = daysLeft();
+    const scesi = isFinite(prima) && isFinite(dopo) ? Math.max(0, prima - dopo) : 0;
+
+    const box = $("#bentornato");
+    box.hidden = false;
+    box.innerHTML = maturato > 0
+      ? `Bentornatə. In ${giorni === 1 ? "un giorno" : giorni + " giorni"} hai messo via <b>${euro(maturato)}</b> senza pensarci: sono <b>${scesi} giorn${scesi === 1 ? "o" : "i"}</b> in meno al traguardo.`
+      : `Bentornatə. Sono passat${giorni === 1 ? "o un giorno" : "i " + giorni + " giorni"}: appena riparte il tuo ritmo, il contatore riprende a scendere.`;
+    save();
+  }
+
+  if (RIPRENDI && load()) {
+    tempoTrascorso();
+    fillSelects();
+    dreamInput.value = state.dreamText || "";
+    costInput.value = state.dreamCost || "";
+    $("#dreamEmoji").textContent = state.dreamEmoji || "✨";
+    show("home");
+  }
+})();
+</script>
+</body>
+</html>

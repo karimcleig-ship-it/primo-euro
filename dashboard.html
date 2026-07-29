@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PRIMO EURO — Il tuo primo euro messo da parte</title>
+  <meta name="description" content="Educazione finanziaria semplice: tre domande e ti costruiamo un budget vero, basato sulla tua città e sui metodi dei migliori insegnanti di finanza personale al mondo." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230b0b12'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23d9ff4b' font-family='Arial' font-weight='bold'%3E€%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- WebGL shader background -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">€</span>
+      <span class="brand-name">PRIMO&nbsp;EURO</span>
+      <span class="brand-tag">educazione finanziaria, senza paroloni</span>
+    </div>
+    <nav class="topbar-right">
+      <ol class="steps" id="stepDots" aria-label="Avanzamento">
+        <li data-dot="goals"></li>
+        <li data-dot="income"></li>
+        <li data-dot="city"></li>
+      </ol>
+      <button class="btn-ghost" id="btnRestart" hidden>↺ Ricomincia</button>
+      <button class="btn-ghost" id="btnAuth">Accedi</button>
+    </nav>
+  </header>
+
+  <main id="stage">
+
+    <!-- ===================== SCENE: HERO ===================== -->
+    <section class="scene is-active" data-scene="hero">
+      <div class="hero">
+        <p class="eyebrow reveal">Il primo sito di educazione finanziaria che non ti fa sentire stupido</p>
+        <h1 class="hero-title" id="heroTitle">
+          <span class="line"><span class="w">Ogni</span> <span class="w">euro</span></span>
+          <span class="line"><span class="w accent">conta.</span> <span class="w outline">Anche&nbsp;uno.</span></span>
+        </h1>
+        <p class="hero-sub reveal">
+          Tre domande, due minuti, zero iscrizioni. Ti costruiamo un budget vero —
+          calcolato sulla città in cui vivi e sui metodi dei migliori insegnanti
+          di finanza personale al mondo.
+        </p>
+        <div class="hero-cta reveal">
+          <button class="btn-primary" id="btnStart">Costruisci il tuo budget <span class="arrow">→</span></button>
+          <p class="hero-note">Niente email. Niente account. I dati restano sul tuo dispositivo.</p>
+        </div>
+        <div class="hero-ticker reveal" aria-hidden="true">
+          <div class="ticker-track" id="tickerTrack"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: GOALS ===================== -->
+    <section class="scene" data-scene="goals">
+      <div class="panel">
+        <header class="panel-head">
+          <p class="kicker">01 — Obiettivi</p>
+          <h2 class="panel-title">Cosa sogni?</h2>
+          <p class="panel-sub">Scegline <em>uno per orizzonte</em>: breve, medio e lungo. Il futuro si costruisce su tre binari insieme.</p>
+        </header>
+        <div class="goals-grid" id="goalsGrid"></div>
+        <footer class="panel-foot">
+          <button class="btn-ghost" data-back>← Indietro</button>
+          <button class="btn-primary" data-next id="btnGoalsNext" disabled>Scegline 3 <span class="arrow">→</span></button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: INCOME ===================== -->
+    <section class="scene" data-scene="income">
+      <div class="panel panel-narrow">
+        <header class="panel-head">
+          <p class="kicker">02 — Entrate</p>
+          <h2 class="panel-title">Quanto ti entra al mese, <em>netto</em>?</h2>
+          <p class="panel-sub">Netto = quello che arriva davvero. Stipendio, paghetta, lavoretti, ripetizioni: conta tutto.</p>
+        </header>
+        <div class="income-box">
+          <div class="type-toggle" id="typeToggle" role="radiogroup" aria-label="Tipo di entrate">
+            <button class="type-btn on" data-type="fisso" role="radio" aria-checked="true">
+              <span class="t-emoji">💼</span><span>Stipendio fisso</span><small>già netto, tasse pagate</small>
+            </button>
+            <button class="type-btn" data-type="piva" role="radio" aria-checked="false">
+              <span class="t-emoji">🧾</span><span>Partita IVA / freelance</span><small>il 50% va da parte per il fisco</small>
+            </button>
+          </div>
+          <div class="income-display">
+            <span class="income-euro">€</span>
+            <input id="incomeInput" type="text" inputmode="numeric" value="1200" maxlength="6" aria-label="Entrate mensili nette in euro" />
+            <span class="income-permonth">/mese</span>
+          </div>
+          <input id="incomeRange" class="range range-big" type="range" min="0" max="3500" step="10" value="1200" aria-label="Cursore entrate mensili" />
+          <div class="income-marks"><span>0€</span><span>1.000€</span><span>2.000€</span><span>3.500€+</span></div>
+          <p class="income-hint" id="incomeHint"></p>
+          <div class="profile-row">
+            <div class="jars-mini" id="ageChoice" role="radiogroup" aria-label="La tua età">
+              <span class="jars-mini-label">La tua età:</span>
+            </div>
+            <div class="jars-mini" id="familyChoice" role="radiogroup" aria-label="Per chi è il budget">
+              <span class="jars-mini-label">Il budget è:</span>
+            </div>
+          </div>
+        </div>
+        <footer class="panel-foot">
+          <button class="btn-ghost" data-back>← Indietro</button>
+          <button class="btn-primary" data-next>Avanti <span class="arrow">→</span></button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: CITY ===================== -->
+    <section class="scene" data-scene="city">
+      <div class="panel">
+        <header class="panel-head">
+          <p class="kicker">03 — Dove vivi</p>
+          <h2 class="panel-title">La tua città, il tuo costo della vita.</h2>
+          <p class="panel-sub">Stessa paga, vita diversa: 1.200€ a Milano non sono 1.200€ a Palermo.</p>
+        </header>
+        <div class="city-wrap">
+          <div class="city-col">
+            <input id="citySearch" class="city-search" type="search" placeholder="Cerca la tua città…" aria-label="Cerca città" />
+            <div class="city-grid" id="cityGrid" role="listbox" aria-label="Scegli la città"></div>
+          </div>
+          <div class="housing-col">
+            <p class="housing-label">Come vivi?</p>
+            <div class="housing-grid" id="housingGrid"></div>
+            <p class="housing-label">Come ti muovi?</p>
+            <div class="housing-grid vehicle-grid" id="vehicleGrid"></div>
+            <div class="city-preview" id="cityPreview" hidden></div>
+          </div>
+        </div>
+        <footer class="panel-foot">
+          <button class="btn-ghost" data-back>← Indietro</button>
+          <button class="btn-primary" id="btnBuild" disabled>Calcola il mio piano <span class="arrow">→</span></button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: LOADING ===================== -->
+    <section class="scene" data-scene="loading">
+      <div class="loading">
+        <div class="loading-ring" aria-hidden="true"><span></span></div>
+        <p class="loading-line" id="loadingLine">Stiamo facendo i conti…</p>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: DASHBOARD ===================== -->
+    <section class="scene" data-scene="dash">
+      <div class="dash">
+
+        <header class="dash-head">
+          <div>
+            <h2 class="dash-title">Il tuo piano di <span id="dashMonth">questo mese</span></h2>
+            <div class="dash-pills" id="dashPills"></div>
+          </div>
+          <div class="dash-actions">
+            <button class="btn-ghost" id="btnTour" aria-label="Rivedi la guida">💡 Come funziona</button>
+            <button class="btn-ghost" id="btnReset">✦ Rimetti i consigli</button>
+          </div>
+        </header>
+
+        <div class="dash-grid">
+
+          <!-- 1 · Budget -->
+          <article class="card card-cats">
+            <h3 class="card-title"><span class="step-num">1</span> Il tuo budget, voce per voce <span class="card-hint">— trascina i cursori o clicca sulla cifra e scrivila: il risparmio si aggiorna da solo</span></h3>
+            <div class="cats" id="catsList"></div>
+          </article>
+
+          <!-- 2 · Piano -->
+          <article class="card card-save">
+            <h3 class="card-title"><span class="step-num">2</span> Il tuo piano del mese</h3>
+            <div class="save-split">
+              <div class="save-cell"><span class="save-emoji">🌱</span><b id="saveRisp">€0</b><span>risparmio</span></div>
+              <div class="save-cell"><span class="save-emoji">📈</span><b id="saveInv">€0</b><span>investimenti</span></div>
+            </div>
+            <p class="save-note" id="saveNote"></p>
+            <div class="jars-list" id="jarsList"></div>
+            <div class="goals-guide" id="goalsGuide"></div>
+            <button class="btn-primary btn-confirm" id="btnConfirm">✓ Conferma il piano</button>
+          </article>
+
+          <!-- 3 · Colpo d'occhio -->
+          <div class="dash-side">
+
+            <article class="card card-donut">
+              <h3 class="card-title"><span class="step-num">3</span> Dove va ogni euro</h3>
+              <div class="donut-wrap">
+                <svg viewBox="0 0 200 200" class="donut" id="donutSvg" role="img" aria-label="Grafico a ciambella del budget">
+                  <g id="donutArcs" transform="rotate(-90 100 100)"></g>
+                </svg>
+                <div class="donut-center">
+                  <span class="donut-total" id="donutTotal">€0</span>
+                  <span class="donut-caption">al mese</span>
+                </div>
+              </div>
+              <ul class="legend" id="donutLegend"></ul>
+            </article>
+
+            <article class="card card-vita">
+              <h3 class="card-title">Tenore di vita</h3>
+              <div class="vita-row">
+                <svg viewBox="0 0 120 70" class="gauge" aria-hidden="true">
+                  <path d="M10 62 A52 52 0 0 1 110 62" class="gauge-track" />
+                  <path d="M10 62 A52 52 0 0 1 110 62" class="gauge-fill" id="gaugeFill" />
+                </svg>
+                <div class="vita-info">
+                  <span class="vita-grade" id="vitaGrade">—</span>
+                  <span class="vita-label" id="vitaLabel"></span>
+                </div>
+              </div>
+              <p class="vita-note" id="vitaNote"></p>
+            </article>
+
+          </div>
+        </div>
+
+        <article class="card card-teacher" id="teacherCard" tabindex="0" role="button" aria-label="Prossimo principio">
+          <h3 class="card-title">I principi<br />dei maestri</h3>
+          <div class="teacher-body">
+            <p class="teacher-quote" id="teacherQuote"></p>
+            <p class="teacher-name" id="teacherName"></p>
+          </div>
+          <div class="teacher-dots" id="teacherDots"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: DONE ===================== -->
+    <section class="scene" data-scene="done">
+      <div class="done">
+        <p class="kicker done-head">Piano confermato ✓</p>
+        <h2 class="done-title done-head" id="doneTitle">Fatto.</h2>
+        <p class="done-sub done-head" id="doneSub"></p>
+        <div class="done-stats" id="doneStats"></div>
+        <div class="done-advice" id="doneAdvice"></div>
+        <div class="done-actions">
+          <button class="btn-ghost" id="btnBackDash">← Ritocca il piano</button>
+          <button class="btn-primary" id="btnDoneOk">Vado così, al lavoro 🌱</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SCENE: TABELLA DI MARCIA ===================== -->
+    <section class="scene" data-scene="table">
+      <div class="done">
+        <p class="kicker done-head">La schermata da salvare 📌</p>
+        <h2 class="done-title done-head">La tua <em>tabella di marcia</em>.</h2>
+        <p class="done-sub done-head">Ogni volta che entrano soldi, esegui in ordine — dal punto 1 in giù. Copiala, scrivila a mano o falle uno screenshot: deve stare dove la vedi.</p>
+        <div class="done-table" id="doneTable"></div>
+        <p class="done-quote">Ogni euro conta. <span>Anche uno.</span></p>
+        <div class="done-actions">
+          <button class="btn-ghost" id="btnTableBack">← Ritocca il piano</button>
+          <button class="btn-primary" id="btnCopyTable">📋 Copia la tabella</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modale accesso -->
+  <div class="overlay" id="authModal" hidden>
+    <div class="overlay-panel" role="dialog" aria-modal="true" aria-label="Accedi o registrati">
+      <header class="overlay-head">
+        <h3>🔑 Accedi o registrati</h3>
+        <button class="overlay-close" id="authClose" aria-label="Chiudi">✕</button>
+      </header>
+      <p class="overlay-sub">
+        Il piano è già salvato <b>su questo dispositivo</b>. Con un account lo ritrovi
+        ovunque: niente password, ti mandiamo un link via email che vale come chiave.
+      </p>
+      <form id="authForm" class="auth-form">
+        <input id="authEmail" type="email" class="city-search" placeholder="la-tua@email.it" autocomplete="email" required />
+        <button class="btn-primary" type="submit">✉️ Inviami il link magico</button>
+      </form>
+      <div class="auth-alt" id="authAlt">
+        <span class="auth-divider">oppure</span>
+        <button class="btn-ghost auth-google" id="authGoogle">
+          <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.7l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
+          Continua con Google
+        </button>
+      </div>
+      <div id="authUser" hidden>
+        <p class="overlay-sub">Sei dentro come <b id="authUserEmail"></b>. Il piano si aggiorna da solo sul tuo account.</p>
+        <button class="btn-ghost" id="authLogout">Esci</button>
+      </div>
+      <p class="auth-msg" id="authMsg" hidden></p>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="position:fixed;inset:0;background:#0b0b12;color:#f5f4ef;display:grid;place-items:center;font-family:sans-serif;text-align:center;padding:2rem;z-index:99">
+      <p>PRIMO ha bisogno di JavaScript per fare i conti. Attivalo e ricarica la pagina 🙏</p>
+    </div>
+  </noscript>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/engine.js" defer></script>
+  <script src="js/bg.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/auth.js" defer></script>
+</body>
+</html>
