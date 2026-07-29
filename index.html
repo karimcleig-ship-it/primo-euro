@@ -84,8 +84,11 @@ button { font-family: inherit; color: inherit; cursor: pointer; border: none; ba
    centro, dove vive l'oggetto — i bordi del video smettono di esistere */
 /* sugli schermi corti (iPhone SE e simili) la clessidra salirebbe fin
    sotto la barra: la si accompagna un po' più giù */
-@media (max-height: 750px) {
-  .sfondo-crescita video { transform: translateY(7%); }
+@media (max-height: 800px) {
+  .sfondo-crescita video { transform: translateY(9%) scale(.86); transform-origin: 50% 62%; }
+}
+@media (max-height: 700px) {
+  .sfondo-crescita video { transform: translateY(10%) scale(.78); transform-origin: 50% 62%; }
 }
 
 .sfondo-crescita::before {
@@ -564,6 +567,11 @@ input[type=range]::-moz-range-thumb {
 /* i suggerimenti stanno a bosco, come i sogni: si leggono a colpo
    d'occhio e se ne prende uno senza scorrere mezzo schermo */
 .moves { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 6px; }
+.moves-gruppo {
+  flex-basis: 100%; font-family: var(--font-display);
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--faint); margin-top: 6px;
+}
 
 /* stessa pastiglia degli esempi del sogno: una riga sola, si dispongono
    da sole e la riga frastagliata invita a scorrere con l'occhio */
@@ -1230,55 +1238,18 @@ input[type=range]::-moz-range-thumb {
         <li class="done"><span>✓</span>Risveglio</li>
         <li class="on"><span>3</span>Azione</li>
       </ol>
-      <h1 style="margin-top:9px">Come si accorcia<br />la distanza.</h1>
-      <p class="sub" style="margin-top:7px">Non sono compiti: sono <b>esempi</b> di cosa funziona. Tocca quelli che ti somigliano e guarda il contatore.</p>
+      <h1 style="margin-top:9px">I consigli<br />della settimana.</h1>
+      <p class="sub" style="margin-top:7px">Piccole abitudini, non compiti: un caffè in meno, la spesa con la lista. <b>Tocca quelle che ti somigliano</b> e guarda i giorni scendere.</p>
 
       <div class="mini-conta">
         <span class="mini-emoji" id="movesEmoji">🎯</span>
         <b id="movesDays">—</b>
         <span id="movesLabel">giorni al traguardo</span>
       </div>
-      <div class="tabs">
-        <button class="tab on" data-tab="once">Una volta e basta</button>
-        <button class="tab" data-tab="week">Ogni settimana</button>
-      </div>
-      <p class="hint" id="movesHint"></p>
       <div class="moves" id="movesList"></div>
-      <button class="cta" id="closeWeek" style="margin-top:11px">Ho scelto, tira le somme →</button>
+      <button class="cta" id="closeWeek" style="margin-top:11px">Ho fatto i miei tagli → alla clessidra</button>
     </section>
 
-    <!-- 6. il patto: qui il cerchio si chiude e comincia l'abitudine -->
-    <section class="screen" data-screen="recap">
-      <p class="eyebrow" id="recapEyebrow">Ci siamo</p>
-      <h1 style="margin-top:8px" id="recapTitle">Il piano è tuo.</h1>
-      <p class="sub" id="recapSub" style="margin-top:7px"></p>
-
-      <div class="chiusura">
-        <div class="chiusura-riga">
-          <span class="chiusura-n" id="recapDays">0</span>
-          <div>
-            <b id="recapLabel">giorni al traguardo</b>
-            <small id="recapQuando"></small>
-          </div>
-        </div>
-      </div>
-
-      <p class="week-title" style="margin-top:12px">I tre salvadanai che contano</p>
-      <div class="salva" id="recapSalva"></div>
-      <p class="salva-nota">Insieme fanno <b id="recapMese">0 €</b> al mese: <b id="recapAnno">0 €</b> in un anno. Sono i soldi che <b>costruiscono il futuro e realizzano il sogno</b> — tutto il resto serve a vivere.</p>
-
-      <div class="recap-tips" id="recapTips"></div>
-
-      <div class="pact">
-        <p class="pact-title">📅 Da qui in poi bastano trenta secondi a settimana</p>
-        <p class="pact-text">La domenica riapri l'app, confermi cosa hai rispettato e il contatore scende. Nient'altro. È così che un piano diventa un'abitudine — e un'abitudine diventa un viaggio.</p>
-        <button class="cta" id="notifyBtn">🔔 Ricordamelo domenica</button>
-        <p class="pact-note" id="notifyNote"></p>
-      </div>
-
-      <div class="spacer"></div>
-      <button class="cta" id="recapBack" style="margin-top:9px">Perfetto, si comincia 🌱</button>
-    </section>
 
   </div>
 
@@ -1564,7 +1535,7 @@ input[type=range]::-moz-range-thumb {
        Risveglio mette in fila le cifre, Azione dà i suggerimenti, Clessidra
        è dove si arriva e dove si torna ogni volta che riapri l'app. */
     const FASE = { dream: "dream", cifre: "cifre", truth: "cifre",
-                   moves: "moves", recap: "moves", home: "home" };
+                   moves: "moves", home: "home" };
     const fase = FASE[name];
     /* la barra compare quando esiste un piano: prima non c'è nulla da navigare */
     $("#tabbar").hidden = !fase || !state.voci;
@@ -2103,13 +2074,7 @@ input[type=range]::-moz-range-thumb {
 
   /* ---------- 4. mosse ---------- */
 
-  let tab = "once";
 
-  $$(".tab").forEach((t) => t.addEventListener("click", () => {
-    tab = t.dataset.tab;
-    $$(".tab").forEach((x) => x.classList.toggle("on", x === t));
-    renderMoves();
-  }));
 
   const fatta = (m) => (state.once.includes(m.id) || state.week.includes(m.id) ? 1 : 0);
 
@@ -2169,14 +2134,26 @@ input[type=range]::-moz-range-thumb {
   function renderMoves() {
     const list = $("#movesList");
     list.innerHTML = "";
-    /* le più grosse per te davanti: chi si ferma alla prima riga
-       ha comunque visto le due che gli cambiano di più il calendario */
-    MOVES.filter((m) => m.type === tab && applicabile(m))
-      .sort((a, b) => (fatta(a) - fatta(b)) || perPeso(a, b))
-      .forEach((m) => list.appendChild(moveRow(m, "move")));
-    $("#movesHint").textContent = tab === "once"
-      ? "Si fanno una volta sola e valgono per sempre: nessuna rinuncia, solo soldi che smetti di regalare."
-      : "Costano un po' di disciplina ogni settimana. Guardale solo dopo aver preso le altre.";
+
+    /* prima le abitudini della settimana — è lì che ci si riconosce:
+       un caffè in meno, la spesa con la lista, una cena a casa */
+    const settimana = MOVES.filter((m) => m.type === "week" && applicabile(m))
+      .sort((a, b) => (fatta(a) - fatta(b)) || perPeso(a, b));
+    const unaVolta = MOVES.filter((m) => m.type === "once" && applicabile(m) && !m.oneShot)
+      .sort((a, b) => (fatta(a) - fatta(b)) || perPeso(a, b));
+
+    const titolo = (t) => {
+      const el = document.createElement("p");
+      el.className = "moves-gruppo";
+      el.textContent = t;
+      list.appendChild(el);
+    };
+
+    titolo("Ogni settimana");
+    settimana.forEach((m) => list.appendChild(moveRow(m, "move")));
+    titolo("E una volta sola, se ti va");
+    unaVolta.forEach((m) => list.appendChild(moveRow(m, "move")));
+
     aggiornaMiniConta(false);
   }
 
@@ -2214,141 +2191,9 @@ input[type=range]::-moz-range-thumb {
 
   /* ---------- 6. riepilogo: cosa hai guadagnato, e il patto ---------- */
 
-  let daysAtStart = null;   /* quanti giorni mancavano a inizio sessione */
+  $("#closeWeek").addEventListener("click", () => show("home"));
 
-  $("#closeWeek").addEventListener("click", () => { renderRecap(); show("recap"); });
-  $("#recapBack").addEventListener("click", () => show("home"));
 
-  function renderRecap() {
-    const d = dream();
-    const days = daysLeft();
-    const lontano = !isFinite(days) || days > TROPPO;
-    const gained = daysAtStart != null && isFinite(days) && isFinite(daysAtStart)
-      ? Math.max(0, daysAtStart - days) : 0;
-    const rate = planRate();
-
-    $("#recapEyebrow").textContent = gained > 0 ? "Guarda cos'hai fatto" : "Ci siamo";
-    $("#recapTitle").innerHTML = gained > 0
-      ? `Hai tagliato <em>${gained} giorn${gained === 1 ? "o" : "i"}</em>.`
-      : "Il piano è tuo.";
-    $("#recapSub").textContent = gained > 0
-      ? "In una sola sessione — e queste scelte continuano a lavorare ogni mese, anche quando non ci pensi."
-      : "Sai dove sei, sai dove vuoi arrivare e sai come arrivarci. È più di quanto faccia la maggior parte delle persone.";
-
-    /* il colpo d'occhio finale: quanto manca, quanto metti via, dove sarai */
-    const umanoR = tempoUmano(days);
-    $("#recapDays").textContent = lontano ? "—" : (umanoR || days);
-    $("#recapDays").classList.toggle("testo", !!umanoR && !lontano);
-    $("#recapLabel").textContent = lontano
-      ? "il traguardo è ancora lontano"
-      : `${umanoR ? days + " giorni" : "giorni"} a « ${d.label.toLowerCase()} »`;
-
-    const quando = new Date();
-    quando.setDate(quando.getDate() + (isFinite(days) ? days : 0));
-    $("#recapQuando").textContent = lontano
-      ? "libera altro spazio e si avvicina"
-      : "cioè " + quando.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
-
-    /* i tre salvadanai che costruiscono il futuro, spiegati */
-    const risp = state.voci ? risparmio() : 0;
-    const inv = state.voci ? (state.voci.find((x) => x.id === "investimento") || {}).valore || 0 : 0;
-    const perSogno = state.voci ? (state.voci.find((x) => x.id === "sogno") || {}).valore || 0 : 0;
-
-    $("#recapSalva").innerHTML = `
-      <div class="sv risparmio">
-        <span class="sv-emoji">🌱</span>
-        <span class="sv-testo"><b>Risparmio</b><small>Il tuo cuscino: ti protegge dagli imprevisti e non si tocca. Cresce e basta.</small></span>
-        <span class="sv-cifra">${euro(risp)}</span>
-      </div>
-      <div class="sv investimenti">
-        <span class="sv-emoji">📈</span>
-        <span class="sv-testo"><b>Investimenti</b><small>${spiegaInvestimenti()}</small></span>
-        <span class="sv-cifra">${euro(inv)}</span>
-      </div>
-      <div class="sv sogno">
-        <span class="sv-emoji">${d.emoji}</span>
-        <span class="sv-testo"><b>${d.label}</b><small>Il salvadanaio del sogno: si riempie da solo, mese dopo mese, finché non parti.</small></span>
-        <span class="sv-cifra">${euro(perSogno)}</span>
-      </div>`;
-
-    const totale = risp + inv + perSogno;
-    $("#recapMese").textContent = euro(totale);
-    $("#recapAnno").textContent = euro(totale * 12);
-
-    /* due righe che danno coraggio, non compiti: cosa hai già in mano
-       e cosa potresti fare se un giorno ne avrai voglia */
-    const tips = [];
-    if (risp > 0) {
-      tips.push({ cls: "lime", emoji: "🌱", html: `Oltre al sogno, ogni mese <b>${euro(risp)}</b> restano tuoi comunque: quello è il futuro che ti costruisci a prescindere.` });
-    } else {
-      tips.push({ cls: "lime", emoji: "🌱", html: "Anche <b>1 € al mese</b> è un inizio vero: non è la cifra, è l'abitudine — e l'abitudine cresce con le entrate." });
-    }
-
-    const restanti = MOVES.filter((m) => m.type === "once" && !fatta(m) && applicabile(m))
-      .sort(perPeso);
-    if (restanti.length) {
-      const next = restanti[0];
-      const x = mossa(next);
-      const quanto = x.oneShot ? euro(x.oneShot) : euro(x.perMonth) + " al mese";
-      tips.push({ emoji: next.emoji, html: `Se un giorno vuoi accelerare, «${next.name}» vale <b>${quanto}</b>${x.reale ? " " + x.nota : ""} e si fa una volta sola. Nessuna fretta.` });
-    } else {
-      tips.push({ emoji: "🏆", html: "Hai già preso <b>tutte</b> le scorciatoie disponibili. Da qui in poi conta una cosa sola: tenere il ritmo." });
-    }
-    $("#recapTips").innerHTML = tips.map((t) => `<div class="tip ${t.cls || ""}"><span>${t.emoji}</span><p>${t.html}</p></div>`).join("");
-
-    paintNotify();
-    daysAtStart = isFinite(days) ? days : null;
-  }
-
-  /* Perché gli investimenti non sono un lusso da ricchi: se i prezzi corrono
-     più di quanto rende il denaro fermo, stare fermi è una scelta che costa.
-     Due numeri ufficiali, nessun consiglio finanziario: solo il fatto. */
-  function spiegaInvestimenti() {
-    const generico = "Soldi che lavorano al posto tuo: non li usi ora, ma tra anni valgono più di quanto hai messo.";
-    if (typeof EUROPA === "undefined" || !state.plan) return generico;
-
-    const infl = inflazioneDi(state.plan.country);
-    const bce = EUROPA.tassi && EUROPA.tassi.deposito;
-    if (!infl || !bce) return generico;
-
-    return infl > bce.valore
-      ? `Oggi i prezzi salgono del <b>${infl}%</b> l'anno e il denaro fermo in banca rende intorno al <b>${bce.valore}%</b>: la differenza la paghi anche se non fai niente. Per questo una parte va fatta lavorare. <i>Fonte: BCE.</i>`
-      : `Oggi i prezzi salgono del <b>${infl}%</b> l'anno e il denaro fermo rende intorno al <b>${bce.valore}%</b>: sei in una fase rara, in cui aspettare non ti costa. <i>Fonte: BCE.</i>`;
-  }
-
-  /* il promemoria della domenica */
-  function paintNotify() {
-    const note = $("#notifyNote"), btn = $("#notifyBtn");
-    note.classList.remove("ok");
-    if (!("Notification" in window)) {
-      btn.hidden = true;
-      note.textContent = "Su questo dispositivo le notifiche non sono disponibili: mettiti una sveglia ricorrente la domenica sera, funziona uguale.";
-      return;
-    }
-    if (Notification.permission === "granted") {
-      btn.hidden = true;
-      note.textContent = "✓ Promemoria attivo. Ci sentiamo domenica sera.";
-      note.classList.add("ok");
-    } else if (Notification.permission === "denied") {
-      btn.hidden = true;
-      note.textContent = "Le notifiche sono bloccate: puoi riattivarle dalle impostazioni del browser, oppure metterti una sveglia ricorrente la domenica.";
-    } else {
-      btn.hidden = false;
-      note.textContent = "Su iPhone aggiungi prima l'app alla schermata Home, così il promemoria arriva anche a schermo spento.";
-    }
-  }
-
-  $("#notifyBtn").addEventListener("click", async () => {
-    try {
-      const res = await Notification.requestPermission();
-      if (res === "granted") {
-        new Notification("Ci vediamo domenica 👋", { body: "Ti ricorderò di confermare le tue mosse: bastano trenta secondi." });
-      }
-      paintNotify();
-    } catch (e) {
-      $("#notifyNote").textContent = "Non è stato possibile attivare il promemoria da qui.";
-    }
-  });
 
   /* ---------- 5. piano: il budget vero alimenta il contatore ---------- */
 
@@ -2708,7 +2553,6 @@ input[type=range]::-moz-range-thumb {
         ? `Al netto del <b>50% messo via per il fisco</b> e delle spese reali di ${city}.`
         : `Calcolato sulle spese reali di ${city}: affitto, spesa, trasporti. Se qualche cifra non è la tua, la correggi tu.`;
 
-    daysAtStart = isFinite(days) && days <= TROPPO ? days : null;
 
     renderTabella($("#truthTable"));
 
@@ -2792,7 +2636,6 @@ input[type=range]::-moz-range-thumb {
               once: [], week: [], plan: null, voci: null, sogni: [], attivoId: null };
     dreamInput.value = "";
     costInput.value = "";
-    daysAtStart = null;
     onDreamTyped();
     show("dream");
   }
