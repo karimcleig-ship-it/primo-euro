@@ -146,18 +146,18 @@ e apri http://localhost:4173 — da telefono, sulla stessa rete: `http://<ip-del
 
 | File | Cos'è |
 |---|---|
-| `index.html` | **Il sito.** La pagina di presentazione, alla radice |
-| `css/tokens/` | il design system: colori, tipografia, forme, movimento |
-| `js/sito.js` | le animazioni del sito, senza librerie esterne |
-| `app/index.html` | **L'app.** Markup, stile e logica in un file solo |
-| `app/js/data.js` | città, veicoli, obiettivi, i principi dei maestri |
-| `app/js/engine.js` | il motore di budget (70/30, fisco 50% p.IVA, salvadanai) |
-| `app/dashboard.html` | la vecchia dashboard desktop, tenuta come archivio |
-| `media/crescita.mp4` | la clessidra 3D, condivisa fra sito e app |
+| `index.html` | **L'app.** Markup, stile e logica in un file solo |
+| `js/data.js` | città, veicoli, obiettivi, i principi dei maestri |
+| `js/engine.js` | il motore di budget (70/30, fisco 50% p.IVA, salvadanai) |
+| `sito/index.html` | **Il sito.** La pagina di presentazione |
+| `sito/css/tokens/` | il design system: colori, tipografia, forme, movimento |
+| `sito/js/sito.js` | le animazioni del sito, senza librerie esterne |
+| `dashboard.html` | la vecchia dashboard desktop, tenuta come archivio |
+| `media/crescita.mp4` | la clessidra 3D, condivisa fra app e sito |
 
-Due indirizzi, un repo solo: il sito sta alla radice, l'app in `app/`. Così un
-CNAME solo, quando arriverà il dominio, porta online tutti e due — GitHub Pages
-collega un dominio per repo, non uno per cartella.
+Due indirizzi, un repo solo: l'app resta alla radice — i link già in giro non
+si toccano — e il sito vive in `sito/`. Quando arriverà il dominio, un CNAME
+solo li porta online tutti e due.
 
 ### Attivare la stima dei sogni con l'AI
 

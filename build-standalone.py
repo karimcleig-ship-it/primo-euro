@@ -2,7 +2,7 @@
 """
 PRIMO EURO — build di un file unico e autonomo.
 
-Prende app/index.html + app/css + app/js e produce un solo file HTML con TUTTO dentro
+Prende index.html + css + js e produce un solo file HTML con TUTTO dentro
 (font e GSAP compresi), che funziona anche offline con un doppio click e
 si può spedire per email o WhatsApp.
 
@@ -20,7 +20,7 @@ import re
 import urllib.request
 
 ROOT = pathlib.Path(__file__).parent
-APP = ROOT / "app"
+APP = ROOT
 DIST = ROOT / "dist"
 
 GSAP_URL = "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"

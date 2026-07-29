@@ -2,7 +2,7 @@
 """
 PRIMO EURO — i numeri veri dell'Europa.
 
-Scarica da due fonti ufficiali e li scrive in app/js/europa.js, che l'app carica
+Scarica da due fonti ufficiali e li scrive in js/europa.js, che l'app carica
 come un file qualsiasi:
 
   BCE       inflazione paese per paese e tassi ufficiali
@@ -213,7 +213,7 @@ def main():
     }
 
     corpo = json.dumps(dati, ensure_ascii=False, indent=2)
-    (ROOT / "app" / "js" / "europa.js").write_text(
+    (ROOT / "js" / "europa.js").write_text(
         "/* Generato da dati-europa.py — non modificare a mano.\n"
         f"   Numeri ufficiali di BCE ed Eurostat, presi il {dati['aggiornato']}.\n"
         "   Per aggiornarli: python3 dati-europa.py, poi commit e push. */\n\n"
@@ -221,7 +221,7 @@ def main():
         encoding="utf-8",
     )
 
-    print(f"\n✓ app/js/europa.js scritto: {len(inflazione)} paesi")
+    print(f"\n✓ js/europa.js scritto: {len(inflazione)} paesi")
     if "U2" in inflazione:
         u2 = inflazione["U2"]
         print(f"  inflazione area euro: {u2['valore']}% ({u2['periodo']})")
