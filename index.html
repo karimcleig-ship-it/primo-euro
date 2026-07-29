@@ -376,7 +376,10 @@ input[type=range]::-moz-range-thumb {
 
 .progress-wrap { margin-top: 18px; }
 
-.bar { height: 9px; border-radius: 5px; background: rgba(245,244,239,.1); overflow: hidden; }
+.bar { position: relative; height: 11px; border-radius: 6px; background: rgba(245,244,239,.1); overflow: hidden; }
+/* le tacche: una per mese di risparmio, perché si mette via al mese.
+   La barra smette di essere astratta e diventa un calendario. */
+.bar-tacche { position: absolute; inset: 0; pointer-events: none; }
 .bar-fill {
   height: 100%; border-radius: 5px; width: 0%;
   background: linear-gradient(90deg, var(--violet), var(--lime));
@@ -1073,7 +1076,7 @@ input[type=range]::-moz-range-thumb {
       </div>
 
       <div class="progress-wrap">
-        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+        <div class="bar"><div class="bar-fill" id="barFill"></div><div class="bar-tacche" id="barTacche"></div></div>
         <div class="bar-nums">
           <span><b id="savedN">0 €</b> messi via</span>
           <span id="costN">0 €</span>
@@ -1658,6 +1661,19 @@ input[type=range]::-moz-range-thumb {
     $("#barFill").style.width = Math.min(100, quota * 100) + "%";
     clessidra.mostra(quota);
 
+    /* Una tacca per ogni mese che serve: si risparmia al mese, e la barra
+       lo deve dire. Ogni segmento riempito è un mese già messo via. */
+    const alMese = attivo ? quotaDi(attivo) : rate();
+    const mesi = alMese > 0 ? Math.ceil(d.cost / alMese) : 0;
+    const tacche = $("#barTacche");
+    if (mesi >= 2 && mesi <= 72) {
+      const seg = 100 / mesi;
+      tacche.style.background = `repeating-linear-gradient(90deg, transparent 0, transparent calc(${seg}% - 1px), rgba(6,6,11,.55) calc(${seg}% - 1px), rgba(6,6,11,.55) ${seg}%)`;
+      tacche.hidden = false;
+    } else {
+      tacche.hidden = true;
+    }
+
     const days = daysLeft();
     const lontano = !isFinite(days) || days > TROPPO;
 
@@ -1785,16 +1801,19 @@ input[type=range]::-moz-range-thumb {
 
       const fondo = basso - mostrato * (basso - collo) - 6;
       for (const g of granelli) {
-        g.y += g.v; g.v += 0.06;
-        if (g.y >= fondo) { g.y = collo; g.v = 0.7 + Math.random() * 0.5; g.x = (Math.random() - 0.5) * 3.5; }
+        /* lentissimi, quasi immobili: ogni granello è un mese che scende,
+           non una goccia di pioggia. Se sembra che non si muova niente,
+           è giusto così — il risparmio è lento, e la clessidra lo dice. */
+        g.y += g.v; g.v += 0.0015;
+        if (g.y >= fondo) { g.y = collo; g.v = 0.05 + Math.random() * 0.04; g.x = (Math.random() - 0.5) * 3.5; }
       }
       disegna();
       if (!document.hidden) requestAnimationFrame(passo);
     }
 
     if (!fermo) {
-      for (let i = 0; i < 7; i++) {
-        granelli.push({ x: (Math.random() - 0.5) * 3.5, y: collo + Math.random() * 30, v: 0.7 + Math.random() * 0.5 });
+      for (let i = 0; i < 3; i++) {
+        granelli.push({ x: (Math.random() - 0.5) * 3.5, y: collo + Math.random() * 40, v: 0.05 + Math.random() * 0.04 });
       }
       requestAnimationFrame(passo);
       document.addEventListener("visibilitychange", () => { if (!document.hidden) requestAnimationFrame(passo); });
