@@ -122,9 +122,12 @@ def build_mobile(demo: bool = False) -> None:
     html = re.sub(r'\s*<link href="https://fonts\.googleapis[^>]*>', "", html)
     html = html.replace("<style>", f"<style>\n{fonts_css}\n", 1)
 
+    # i tag possono avere una versione (?v=...) per non restare in cache:
+    # qui dentro non serve, il file è unico e si porta tutto appresso
     for name in ("europa", "sogni", "data", "engine"):
         code = (ROOT / "js" / f"{name}.js").read_text(encoding="utf-8")
-        html = html.replace(f'<script src="js/{name}.js"></script>', f"<script>\n{code}\n</script>")
+        html = re.sub(rf'<script src="js/{name}\.js(\?[^"]*)?"></script>',
+                      lambda _m, c=code: f"<script>\n{c}\n</script>", html)
 
     leftovers = re.findall(r'<(?:script|link)[^>]*(?:src|href)="(?!data:)[^"]+"', html)
     if leftovers:
