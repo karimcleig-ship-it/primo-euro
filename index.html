@@ -356,7 +356,19 @@ input[type=range]::-moz-range-thumb {
   border-radius: 20px; text-align: center;
 }
 .clessidra { width: 96px; height: 138px; display: block; margin: 0 auto; }
-.crescita { width: 150px; max-width: 60%; display: block; margin: 0 auto; border-radius: 14px; }
+/* Il video si fonde nella card: angoli morbidi, bordi che sfumano nel
+   buio e neri schiacciati verso il nostro inchiostro — così anche uno
+   sfondo non perfettamente nero non si vede come un rettangolo. */
+.crescita {
+  /* il riquadro comanda: qualunque proporzione abbia il video, qui dentro
+     diventa un quadrato morbido e non una torre che sfonda la card */
+  width: 170px; height: 170px; max-width: 70%; object-fit: cover;
+  display: block; margin: 0 auto;
+  border-radius: 16px;
+  filter: brightness(.82) contrast(1.22) saturate(1.05);
+  -webkit-mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, #000 58%, transparent 97%);
+  mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, #000 58%, transparent 97%);
+}
 .crescita[hidden] { display: none; }
 .clessidra-nota {
   font-size: 11.5px; color: var(--muted); line-height: 1.5;
