@@ -1039,7 +1039,7 @@ input[type=range]::-moz-range-thumb {
       <div class="truth-box">
         <span class="truth-dream" id="truthEmoji">🗾</span>
         <div>
-          <div class="truth-days"><b id="truthDays">0</b> giorni</div>
+          <div class="truth-days"><b id="truthDays">0</b><span id="truthUnita"> giorni</span></div>
           <div class="truth-label" id="truthLabel"></div>
         </div>
       </div>
@@ -2525,10 +2525,14 @@ input[type=range]::-moz-range-thumb {
 
     $("#truthRate").textContent = euro(perMonth);
     $("#truthEmoji").textContent = lontano ? "🧭" : d.emoji;
-    $("#truthDays").textContent = lontano ? "—" : days;
+    /* oltre l'anno anche qui si parla da persone: "4 anni e 5 mesi",
+       coi giorni in piccolo — la stessa regola di tutti gli altri contatori */
+    const umano = tempoUmano(days);
+    $("#truthDays").textContent = lontano ? "—" : (umano || days);
+    $("#truthUnita").textContent = umano || lontano ? "" : " giorni";
     $("#truthLabel").textContent = lontano
       ? "con questo ritmo « " + d.label.toLowerCase() + " » resta troppo lontano"
-      : "ti separano da « " + d.label.toLowerCase() + " »";
+      : (umano ? days + " giorni " : "") + "ti separano da « " + d.label.toLowerCase() + " »";
 
     const city = budget.city.name;
     $("#truthNote").innerHTML = lontano
