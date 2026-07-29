@@ -347,7 +347,7 @@ input[type=range]::-moz-range-thumb {
 
 /* ---------- home ---------- */
 
-.home-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.home-head { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 
 .home-azioni { display: flex; align-items: center; gap: 7px; }
 
@@ -374,7 +374,7 @@ input[type=range]::-moz-range-thumb {
 /* il blocco emoji+cifra+sottocifra è alto esattamente quanto il box sogno:
    stessa cima, stesso fondo, contenuto centrato in mezzo */
 .countdown { flex: 1 1 55%; min-width: 0; text-align: left; margin: 0;
-  display: flex; flex-direction: column; justify-content: center; }
+  display: flex; flex-direction: column; justify-content: space-between; gap: 4px; }
 .cd-infl { margin-inline: 0; }
 
 /* il box del sogno: la cifra messa via, bene in vista */
@@ -409,7 +409,6 @@ input[type=range]::-moz-range-thumb {
 /* l'emoji del sogno sta a fianco del numero, non sopra */
 .cd-riga { display: flex; align-items: center; gap: 10px; }
 .cd-riga .cd-days { margin-top: 0; }
-.cd-testi { min-width: 0; }
 .cd-dream { font-size: 35px; line-height: 1; flex: none; }
 
 .cd-days {
@@ -1184,7 +1183,6 @@ input[type=range]::-moz-range-thumb {
     <!-- 3. home: il conto alla rovescia -->
     <section class="screen" data-screen="home">
       <div class="home-head">
-        <p class="eyebrow grande">La tua clessidra</p>
         <div class="home-azioni">
           <button class="ricomincia" id="homeReset" aria-label="Ricomincia da capo" title="Ricomincia da capo">↺</button>
         </div>
@@ -1195,13 +1193,12 @@ input[type=range]::-moz-range-thumb {
       <div class="cd-infl" id="cdInfl" hidden style="display:none"></div>
       <div class="testata">
         <div class="countdown">
+          <p class="eyebrow grande">La tua clessidra</p>
           <div class="cd-riga">
             <div class="cd-dream" id="cdEmoji">🗾</div>
-            <div class="cd-testi">
-              <div class="cd-days" id="cdDays">—</div>
-              <div class="cd-label" id="cdLabel">giorni al Giappone</div>
-            </div>
+            <div class="cd-days" id="cdDays">—</div>
           </div>
+          <div class="cd-label" id="cdLabel">giorni al Giappone</div>
         </div>
         <div class="box-sogno" id="boxSogno"></div>
       </div>
