@@ -23,8 +23,54 @@ function gradeFor(ratio, cityName) {
   return { grade: "F", gradeLabel: "Sott'acqua", gradeColor: "#ff5c72", gradeNote: `Così le uscite superano le entrate: non sei tu il problema, ma servono mosse di emergenza. Guarda i consigli dopo la conferma.` };
 }
 
+/* ---------- l'Europa ----------
+   I prezzi italiani sono studiati città per città. Per gli altri paesi
+   dell'euro non li inventiamo: partiamo dalla media italiana e la scaliamo
+   con l'indice ufficiale Eurostat, che esiste già diviso nelle stesse voci
+   che usiamo qui (casa, spesa, trasporti, salute). Tanto ogni cifra la
+   conferma comunque l'utente: questo è solo un punto di partenza onesto. */
+
+function scalaPaese(codice, voce) {
+  if (!codice || codice === "IT") return 1;
+  if (typeof EUROPA === "undefined") return 1;
+  const p = EUROPA.prezzi && EUROPA.prezzi[codice];
+  return (p && p[voce]) || 1;
+}
+
+function mediaItalia() {
+  const n = CITIES.length;
+  const s = CITIES.reduce((a, c) => ({ r: a.r + c.r, m: a.m + c.m, g: a.g + c.g, t: a.t + c.t }),
+                          { r: 0, m: 0, g: 0, t: 0 });
+  return { r: s.r / n, m: s.m / n, g: s.g / n, t: s.t / n };
+}
+
+/* I posti fra cui scegliere in un paese: le 21 città vere per l'Italia,
+   una media nazionale per gli altri. */
+function luoghiDelPaese(codice) {
+  if (!codice || codice === "IT") return CITIES;
+  const base = mediaItalia();
+  const casa = scalaPaese(codice, "casa");
+  const nome = (typeof EUROPA !== "undefined" && EUROPA.paesi[codice]) || codice;
+  return [{
+    id: "media-" + codice,
+    name: "Media nazionale — " + nome,
+    r: Math.round(base.r * casa),
+    m: Math.round(base.m * casa),
+    g: Math.round(base.g * scalaPaese(codice, "spesa")),
+    t: Math.round(base.t * scalaPaese(codice, "trasporti")),
+  }];
+}
+
+/* Quanto corre l'inflazione dove vivi, in percentuale annua. */
+function inflazione(codice) {
+  if (typeof EUROPA === "undefined") return 0;
+  const i = EUROPA.inflazione && (EUROPA.inflazione[codice] || EUROPA.inflazione.U2);
+  return i ? i.valore : 0;
+}
+
 function computeBudget(state) {
-  const city = CITIES.find((c) => c.id === state.cityId) || CITIES[0];
+  const luoghi = luoghiDelPaese(state.country);
+  const city = luoghi.find((c) => c.id === state.cityId) || luoghi[0];
   const income = Math.max(0, state.income | 0);
   const housing = state.housing;
 
@@ -37,23 +83,28 @@ function computeBudget(state) {
 
   /* --- costi fissi stimati sulla città --- */
   const vehicle = VEHICLES.find((v) => v.id === state.vehicle) || VEHICLES[0];
-  let casa = 0, bollette = 0, spesa = city.g, salute = 30;
-  let trasporti = vehicle.cost == null ? city.t : vehicle.cost;
+  /* anche salute e bollette seguono il paese: lasciarle a cifre italiane
+     darebbe a un irlandese un conto per metà sbagliato */
+  const kCasa = scalaPaese(state.country, "casa");
+  const kSalute = scalaPaese(state.country, "salute");
+
+  let casa = 0, bollette = 0, spesa = city.g, salute = round5(30 * kSalute);
+  let trasporti = vehicle.cost == null ? city.t : round5(vehicle.cost * scalaPaese(state.country, "trasporti"));
 
   if (housing === "genitori") {
     casa = 0;
     bollette = 0;
     spesa = round5(city.g * 0.35);   // mangi quasi sempre a casa
-    salute = 15;
+    salute = round5(15 * kSalute);
   } else if (housing === "stanza") {
     casa = city.r;
-    bollette = 50;                    // spesso parte è inclusa nell'affitto
+    bollette = round5(50 * kCasa);    // spesso parte è inclusa nell'affitto
   } else if (housing === "mono") {
     casa = city.m;
-    bollette = 150;
+    bollette = round5(150 * kCasa);
   } else if (housing === "mutuo") {
     casa = round5(city.m * 0.9);      // stima rata mutuo
-    bollette = 150;
+    bollette = round5(150 * kCasa);
   }
 
   /* famiglia: più bocche = più spesa e più salute */

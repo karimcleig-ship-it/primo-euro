@@ -342,6 +342,16 @@ input[type=range]::-moz-range-thumb {
 .cd-label { font-family: var(--font-display); font-size: 15px; color: var(--muted); letter-spacing: .02em; }
 .cd-date { font-size: 13px; color: var(--faint); margin-top: 6px; }
 
+/* i prezzi che salgono: si dice, non si urla — il tono resta quello
+   di chi ti accompagna, e la fonte è lì accanto perché è verificabile */
+.cd-infl {
+  font-size: 11.5px; color: var(--muted); margin-top: 9px;
+  line-height: 1.5; max-width: 300px; margin-inline: auto;
+}
+.cd-infl b { color: var(--arancio); font-weight: 600; }
+.cd-infl small { display: block; color: var(--faint); font-size: 10.5px; margin-top: 3px; }
+.cd-infl[hidden] { display: none; }
+
 .progress-wrap { margin-top: 18px; }
 
 .bar { height: 9px; border-radius: 5px; background: rgba(245,244,239,.1); overflow: hidden; }
@@ -909,6 +919,11 @@ input[type=range]::-moz-range-thumb {
       </div>
 
       <div class="field">
+        <label for="pCountry">In che paese vivi</label>
+        <select id="pCountry"></select>
+      </div>
+
+      <div class="field">
         <label for="pCity">Dove vivi</label>
         <select id="pCity"></select>
       </div>
@@ -1004,6 +1019,7 @@ input[type=range]::-moz-range-thumb {
         <div class="cd-days" id="cdDays">—</div>
         <div class="cd-label" id="cdLabel">giorni al Giappone</div>
         <div class="cd-date" id="cdDate"></div>
+        <div class="cd-infl" id="cdInfl" hidden></div>
       </div>
 
       <div class="progress-wrap">
@@ -1096,6 +1112,7 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
+<script src="js/europa.js"></script>
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
 <script>
@@ -1179,7 +1196,7 @@ input[type=range]::-moz-range-thumb {
   /* ---------- stato ---------- */
 
   const KEY = "primo-mobile-v1";
-  let state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, once: [], week: [], plan: null };
+  let state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, cifraTua: false, once: [], week: [], plan: null };
 
   const save = () => {
     state.ultimoAccesso = Date.now();
@@ -1224,13 +1241,41 @@ input[type=range]::-moz-range-thumb {
     return s + (m ? mossa(m).perMonth || 0 : 0);
   }, 0);
 
-  const daysLeft = (extraSaved = 0, extraRate = 0) => {
-    const missing = Math.max(0, dream().cost - state.saved - extraSaved);
+  /* Quanto corrono i prezzi dove vive l'utente, al mese. Dato ufficiale BCE. */
+  function tassoMensile() {
+    const annuo = state.plan ? inflazione(state.plan.country) : 0;
+    return annuo > 0 ? Math.pow(1 + annuo / 100, 1 / 12) - 1 : 0;
+  }
+
+  /* Il traguardo non sta fermo: mentre metti via, il prezzo sale.
+     Fingere il contrario vorrebbe dire promettere una data che non arriva.
+     Non è pessimismo — è il motivo per cui i soldi vanno fatti lavorare,
+     ed è la cosa che l'app può dire con la fonte in mano. */
+  const daysLeft = (extraSaved = 0, extraRate = 0, conInflazione = true) => {
+    const costo = dream().cost;
+    const avere = state.saved + extraSaved;
     const r = rate() + extraRate;
-    if (missing === 0) return 0;
+    if (avere >= costo) return 0;
     if (r <= 0) return Infinity;
-    return Math.ceil((missing / r) * 30.4);
+
+    const i = conInflazione ? tassoMensile() : 0;
+    if (i <= 0) return Math.ceil(((costo - avere) / r) * 30.4);
+
+    /* mese per mese, finché i risparmi non raggiungono un prezzo che sale */
+    let soldi = avere, prezzo = costo;
+    for (let m = 1; m <= 600; m++) {
+      soldi += r;
+      prezzo *= 1 + i;
+      if (soldi >= prezzo) return Math.ceil(m * 30.4);
+    }
+    return Infinity;   /* a questo ritmo non lo raggiunge: lo dicono le mosse */
   };
+
+  /* quanti giorni ci mette in più il traguardo per colpa dei prezzi che salgono */
+  function giorniDiInflazione() {
+    const con = daysLeft(), senza = daysLeft(0, 0, false);
+    return isFinite(con) && isFinite(senza) ? Math.max(0, con - senza) : 0;
+  }
 
   /* ---------- navigazione ---------- */
 
@@ -1260,6 +1305,9 @@ input[type=range]::-moz-range-thumb {
   $("#examples").innerHTML = ESEMPI.map((e) => `<button class="ex">${e}</button>`).join("");
   $$("#examples .ex").forEach((b) => b.addEventListener("click", () => {
     dreamInput.value = b.textContent;
+    /* scegliere un esempio è una richiesta esplicita di ricominciare da
+       capo: solo qui la stima può tornare a parlare. Scrivere a mano no. */
+    state.cifraTua = false;
     onDreamTyped();
     dreamInput.focus();
   }));
@@ -1340,11 +1388,17 @@ input[type=range]::-moz-range-thumb {
     $("#dreamEmoji").textContent = state.dreamEmoji;
 
     $("#guess").hidden = false;
-    $("#guessLabel").innerHTML = g
+    $("#guessLabel").innerHTML = state.cifraTua
+      ? `La cifra è tua, e resta tua. <b>Cambiala quando vuoi.</b>`
+      : g
       ? `Di solito <b>${g.what}</b> costa più o meno così:`
       : `Non conosco questo sogno, e va benissimo. <b>Quanto ti serve, all'incirca?</b>`;
 
-    if (document.activeElement !== costInput) {
+    /* La stima non sovrascrive MAI una cifra scritta a mano. Chi scrive
+       1500 per le Azzorre sa qualcosa che il dizionario non sa: magari
+       ci va da un'isola vicina, magari dorme da amici. Il suo numero vale
+       più del nostro, e deve restare lì anche se poi corregge il testo. */
+    if (!state.cifraTua) {
       state.dreamCost = cost;
       costInput.value = cost;
     }
@@ -1359,6 +1413,8 @@ input[type=range]::-moz-range-thumb {
   costInput.addEventListener("focus", () => costInput.select());
   costInput.addEventListener("input", () => {
     state.dreamCost = Math.max(1, parseInt(costInput.value.replace(/\D/g, ""), 10) || 0);
+    state.cifraTua = true;      /* da qui in poi comanda lei, non il dizionario */
+    if (typeof onDreamTyped === "function") $("#guessLabel").innerHTML = `La cifra è tua, e resta tua. <b>Cambiala quando vuoi.</b>`;
   });
   costInput.addEventListener("blur", () => { costInput.value = state.dreamCost || 1500; });
 
@@ -1368,6 +1424,29 @@ input[type=range]::-moz-range-thumb {
   /* ---------- 3. home ---------- */
 
   let shownDays = null;
+
+  /* Il traguardo che si allontana, detto senza spaventare. Mai «hai perso»:
+     è un fatto che riguarda tutti, e ha una risposta — far lavorare i soldi.
+     Il numero della BCE è lì sotto perché chiunque possa verificarlo. */
+  function dilloDellInflazione() {
+    const box = $("#cdInfl");
+    const paese = state.plan && state.plan.country;
+    const annuo = paese ? inflazione(paese) : 0;
+
+    if (!annuo || !state.plan) { box.hidden = true; return; }
+
+    const dove = (typeof EUROPA !== "undefined" && EUROPA.paesi[paese]) || "";
+    const persi = giorniDiInflazione();
+    const quando = (typeof EUROPA !== "undefined" && EUROPA.inflazione[paese])
+      ? EUROPA.inflazione[paese].periodo : "";
+
+    box.hidden = false;
+    box.innerHTML = persi > 0
+      ? `Mentre metti da parte, i prezzi salgono: l'inflazione allontana il traguardo di <b>${persi} giorn${persi === 1 ? "o" : "i"}</b>. È già contata qui sopra.
+         <small>${dove} · ${annuo}% annuo · dato BCE ${quando}</small>`
+      : `Inflazione al <b>${annuo}%</b>: a questo ritmo la stai già battendo.
+         <small>${dove} · dato BCE ${quando}</small>`;
+  }
 
   function renderHome() {
     const d = dream();
@@ -1392,6 +1471,8 @@ input[type=range]::-moz-range-thumb {
         ? "Ci sei già. Ora scegli il prossimo."
         : "Pronto entro " + when.toLocaleDateString("it-IT", { month: "long", year: "numeric" }) + " · " + euro(rate()) + "/mese";
     }
+
+    dilloDellInflazione();
 
     /* i tre salvadanai, a colpo d'occhio */
     if (state.voci) {
@@ -1594,7 +1675,7 @@ input[type=range]::-moz-range-thumb {
       </div>
       <div class="sv investimenti">
         <span class="sv-emoji">📈</span>
-        <span class="sv-testo"><b>Investimenti</b><small>Soldi che lavorano al posto tuo: non li usi ora, ma tra anni valgono più di quanto hai messo.</small></span>
+        <span class="sv-testo"><b>Investimenti</b><small>${spiegaInvestimenti()}</small></span>
         <span class="sv-cifra">${euro(inv)}</span>
       </div>
       <div class="sv sogno">
@@ -1630,6 +1711,22 @@ input[type=range]::-moz-range-thumb {
 
     paintNotify();
     daysAtStart = isFinite(days) ? days : null;
+  }
+
+  /* Perché gli investimenti non sono un lusso da ricchi: se i prezzi corrono
+     più di quanto rende il denaro fermo, stare fermi è una scelta che costa.
+     Due numeri ufficiali, nessun consiglio finanziario: solo il fatto. */
+  function spiegaInvestimenti() {
+    const generico = "Soldi che lavorano al posto tuo: non li usi ora, ma tra anni valgono più di quanto hai messo.";
+    if (typeof EUROPA === "undefined" || !state.plan) return generico;
+
+    const infl = inflazione(state.plan.country);
+    const bce = EUROPA.tassi && EUROPA.tassi.deposito;
+    if (!infl || !bce) return generico;
+
+    return infl > bce.valore
+      ? `Oggi i prezzi salgono del <b>${infl}%</b> l'anno e il denaro fermo in banca rende intorno al <b>${bce.valore}%</b>: la differenza la paghi anche se non fai niente. Per questo una parte va fatta lavorare. <i>Fonte: BCE.</i>`
+      : `Oggi i prezzi salgono del <b>${infl}%</b> l'anno e il denaro fermo rende intorno al <b>${bce.valore}%</b>: sei in una fase rara, in cui aspettare non ti costa. <i>Fonte: BCE.</i>`;
   }
 
   /* il promemoria della domenica */
@@ -1668,19 +1765,44 @@ input[type=range]::-moz-range-thumb {
 
   /* ---------- 5. piano: il budget vero alimenta il contatore ---------- */
 
+  /* i paesi dell'euro, con l'Italia in cima perché è da lì che veniamo
+     e perché è l'unico con le città vere; gli altri in ordine alfabetico */
+  const PAESI_EURO = () => {
+    if (typeof EUROPA === "undefined") return [["IT", "Italia"]];
+    return Object.entries(EUROPA.paesi)
+      .filter(([c]) => c !== "U2" && EUROPA.prezzi[c])
+      .sort((a, b) => (a[0] === "IT" ? -1 : b[0] === "IT" ? 1 : a[1].localeCompare(b[1], "it")));
+  };
+
+  /* le città cambiano col paese: l'Italia ne ha 21 vere, gli altri
+     una media nazionale scalata sui prezzi ufficiali Eurostat */
+  function riempiCitta(paese, scelta) {
+    const luoghi = luoghiDelPaese(paese);
+    $("#pCity").innerHTML = luoghi.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+    if (scelta && luoghi.some((c) => c.id === scelta)) $("#pCity").value = scelta;
+    /* con un posto solo il menu non serve: resta visibile ma non tocca a te */
+    $("#pCity").disabled = luoghi.length < 2;
+  }
+
   /* i menu si costruiscono dagli stessi dati della versione desktop */
   function fillSelects() {
-    $("#pCity").innerHTML = CITIES.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+    $("#pCountry").innerHTML = PAESI_EURO().map(([c, n]) => `<option value="${c}">${n}</option>`).join("");
     $("#pHousing").innerHTML = HOUSING.map((h) => `<option value="${h.id}">${h.emoji} ${h.label}</option>`).join("");
     $("#pVehicle").innerHTML = VEHICLES.map((v) => `<option value="${v.id}">${v.emoji} ${v.label}</option>`).join("");
+
+    const paese = (state.plan && state.plan.country) || "IT";
+    $("#pCountry").value = paese;
+    riempiCitta(paese, state.plan && state.plan.cityId);
+
     if (state.plan) {
       $("#pIncome").value = state.plan.income;
-      $("#pCity").value = state.plan.cityId;
       $("#pHousing").value = state.plan.housing;
       $("#pVehicle").value = state.plan.vehicle;
       $("#pPiva").checked = state.plan.incomeType === "piva";
     }
   }
+
+  $("#pCountry").addEventListener("change", () => riempiCitta($("#pCountry").value));
 
   $("#pIncome").addEventListener("focus", (e) => e.target.select());
 
@@ -1689,6 +1811,7 @@ input[type=range]::-moz-range-thumb {
   $("#pCalc").addEventListener("click", () => {
     state.plan = {
       income: Math.max(0, parseInt($("#pIncome").value.replace(/\D/g, ""), 10) || 0),
+      country: $("#pCountry").value,
       cityId: $("#pCity").value,
       housing: $("#pHousing").value,
       vehicle: $("#pVehicle").value,
@@ -2037,7 +2160,7 @@ input[type=range]::-moz-range-thumb {
 
   function ricomincia() {
     try { localStorage.removeItem(KEY); } catch (e) {}
-    state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, once: [], week: [], plan: null, voci: null };
+    state = { dreamText: "", dreamCost: 0, dreamEmoji: "✨", baseRate: 0, saved: 0, cifraTua: false, once: [], week: [], plan: null, voci: null };
     dreamInput.value = "";
     costInput.value = "";
     daysAtStart = null;

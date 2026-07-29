@@ -45,6 +45,49 @@ Due famiglie, in due schede:
 Quando una rinuncia è troppo piccola per spostare il calendario, l'app non
 promette «−0 giorni»: dice quanto vale in un anno, che non è mai zero.
 
+## I numeri veri dell'Europa
+
+L'app copre i **21 paesi dell'euro** e non inventa niente: ogni cifra viene da
+una fonte pubblica e verificabile.
+
+- **Inflazione** — Banca Centrale Europea, paese per paese, aggiornata al mese.
+- **Prezzi** — Eurostat, livelli comparati divisi nelle stesse voci che l'app
+  già usa: casa, spesa, trasporti, salute, shopping, uscite.
+- **Tassi** — BCE, tasso sui depositi e di rifinanziamento.
+
+I prezzi italiani sono studiati città per città; per gli altri paesi si parte
+dalla media italiana e la si scala con l'indice Eurostat. Non è una stima a
+caso: è il rapporto ufficiale fra due paesi. E resta comunque un punto di
+partenza, perché ogni cifra la conferma l'utente nel Risveglio.
+
+Il risultato: **lo stesso stipendio di 1.500 € permette di mettere via 24 € al
+mese in Irlanda e 203 € in Portogallo.** Un'app che desse gli stessi numeri a
+entrambi starebbe mentendo a uno dei due.
+
+**Il traguardo si muove.** Mentre risparmi, i prezzi salgono: il contatore lo
+tiene in conto e lo dice apertamente («l'inflazione allontana il traguardo di
+13 giorni»), con la fonte accanto. Non è pessimismo — è il motivo per cui una
+parte dei soldi va fatta lavorare, ed è la sola cosa onesta da dire a chi mette
+via 200 € al mese per due anni.
+
+### Aggiornare i dati
+
+```bash
+python3 dati-europa.py
+```
+
+Scarica da BCE ed Eurostat e riscrive `js/europa.js`. Poi commit e push.
+
+Non chiamiamo le API dal browser a ogni visita: l'app deve restare statica —
+istantanea, gratis, funzionante offline. Congelando i dati nel repo, ogni
+aggiornamento resta nella storia del progetto: fra un anno si potrà dire con
+precisione quali numeri mostrava l'app in un dato giorno.
+
+> ⚠️ Fino a febbraio 2026 l'inflazione stava nel dataset BCE `ICP`, ora
+> **congelato** (ultimo dato: dicembre 2025) ma ancora attivo: chi lo interroga
+> oggi si porta a casa numeri vecchi di mesi senza nessun errore. Quello giusto
+> è `HICP`. Lo script ha un controllo che avvisa se i dati invecchiano.
+
 ## Le altre scelte di fondo
 
 - **Regola 70/30 (Jim Rohn)**: **risparmio**, **investimenti** e **sogno** sono
