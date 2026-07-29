@@ -9,6 +9,20 @@
 <meta property="og:title" content="PRIMO EURO® — la valuta non è l'euro, è il tempo" />
 <meta property="og:description" content="Non è un'app che ti dice quanto hai speso. È un'app che ti dice quanto manca." />
 <meta property="og:type" content="website" />
+<script>
+/* I link di prova di sempre continuano a funzionare.
+   ?clessidra, ?nuovo, ?test e ?reset erano indirizzi dell'app, e l'app
+   adesso vive in app/: chi arriva con uno di questi viene passato di là.
+   Sta qui in cima, prima dei fogli di stile, così il sito non fa nemmeno
+   un lampo prima di cambiare pagina. replace() e non href: il tasto
+   «indietro» torna da dove sei venuto, non in un anello. */
+(function () {
+  var q = location.search;
+  if (/[?&](clessidra|nuovo|test|reset)\b/.test(q)) {
+    location.replace("app/" + q + location.hash);
+  }
+})();
+</script>
 <link rel="stylesheet" href="css/design-system.css" />
 <link rel="stylesheet" href="css/sito.css" />
 </head>
