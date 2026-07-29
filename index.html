@@ -1535,7 +1535,10 @@ input[type=range]::-moz-range-thumb {
     /* la barra compare quando esiste un piano: prima non c'è nulla da navigare */
     $("#tabbar").hidden = !fase || !state.voci;
     $$("#tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === fase));
-    if (sfondoCrescita) sfondoCrescita.hidden = !(name === "home" && sfondoCrescita.dataset.pronto === "1");
+    if (sfondoCrescita) {
+      sfondoCrescita.hidden = !(name === "home" && sfondoCrescita.dataset.pronto === "1");
+      if (!sfondoCrescita.hidden) requestAnimationFrame(posizionaCrescita);
+    }
     $("#ticker").hidden = name !== "home";
     const sc = $(`.screen[data-screen="${name}"]`);
     if (sc) sc.scrollTop = 0;
@@ -2024,6 +2027,35 @@ input[type=range]::-moz-range-thumb {
   /* La crescita 3D: quando il file esiste, il video diventa lo sfondo
      della Clessidra e la card disegnata si spegne. */
   const sfondoCrescita = $("#sfondoCrescita");
+
+  /* Nel filmato la clessidra occupa circa la fascia 26%–78% del quadro.
+     Questo posizionatore misura lo spazio davvero libero — sotto la barra
+     dei mesi, sopra la banda dei maestri — e ci incastra il video in modo
+     che la clessidra ci stia dentro. Non è un aggiustamento per uno
+     schermo: è la geometria, e vale su qualunque telefono. */
+  function posizionaCrescita() {
+    const v = $("#crescita3d");
+    if (!v || sfondoCrescita.hidden) return;
+    const phone = document.querySelector(".phone").getBoundingClientRect();
+    const barra = document.querySelector(".progress-wrap");
+    const banda = $("#ticker") && !$("#ticker").hidden ? $("#ticker") : $("#tabbar");
+    if (!barra || !banda) return;
+
+    const sopra = barra.getBoundingClientRect().bottom - phone.top + 6;
+    const sotto = banda.getBoundingClientRect().top - phone.top - 4;
+    const zona = sotto - sopra;
+    if (zona < 120) return;               /* niente spazio: meglio fermi */
+
+    const altezza = zona / 0.52;          /* la clessidra è ~52% del quadro */
+    const larghezza = altezza * (1080 / 1920);
+    v.style.position = "absolute";
+    v.style.width = larghezza + "px";
+    v.style.height = altezza + "px";
+    v.style.left = "50%";
+    v.style.top = (sopra - 0.26 * altezza) + "px";
+    v.style.transform = "translateX(-50%)";
+  }
+  window.addEventListener("resize", posizionaCrescita);
   (function () {
     const v = $("#crescita3d");
     if (!v || !sfondoCrescita) return;
@@ -2039,6 +2071,7 @@ input[type=range]::-moz-range-thumb {
       if (attuale && attuale.dataset.screen === "home") {
         sfondoCrescita.hidden = false;
         renderHome();
+        posizionaCrescita();
       }
     });
   })();
