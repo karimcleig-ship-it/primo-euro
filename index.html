@@ -6,13 +6,13 @@
 <script>
 /* Lo smistatore. Karim ha distribuito DUE link sulla stessa porta:
    quello nudo per far vedere il sito, quello con ?nuovo per provare l'app.
-   Quindi: parametri dell'app (?nuovo, ?test, ?reset, ?clessidra) o un piano
+   Quindi: parametri dell'app (?nuovo, ?test, ?reset, ?clessidra, ?app) o un piano
    già salvato → si entra nell'app. Link nudo e nessun piano → è qualcuno
    venuto a conoscere PRIMO EURO: lo si accompagna al sito. Sta in cima,
    prima dei fogli di stile, così chi va al sito non vede nemmeno un lampo
    dell'app. I file non si spostano: i link di tutti restano veri. */
 (function () {
-  if (/[?&](nuovo|test|reset|clessidra)\b/.test(location.search)) return;
+  if (/[?&](nuovo|test|reset|clessidra|app)\b/.test(location.search)) return;
   var piano = null;
   try { piano = localStorage.getItem("primo-mobile-v1"); } catch (e) {}
   if (!piano) location.replace("sito/");

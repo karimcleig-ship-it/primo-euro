@@ -27,7 +27,7 @@
     <a class="voce" href="#numeri">I numeri</a>
     <a class="voce" href="#europa">L'Europa</a>
     <a class="voce solo-larghi" href="#maestri">I maestri</a>
-    <a class="btn pastiglia" href="../">Apri l'app</a>
+    <a class="btn pastiglia" href="../?app">Apri l'app</a>
   </nav>
 </header>
 
@@ -236,121 +236,141 @@
 </section>
 
 <!-- ============ 04 in mano ============ -->
-<section class="sezione" id="inmano">
-  <div class="dentro in-mano">
-    <div class="colonna-telefono">
-      <div class="telefono">
-        <div class="luci" aria-hidden="true"></div>
+<section class="sezione inmano" id="inmano">
+  <div class="binario-fermo" id="binarioFermo">
+    <div class="dentro inmano-testa">
+      <p class="occhiello appare">04 — In mano</p>
+      <h2 class="titolo appare" style="font-size:clamp(30px,4.4vw,62px)">Una schermata alla volta.</h2>
+      <p class="testo appare" style="max-width:40ch;font-size:14.5px;margin-top:12px">Niente dashboard, niente grafici a torta. Tre fasi e una clessidra: il resto è rumore.</p>
+    </div>
 
-        <div class="schermo visibile" data-schermo="0">
-          <ol class="fasi" aria-label="Le tre fasi">
-            <li class="qui"><i>1</i>Sogno</li>
-            <li><i>2</i>Risveglio</li>
-            <li><i>3</i>Azione</li>
-          </ol>
-          <div class="centro">
-            <p class="titolo-schermo">Cosa vuoi,<br /><em>davvero?</em></p>
-            <p class="testo-schermo">Scrivilo con parole tue. Da qui in poi ogni euro che metti via ha un motivo e un nome.</p>
-            <div class="finta-riga">
-              <span class="emoji" aria-hidden="true">✨</span>
-              <span class="grigio">Andare a Tokyo…</span>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <span class="btn pastiglia">🗾 andare a tokyo</span>
-              <span class="btn pastiglia">🛵 una vespa</span>
-              <span class="btn pastiglia">🌍 un anno sabbatico</span>
-            </div>
-          </div>
-          <span class="btn piena">Continua →</span>
-        </div>
+    <div class="binario" id="binario">
 
-        <div class="schermo" data-schermo="1">
-          <ol class="fasi" aria-label="Le tre fasi">
-            <li class="fatta"><i>✓</i>Sogno</li>
-            <li><i>2</i>Risveglio</li>
-            <li class="qui"><i>3</i>Azione</li>
-          </ol>
-          <p class="titolo-schermo" style="font-size:25px;margin-top:6px">Una mossa alla volta.</p>
-          <div class="mini-contatore">
-            <span aria-hidden="true">🎯</span>
-            <b>341</b>
-            <span class="nota">giorni al traguardo</span>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-            <span class="mossa fatta"><span aria-hidden="true">📺</span><span class="nome">Disdici un abbonamento</span><span class="cifra">21 €/mese</span></span>
-            <span class="mossa"><span aria-hidden="true">🛒</span><span class="nome">Spesa: una volta a settimana</span><span class="cifra">34 €/mese</span></span>
-            <span class="mossa"><span aria-hidden="true">🚌</span><span class="nome">Abbonamento annuale</span><span class="cifra">12 €/mese</span></span>
-          </div>
-          <div class="spazio"></div>
-          <div class="suggerimento lime"><span class="emoji" aria-hidden="true">⏳</span><span>Ho fatto i miei tagli → alla clessidra</span></div>
-        </div>
-
-        <div class="schermo" data-schermo="2">
-          <div style="display:flex;gap:11px;align-items:stretch">
-            <div class="contatore" style="flex:1">
-              <p class="etichetta" style="font-size:12px">La tua clessidra</p>
-              <div class="riga">
-                <div class="emoji" style="font-size:26px" aria-hidden="true">🗾</div>
-                <div class="giorni" style="font-size:46px">341</div>
+      <article class="tappa">
+        <div class="mini-telefono"><div class="lente"><div class="telefono">
+          <div class="luci" aria-hidden="true"></div>
+          <div class="schermo">
+            <ol class="fasi" aria-label="Le tre fasi">
+              <li class="qui"><i>1</i>Sogno</li>
+              <li><i>2</i>Risveglio</li>
+              <li><i>3</i>Azione</li>
+            </ol>
+            <div class="centro">
+              <p class="titolo-schermo">Cosa vuoi,<br /><em>davvero?</em></p>
+              <p class="testo-schermo">Scrivilo con parole tue. Da qui in poi ogni euro che metti via ha un motivo e un nome.</p>
+              <div class="finta-riga">
+                <span class="emoji" aria-hidden="true">✨</span>
+                <span class="grigio">Andare a Tokyo…</span>
               </div>
-              <div class="sogno" style="font-size:11px">giorni a « andare a tokyo »</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <span class="btn pastiglia">🗾 andare a tokyo</span>
+                <span class="btn pastiglia">🛵 una vespa</span>
+                <span class="btn pastiglia">🌍 un anno sabbatico</span>
+              </div>
             </div>
-            <div class="scatola-sogno" style="flex:0 0 40%">
-              <div class="nome">🗾 Tokyo</div>
-              <div class="cifra">225 €</div>
-              <div class="sotto">da mettere via ogni mese</div>
+            <span class="btn piena">Continua →</span>
+          </div>
+        </div></div></div>      </article>
+
+      <article class="tappa">
+        <div class="mini-telefono"><div class="lente"><div class="telefono">
+          <div class="luci" aria-hidden="true"></div>
+          <div class="schermo">
+            <ol class="fasi" aria-label="Le tre fasi">
+              <li class="fatta"><i>✓</i>Sogno</li>
+              <li class="qui"><i>2</i>Risveglio</li>
+              <li><i>3</i>Azione</li>
+            </ol>
+            <p class="titolo-schermo" style="font-size:25px;margin-top:6px">Adesso i numeri veri.</p>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <div class="voce-riga"><span class="emoji" aria-hidden="true">🏠</span><span class="nome">Casa</span><b class="cifra">730 €</b><span class="ok" aria-hidden="true">✓</span></div>
+              <div class="voce-riga"><span class="emoji" aria-hidden="true">💡</span><span class="nome">Bollette</span><b class="cifra">50 €</b><span class="ok" aria-hidden="true">✓</span></div>
+              <div class="voce-riga"><span class="emoji" aria-hidden="true">🛒</span><span class="nome">Spesa</span><b class="cifra">320 €</b><span class="ok" aria-hidden="true">✓</span></div>
+              <div class="voce-riga"><span class="emoji" aria-hidden="true">🚌</span><span class="nome">Trasporti</span><b class="cifra">40 €</b><span class="ok" aria-hidden="true">✓</span></div>
+              <div class="voce-riga"><span class="emoji" aria-hidden="true">📺</span><span class="nome">Abbonamenti</span><b class="cifra">25 €</b><span class="ok" aria-hidden="true">✓</span></div>
+              <div class="voce-riga"><span class="emoji" aria-hidden="true">🎨</span><span class="nome">Hobby &amp; uscite</span><b class="cifra">50 €</b><span class="ok" aria-hidden="true">✓</span></div>
+            </div>
+            <div class="spazio"></div>
+            <div class="suggerimento"><span class="emoji" aria-hidden="true">💡</span><span>L'app propone, tu decidi: ogni cifra resta correggibile a mano.</span></div>
+          </div>
+        </div></div></div>      </article>
+
+      <article class="tappa">
+        <div class="mini-telefono"><div class="lente"><div class="telefono">
+          <div class="luci" aria-hidden="true"></div>
+          <div class="schermo">
+            <ol class="fasi" aria-label="Le tre fasi">
+              <li class="fatta"><i>✓</i>Sogno</li>
+              <li class="fatta"><i>✓</i>Risveglio</li>
+              <li class="qui"><i>3</i>Azione</li>
+            </ol>
+            <p class="titolo-schermo" style="font-size:25px;margin-top:6px">Una mossa alla volta.</p>
+            <div class="mini-contatore">
+              <span aria-hidden="true">🎯</span>
+              <b>341</b>
+              <span class="nota">giorni al traguardo</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <span class="mossa fatta"><span aria-hidden="true">📺</span><span class="nome">Disdici un abbonamento</span><span class="cifra">21 €/mese</span></span>
+              <span class="mossa"><span aria-hidden="true">🛒</span><span class="nome">Spesa: una volta a settimana</span><span class="cifra">34 €/mese</span></span>
+              <span class="mossa"><span aria-hidden="true">🚌</span><span class="nome">Abbonamento annuale</span><span class="cifra">12 €/mese</span></span>
+            </div>
+            <div class="spazio"></div>
+            <div class="suggerimento lime"><span class="emoji" aria-hidden="true">⏳</span><span>Ho fatto i miei tagli → alla clessidra</span></div>
+          </div>
+        </div></div></div>      </article>
+
+      <article class="tappa">
+        <div class="mini-telefono"><div class="lente"><div class="telefono">
+          <div class="luci" aria-hidden="true"></div>
+          <div class="schermo">
+            <div style="display:flex;gap:11px;align-items:stretch">
+              <div class="contatore" style="flex:1">
+                <p class="etichetta" style="font-size:12px">La tua clessidra</p>
+                <div class="riga">
+                  <div class="emoji" style="font-size:26px" aria-hidden="true">🗾</div>
+                  <div class="giorni" style="font-size:46px">341</div>
+                </div>
+                <div class="sogno" style="font-size:11px">giorni a « andare a tokyo »</div>
+              </div>
+              <div class="scatola-sogno" style="flex:0 0 40%">
+                <div class="nome">🗾 Tokyo</div>
+                <div class="cifra">225 €</div>
+                <div class="sotto">da mettere via ogni mese</div>
+              </div>
+            </div>
+            <div>
+              <div class="barra-mesi" data-barra-quota="15">
+                <div class="riempi"></div>
+                <div class="tacche" aria-hidden="true"></div>
+              </div>
+              <div class="barra-cifre">
+                <span class="lato"><b>390 €</b><small>messi via</small></span>
+                <div class="quando">Pronto entro luglio 2027</div>
+                <span class="lato dx"><b>2210 €</b><small>mancanti</small></span>
+              </div>
+            </div>
+            <div class="spazio" style="display:flex;align-items:center;justify-content:center">
+              <img src="../media/clessidratrasparente.png" alt="" style="width:56%;height:auto" loading="lazy" />
+            </div>
+            <div style="display:flex;gap:10px">
+              <div class="salvadanaio risparmio stretto" style="flex:1">
+                <span class="emoji" aria-hidden="true">🌱</span>
+                <span class="testi"><b>Risparmio</b></span>
+                <span class="cifra">300 €</span>
+              </div>
+              <div class="salvadanaio investimenti stretto" style="flex:1">
+                <span class="emoji" aria-hidden="true">📈</span>
+                <span class="testi"><b>Investimenti</b></span>
+                <span class="cifra">180 €</span>
+              </div>
             </div>
           </div>
-          <div>
-            <div class="barra-mesi" data-barra-quota="15">
-              <div class="riempi"></div>
-              <div class="tacche" aria-hidden="true"></div>
-            </div>
-            <div class="barra-cifre">
-              <span class="lato"><b>390 €</b><small>messi via</small></span>
-              <div class="quando">Pronto entro luglio 2027</div>
-              <span class="lato dx"><b>2210 €</b><small>mancanti</small></span>
-            </div>
-          </div>
-          <div class="spazio"></div>
-          <div style="display:flex;gap:10px">
-            <div class="salvadanaio risparmio stretto" style="flex:1">
-              <span class="emoji" aria-hidden="true">🌱</span>
-              <span class="testi"><b>Risparmio</b></span>
-              <span class="cifra">300 €</span>
-            </div>
-            <div class="salvadanaio investimenti stretto" style="flex:1">
-              <span class="emoji" aria-hidden="true">📈</span>
-              <span class="testi"><b>Investimenti</b></span>
-              <span class="cifra">180 €</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        </div></div></div>      </article>
+
     </div>
 
-    <div class="passi">
-      <div>
-        <p class="occhiello appare">04 — In mano</p>
-        <h2 class="titolo appare" style="font-size:clamp(30px,4.4vw,62px)">Una schermata alla volta.</h2>
-        <p class="testo appare" style="max-width:40ch;font-size:14.5px">Niente dashboard, niente grafici a torta. Tre fasi e una clessidra: il resto è rumore.</p>
-      </div>
-      <div class="passo qui" data-passo="0">
-        <p class="occhiello">Sogno 🎯</p>
-        <h3 class="sotto-titolo">Scrivi dove vuoi arrivare.</h3>
-        <p>Una riga, come quando appunti un desiderio su un foglio. Il dizionario riconosce 181 sogni; se il tuo non c'è, lo scrivi comunque e metti tu la cifra.</p>
-      </div>
-      <div class="passo" data-passo="1">
-        <p class="occhiello">Azione ⚡</p>
-        <h3 class="sotto-titolo">Fai una mossa, guarda il numero.</h3>
-        <p>Ogni pastiglia è una cifra vera presa dalle tue voci. Tocchi, e i giorni scendono: 362, 351, 341. È l'unica gratificazione che ti serve.</p>
-      </div>
-      <div class="passo" data-passo="2">
-        <p class="occhiello">Clessidra ⏳</p>
-        <h3 class="sotto-titolo">E poi la lasci lì, che scende.</h3>
-        <p>La schermata simbolo: il sogno in alto, i mesi in una barra, i tre salvadanai ai lati del collo della clessidra. Se sembra ferma è giusto così — sta scendendo.</p>
-      </div>
-    </div>
+    <div class="tappe-punti" id="tappePunti" aria-hidden="true"><i class="qui"></i><i></i><i></i><i></i></div>
   </div>
 </section>
 
@@ -368,9 +388,9 @@
 <section class="sezione chiusura" id="scarica">
   <div class="dentro">
     <p class="occhiello appare">L'attesa amplifica il piacere</p>
-    <h2 class="appare">Quanti giorni ti mancano?</h2>
+    <h2 class="appare">Scopri quanti giorni mancano al tuo <em>sogno.</em></h2>
     <div class="azioni appare">
-      <a class="btn" href="../">Apri PRIMO EURO →</a>
+      <a class="btn" href="../?app">Apri PRIMO EURO →</a>
       <p>Gratis. Nessun conto da collegare, nessuna banca di mezzo.</p>
     </div>
 

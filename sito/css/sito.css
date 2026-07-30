@@ -397,16 +397,49 @@ em, .corsivo { font-style: italic; font-weight: var(--fw-regular); }
 .paese.peggiore .pista i { background: linear-gradient(90deg, var(--danger), rgba(255,92,114,.3)); }
 .fonte { margin: 18px 0 0; font-size: var(--fs-xsmall); color: var(--faint); text-wrap: pretty; }
 
-/* ---------- 04 in mano ---------- */
+/* ---------- 04 in mano: il binario delle schermate ----------
+   Solo le quattro schermate, nessun testo. Dove c'è spazio stanno in fila;
+   dove non c'è, il nastro si sfoglia col dito, a scatti — il gesto nativo,
+   che non può incastrarsi. Un filo di parallasse verticale mentre scorri. */
 
-.in-mano { display: flex; gap: clamp(32px, 5vw, 80px); flex-wrap: wrap; align-items: flex-start; }
-.colonna-telefono {
-  flex: 0 1 430px; min-width: min(100%, 300px);
-  position: sticky; top: clamp(80px, 12vh, 120px);
-  display: flex; justify-content: center;
+.inmano { padding: 0; }
+.binario-fermo { padding: clamp(64px, 9vw, 110px) 0; display: flex; flex-direction: column; gap: clamp(22px, 4vh, 36px); }
+.inmano-testa { width: 100%; padding: 0 clamp(18px, 4vw, 44px); }
+
+.binario {
+  display: flex; gap: clamp(16px, 2.6vw, 34px);
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 10px clamp(18px, 4vw, 44px) 16px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
+.binario::-webkit-scrollbar { display: none; }
+.tappa { flex: 0 0 auto; scroll-snap-align: center; }
+
+/* dove entrano tutti e quattro, il nastro diventa una fila ferma centrata */
+@media (min-width: 1180px) {
+  .binario { justify-content: center; overflow-x: visible; }
+}
+
+/* il telefono in miniatura: dentro la lente vive un telefono a grandezza
+   vera (430×880) rimpicciolito otticamente — corpi e spaziature restano
+   identici all'app, solo più piccoli. --mini è un numero puro: scale()
+   rifiuta le lunghezze. */
+.mini-telefono {
+  --mini: 250;
+  width: calc(var(--mini) * 1px); height: calc(var(--mini) * 880px / 430);
+  flex: none; position: relative;
+  transition: transform .2s var(--ease);
+}
+.mini-telefono .lente {
+  position: absolute; top: 0; left: 0; width: 430px; height: 880px;
+  transform: scale(calc(var(--mini) / 430)); transform-origin: 0 0;
+}
+@media (max-width: 899px) {
+  .mini-telefono { --mini: 225; margin: 0 auto; }
+}
+
 .telefono {
-  position: relative; width: min(100%, 430px); aspect-ratio: 430 / 880;
+  position: relative; width: 430px; height: 880px;
   border-radius: var(--r-phone); border: 1px solid rgba(245,244,239,.14);
   background: var(--ink); box-shadow: var(--shadow-phone); overflow: hidden;
 }
@@ -420,10 +453,7 @@ em, .corsivo { font-style: italic; font-weight: var(--fw-regular); }
 .schermo {
   position: absolute; inset: 0; padding: 22px 18px 14px;
   display: flex; flex-direction: column; gap: 12px;
-  opacity: 0; transform: translateY(14px); pointer-events: none;
-  transition: opacity var(--dur-screen) var(--ease), transform var(--dur-screen) var(--ease);
 }
-.schermo.visibile { opacity: 1; transform: none; pointer-events: auto; }
 .schermo .titolo-schermo { margin: 0; font-family: var(--font-display); font-weight: var(--fw-bold); font-size: 30px; letter-spacing: -.03em; line-height: 1.05; }
 .schermo .testo-schermo { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
 .schermo .centro { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
@@ -432,23 +462,26 @@ em, .corsivo { font-style: italic; font-weight: var(--fw-regular); }
 .schermo .finta-riga .grigio { font-size: 17px; color: var(--faint); }
 .schermo .spazio { flex: 1; }
 
-.passi { flex: 1 1 380px; min-width: min(100%, 300px); display: flex; flex-direction: column; gap: clamp(40px, 10vh, 120px); padding: clamp(0px, 4vh, 40px) 0; }
-.passo { padding-left: 18px; border-left: 2px solid var(--line); transition: border-color var(--dur-ui); }
-/* Perché il telefono resti agganciato mentre i passi gli scorrono accanto,
-   la colonna dei testi deve essere più alta di lui: senza questo respiro la
-   corsa utile è di pochi pixel e l'aggancio non si vede nemmeno. Vale solo
-   quando le due colonne stanno affiancate. */
-@media (min-width: 900px) {
-  .passo { min-height: 62vh; display: flex; flex-direction: column; justify-content: center; }
-  /* e un po' di coda, così il telefono resta fermo anche sull'ultimo passo
-     invece di scappare in alto proprio sul finale */
-  .passi { padding-bottom: 22vh; }
+/* le voci del Risveglio */
+.voce-riga {
+  display: flex; align-items: center; gap: 10px;
+  border: var(--border-hair); background: var(--card);
+  border-radius: 12px; padding: 10px 12px;
 }
-.passo .occhiello { margin: 0; transition: color var(--dur-ui); }
-.passo h3 { margin: 10px 0 0; }
-.passo p { margin: 12px 0 0; max-width: 38ch; font-size: 14px; line-height: 1.65; color: var(--muted); text-wrap: pretty; }
-.passo.qui { border-left-color: rgba(217,255,75,.5); }
-.passo.qui .occhiello { color: var(--lime); }
+.voce-riga .emoji { font-size: 16px; flex: none; }
+.voce-riga .nome { flex: 1; min-width: 0; font-size: 13.5px; }
+.voce-riga .cifra { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: 14px; font-variant-numeric: tabular-nums; }
+.voce-riga .ok { color: var(--lime); font-size: 12px; flex: none; }
+
+/* i puntini di posizione, quando il nastro si sfoglia */
+.tappe-punti { display: flex; justify-content: center; gap: 7px; }
+.tappe-punti i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(245,244,239,.18);
+  transition: background var(--dur-ui), transform var(--dur-ui);
+}
+.tappe-punti i.qui { background: var(--lime); transform: scale(1.3); }
+@media (min-width: 1180px) { .tappe-punti { display: none; } }
 
 /* ---------- 05 i maestri ---------- */
 

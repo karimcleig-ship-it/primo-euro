@@ -222,30 +222,45 @@
     });
   }
 
-  /* ---------- il telefono: le schermate seguono i passi del testo ---------- */
+  /* ---------- il binario delle schermate ----------
+     Nessun motore: dove c'è spazio i telefoni stanno in fila, dove manca
+     il nastro si sfoglia col dito. Qui si aggiornano i puntini e si dà
+     ai telefoni un filo di parallasse verticale mentre la pagina scorre. */
 
-  function telefono() {
-    const schermi = $$("[data-schermo]");
-    const passi = $$("[data-passo]");
-    if (!schermi.length || !passi.length || !("IntersectionObserver" in window)) return;
-    let attivo = 0;
+  function binario() {
+    const sez = $(".inmano"), nastro = $("#binario");
+    if (!sez || !nastro) return;
+    const punti = $$("#tappePunti i");
+    const telefoni = $$(".mini-telefono", nastro);
 
-    const mostra = (i) => {
-      if (i === attivo) return;
-      attivo = i;
-      schermi.forEach((s, j) => s.classList.toggle("visibile", j === i));
-      passi.forEach((p, j) => p.classList.toggle("qui", j === i));
+    const aggiornaPunti = () => {
+      if (!punti.length) return;
+      const tappe = $$(".tappa", nastro);
+      const centro = nastro.scrollLeft + nastro.clientWidth / 2;
+      let vicina = 0, minimo = Infinity;
+      tappe.forEach((t, i) => {
+        const m = Math.abs(t.offsetLeft + t.offsetWidth / 2 - centro);
+        if (m < minimo) { minimo = m; vicina = i; }
+      });
+      punti.forEach((pt, i) => pt.classList.toggle("qui", i === vicina));
     };
 
-    const oss = new IntersectionObserver((voci) => {
-      /* vince il passo più in alto fra quelli in scena: così il telefono
-         non salta avanti e indietro mentre si scorre */
-      const dentro = voci.filter((v) => v.isIntersecting);
-      if (!dentro.length) return;
-      dentro.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      mostra(passi.indexOf(dentro[0].target));
-    }, { rootMargin: "-38% 0px -40% 0px" });
-    passi.forEach((p) => oss.observe(p));
+    /* la parallasse: mentre la sezione attraversa lo schermo, i telefoni
+       pari e dispari si sfalsano di qualche pixel in verticale */
+    const parallasse = () => {
+      if (ridotto) return;
+      const r = sez.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+      telefoni.forEach((el, i) => {
+        el.style.transform = "translateY(" + (p * (i % 2 ? 26 : -18)).toFixed(1) + "px)";
+      });
+    };
+
+    nastro.addEventListener("scroll", aggiornaPunti, { passive: true });
+    addEventListener("scroll", parallasse, { passive: true });
+    addEventListener("resize", aggiornaPunti);
+    aggiornaPunti(); parallasse();
   }
 
   /* ---------- il puntatore che si allarga ---------- */
@@ -292,7 +307,7 @@
   barre();
   classifica();
   rigaSogno();
-  telefono();
+  binario();
   puntatore();
   video();
 })();
