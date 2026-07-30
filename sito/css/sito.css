@@ -406,26 +406,41 @@ em, .corsivo { font-style: italic; font-weight: var(--fw-regular); }
 .binario-fermo { padding: clamp(64px, 9vw, 110px) 0; display: flex; flex-direction: column; gap: clamp(22px, 4vh, 36px); }
 .inmano-testa { width: 100%; padding: 0 clamp(18px, 4vw, 44px); }
 
+/* il nastro agganciato: la sezione si ferma e lo scroll verticale diventa
+   corsa orizzontale — il gesto resta quello di sempre (si scorre la pagina),
+   quindi non può incastrarsi; è solo la scena che si muove di lato */
+.binario-fermo { position: sticky; top: 0; height: 100vh; height: 100svh; justify-content: center; overflow: hidden; }
+/* la mascherina: le schermate emergono dal buio ai lati */
+.mascherina {
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
 .binario {
+  /* --mini è la larghezza dei telefoni, numero puro (scale() rifiuta le
+     lunghezze): 225 sui telefoni, e dagli 900px in su la ricalcola
+     js/sito.js sull'altezza dello schermo */
+  --mini: 250;
   display: flex; gap: clamp(16px, 2.6vw, 34px);
-  overflow-x: auto; scroll-snap-type: x mandatory;
-  padding: 10px clamp(18px, 4vw, 44px) 16px;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  /* la prima e l'ultima schermata partono e arrivano al centro esatto */
+  padding: 10px calc((100% - var(--mini) * 1px) / 2) 16px;
+  will-change: transform;
 }
-.binario::-webkit-scrollbar { display: none; }
-.tappa { flex: 0 0 auto; scroll-snap-align: center; }
+@media (max-width: 899px) { .binario { --mini: 225; } }
+.tappa { flex: 0 0 auto; }
 
-/* dove entrano tutti e quattro, il nastro diventa una fila ferma centrata */
-@media (min-width: 1180px) {
-  .binario { justify-content: center; overflow-x: visible; }
-}
+/* con le animazioni ridotte niente aggancio: nastro da sfogliare a mano */
+html.senza-moto .inmano { height: auto !important; }
+html.senza-moto .binario-fermo { position: static; height: auto; }
+html.senza-moto .binario { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+html.senza-moto .tappa { scroll-snap-align: center; }
 
 /* il telefono in miniatura: dentro la lente vive un telefono a grandezza
    vera (430×880) rimpicciolito otticamente — corpi e spaziature restano
    identici all'app, solo più piccoli. --mini è un numero puro: scale()
    rifiuta le lunghezze. */
 .mini-telefono {
-  --mini: 250;
+  /* eredita --mini dal binario */
   width: calc(var(--mini) * 1px); height: calc(var(--mini) * 880px / 430);
   flex: none; position: relative;
   will-change: transform, opacity;
@@ -435,7 +450,7 @@ em, .corsivo { font-style: italic; font-weight: var(--fw-regular); }
   transform: scale(calc(var(--mini) / 430)); transform-origin: 0 0;
 }
 @media (max-width: 899px) {
-  .mini-telefono { --mini: 225; margin: 0 auto; }
+  .mini-telefono { margin: 0 auto; }
 }
 
 .telefono {

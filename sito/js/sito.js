@@ -222,61 +222,87 @@
     });
   }
 
-  /* ---------- il binario delle schermate ----------
-     Il nastro resta nativo: il dito (o la rotella) comanda, qui si ascolta
-     soltanto. Dall'ascolto nascono le due parallassi: quella orizzontale
-     mentre sfogli — la schermata al centro piena e a fuoco, le vicine più
-     piccole, in ombra e un filo in ritardo — e quella verticale mentre la
-     pagina scorre, coi telefoni pari e dispari sfalsati di qualche pixel. */
+  /* ---------- il binario agganciato ----------
+     Scendi, la sezione si ferma, e lo scroll diventa corsa orizzontale:
+     schermata 1, 2, 3, 4 — poi la pagina riprende a scendere. Il gesto
+     resta il normale scroll verticale (niente da rubare, niente da
+     incastrare); la profondità segue la corsa: piena al centro, in
+     penombra ai lati. Dove le schermate entrano tutte, nessuna corsa. */
 
   function binario() {
-    const sez = $(".inmano"), nastro = $("#binario");
-    if (!sez || !nastro) return;
+    const sez = $(".inmano"), fermo = $("#binarioFermo"), nastro = $("#binario");
+    if (!sez || !fermo || !nastro) return;
     const punti = $$("#tappePunti i");
     const tappe = $$(".tappa", nastro);
+    const telefoni = tappe.map((t) => $(".mini-telefono", t));
+    if (ridotto) { document.documentElement.classList.add("senza-moto"); return; }
 
-    const aggiornaPunti = () => {
-      if (!punti.length) return;
-      const centro = nastro.scrollLeft + nastro.clientWidth / 2;
-      let vicina = 0, minimo = Infinity;
-      tappe.forEach((t, i) => {
-        const m = Math.abs(t.offsetLeft + t.offsetWidth / 2 - centro);
-        if (m < minimo) { minimo = m; vicina = i; }
-      });
-      punti.forEach((pt, i) => pt.classList.toggle("qui", i === vicina));
-    };
+    let corsa = 0;
 
-    let prenotato = false;
-    const pennello = () => {
-      prenotato = false;
-      if (ridotto) return;
+    const dipingi = () => {
       const r = sez.getBoundingClientRect();
-      const fuori = r.bottom < 0 || r.top > innerHeight;
-      const pv = fuori ? 0 : (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
-      const sfogliabile = nastro.scrollWidth > nastro.clientWidth + 4;
-      const centro = nastro.scrollLeft + nastro.clientWidth / 2;
+      const utile = Math.max(1, r.height - innerHeight);
+      const p = corsa ? Math.min(1, Math.max(0, -r.top / utile)) : 0;
+      nastro.style.transform = "translate3d(" + (-p * corsa).toFixed(1) + "px,0,0)";
+
       tappe.forEach((t, i) => {
-        const tel = $(".mini-telefono", t);
+        const tel = telefoni[i];
         if (!tel) return;
         let x = 0, scala = 1, velo = 1;
-        if (sfogliabile) {
-          const d = (t.offsetLeft + t.offsetWidth / 2 - centro) / nastro.clientWidth;
+        if (corsa) {
+          const c = t.getBoundingClientRect();
+          const d = (c.left + c.width / 2 - innerWidth / 2) / innerWidth;
           const vicino = Math.max(0, 1 - Math.abs(d) * 1.5);
           x = -d * 16;
           scala = 0.94 + 0.06 * vicino;
           velo = 0.6 + 0.4 * vicino;
         }
-        const y = pv * (i % 2 ? 26 : -18);
-        tel.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) scale(" + scala.toFixed(3) + ")";
+        tel.style.transform = "translateX(" + x.toFixed(1) + "px) scale(" + scala.toFixed(3) + ")";
         tel.style.opacity = velo.toFixed(2);
       });
-    };
-    const chiedi = () => { if (!prenotato) { prenotato = true; requestAnimationFrame(pennello); } };
 
-    nastro.addEventListener("scroll", () => { chiedi(); aggiornaPunti(); }, { passive: true });
+      if (punti.length) {
+        const idx = Math.round(p * (tappe.length - 1));
+        punti.forEach((pt, i) => pt.classList.toggle("qui", i === idx));
+      }
+    };
+
+    const misura = () => {
+      nastro.style.transform = "";
+      /* dagli 900px in su la taglia dei telefoni segue l'altezza dello
+         schermo: la sezione è inchiodata a schermo pieno, quindi più il
+         monitor è alto, più le schermate crescono */
+      if (matchMedia("(min-width: 900px)").matches) {
+        const testa = $(".inmano-testa");
+        const occupato = (testa ? testa.getBoundingClientRect().height : 170) + 210;
+        const mini = Math.round(Math.min(400, Math.max(250, (innerHeight - occupato) * 430 / 880)));
+        nastro.style.setProperty("--mini", mini);
+      } else {
+        nastro.style.removeProperty("--mini");
+      }
+      /* la corsa non si misura con scrollWidth (i browser scordano il
+         padding finale): finisce quando l'ULTIMA schermata è al centro */
+      const ultima = tappe[tappe.length - 1];
+      corsa = ultima
+        ? Math.max(0, ultima.offsetLeft + ultima.offsetWidth / 2 - fermo.clientWidth / 2)
+        : 0;
+      sez.style.height = corsa ? (innerHeight + corsa) + "px" : "";
+      const scia = $("#tappePunti");
+      if (scia) scia.style.display = corsa ? "" : "none";
+      dipingi();
+    };
+
+    let prenotato = false;
+    const chiedi = () => {
+      if (prenotato) return;
+      prenotato = true;
+      requestAnimationFrame(() => { prenotato = false; dipingi(); });
+    };
+
     addEventListener("scroll", chiedi, { passive: true });
-    addEventListener("resize", () => { chiedi(); aggiornaPunti(); });
-    chiedi(); aggiornaPunti();
+    addEventListener("resize", misura);
+    addEventListener("load", misura);
+    misura();
   }
 
   /* ---------- il puntatore che si allarga ---------- */
