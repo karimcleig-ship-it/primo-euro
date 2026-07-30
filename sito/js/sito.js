@@ -223,19 +223,20 @@
   }
 
   /* ---------- il binario delle schermate ----------
-     Nessun motore: dove c'è spazio i telefoni stanno in fila, dove manca
-     il nastro si sfoglia col dito. Qui si aggiornano i puntini e si dà
-     ai telefoni un filo di parallasse verticale mentre la pagina scorre. */
+     Il nastro resta nativo: il dito (o la rotella) comanda, qui si ascolta
+     soltanto. Dall'ascolto nascono le due parallassi: quella orizzontale
+     mentre sfogli — la schermata al centro piena e a fuoco, le vicine più
+     piccole, in ombra e un filo in ritardo — e quella verticale mentre la
+     pagina scorre, coi telefoni pari e dispari sfalsati di qualche pixel. */
 
   function binario() {
     const sez = $(".inmano"), nastro = $("#binario");
     if (!sez || !nastro) return;
     const punti = $$("#tappePunti i");
-    const telefoni = $$(".mini-telefono", nastro);
+    const tappe = $$(".tappa", nastro);
 
     const aggiornaPunti = () => {
       if (!punti.length) return;
-      const tappe = $$(".tappa", nastro);
       const centro = nastro.scrollLeft + nastro.clientWidth / 2;
       let vicina = 0, minimo = Infinity;
       tappe.forEach((t, i) => {
@@ -245,22 +246,37 @@
       punti.forEach((pt, i) => pt.classList.toggle("qui", i === vicina));
     };
 
-    /* la parallasse: mentre la sezione attraversa lo schermo, i telefoni
-       pari e dispari si sfalsano di qualche pixel in verticale */
-    const parallasse = () => {
+    let prenotato = false;
+    const pennello = () => {
+      prenotato = false;
       if (ridotto) return;
       const r = sez.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight) return;
-      const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
-      telefoni.forEach((el, i) => {
-        el.style.transform = "translateY(" + (p * (i % 2 ? 26 : -18)).toFixed(1) + "px)";
+      const fuori = r.bottom < 0 || r.top > innerHeight;
+      const pv = fuori ? 0 : (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+      const sfogliabile = nastro.scrollWidth > nastro.clientWidth + 4;
+      const centro = nastro.scrollLeft + nastro.clientWidth / 2;
+      tappe.forEach((t, i) => {
+        const tel = $(".mini-telefono", t);
+        if (!tel) return;
+        let x = 0, scala = 1, velo = 1;
+        if (sfogliabile) {
+          const d = (t.offsetLeft + t.offsetWidth / 2 - centro) / nastro.clientWidth;
+          const vicino = Math.max(0, 1 - Math.abs(d) * 1.5);
+          x = -d * 16;
+          scala = 0.94 + 0.06 * vicino;
+          velo = 0.6 + 0.4 * vicino;
+        }
+        const y = pv * (i % 2 ? 26 : -18);
+        tel.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) scale(" + scala.toFixed(3) + ")";
+        tel.style.opacity = velo.toFixed(2);
       });
     };
+    const chiedi = () => { if (!prenotato) { prenotato = true; requestAnimationFrame(pennello); } };
 
-    nastro.addEventListener("scroll", aggiornaPunti, { passive: true });
-    addEventListener("scroll", parallasse, { passive: true });
-    addEventListener("resize", aggiornaPunti);
-    aggiornaPunti(); parallasse();
+    nastro.addEventListener("scroll", () => { chiedi(); aggiornaPunti(); }, { passive: true });
+    addEventListener("scroll", chiedi, { passive: true });
+    addEventListener("resize", () => { chiedi(); aggiornaPunti(); });
+    chiedi(); aggiornaPunti();
   }
 
   /* ---------- il puntatore che si allarga ---------- */

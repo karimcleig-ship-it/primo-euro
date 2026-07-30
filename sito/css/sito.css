@@ -428,7 +428,7 @@ em, .corsivo { font-style: italic; font-weight: var(--fw-regular); }
   --mini: 250;
   width: calc(var(--mini) * 1px); height: calc(var(--mini) * 880px / 430);
   flex: none; position: relative;
-  transition: transform .2s var(--ease);
+  will-change: transform, opacity;
 }
 .mini-telefono .lente {
   position: absolute; top: 0; left: 0; width: 430px; height: 880px;
