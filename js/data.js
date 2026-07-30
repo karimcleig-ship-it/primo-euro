@@ -35,8 +35,9 @@ const VEHICLES = [
   { id: "mezzi",    emoji: "🚌", label: "Mezzi pubblici",     desc: "abbonamento urbano",              cost: null },
   { id: "apiedi",   emoji: "🚶", label: "A piedi",            desc: "costa zero",                      cost: 0 },
   { id: "bici",     emoji: "🚲", label: "Bicicletta",         desc: "manutenzione e poco altro",       cost: 10 },
-  { id: "scooter",  emoji: "🏍️", label: "Scooter",            desc: "benzina + assicurazione",         cost: 60 },
-  { id: "scooterE", emoji: "🛵", label: "Motorino elettrico", desc: "ricariche + assicurazione",       cost: 35 },
+  { id: "scooter",  emoji: "🛵", label: "Scooter",            desc: "benzina + assicurazione",         cost: 60 },
+  { id: "moto",     emoji: "🏍️", label: "Moto",               desc: "benzina, assicurazione, bollo",   cost: 100 },
+  { id: "scooterE", emoji: "🔋", label: "Motorino elettrico", desc: "ricariche + assicurazione",       cost: 35 },
   { id: "autoE",    emoji: "⚡", label: "Auto elettrica",     desc: "torrette + assicurazione",        cost: 135 },
   { id: "autoB",    emoji: "🚗", label: "Auto a benzina",     desc: "benzina, assicurazione, bollo",   cost: 210 },
 ];
