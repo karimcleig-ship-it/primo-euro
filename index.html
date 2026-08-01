@@ -496,6 +496,13 @@ input[type=range]::-moz-range-thumb {
 .diario-riga .campo span { color: var(--muted); font-weight: 600; }
 .diario-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
 .diario-chips .benefit { flex: none; }
+.diario-oggi { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+.diario-oggi div {
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 12.5px; color: var(--muted);
+  border-bottom: 1px dashed rgba(245,244,239,.08); padding-bottom: 4px;
+}
+.diario-oggi b { color: var(--paper); font-family: var(--font-display); font-variant-numeric: tabular-nums; }
 .diario-ritmo { margin: 11px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); min-height: 18px; }
 .diario-ritmo b { color: var(--lime); }
 .diario-strip { display: flex; gap: 4px; align-items: flex-end; height: 26px; margin-top: 10px; }
@@ -779,7 +786,7 @@ input[type=range]::-moz-range-thumb {
   display: grid;
   grid-template-columns: 26px 1fr auto;
   grid-template-areas: "emoji nome campo" "emoji slider slider";
-  align-items: center; gap: 7px 9px;
+  align-items: center; gap: 0 9px;
   border: 1px solid var(--line); background: var(--card);
   border-radius: 14px; padding: 9px 11px;
   transition: border-color .3s, background .3s;
@@ -817,7 +824,10 @@ input[type=range]::-moz-range-thumb {
 }
 .voce.ok .voce-check { background: var(--lime); border-color: var(--lime); color: var(--ink); }
 
-.voce .range { grid-area: slider; height: 20px; }
+/* il cursore dorme: la voce è una riga di diario. Si sveglia al tocco */
+.voce .range { grid-area: slider; height: 20px; display: none; }
+.voce.aperta { gap: 7px 9px; }
+.voce.aperta .range { display: block; }
 .voce .range::-webkit-slider-runnable-track { height: 4px; }
 .voce .range::-webkit-slider-thumb { width: 17px; height: 17px; border-width: 5px; margin-top: -7px; }
 
@@ -1373,7 +1383,7 @@ input[type=range]::-moz-range-thumb {
     <div class="diario-sheet">
       <h3>Oggi quanto è uscito?</h3>
       <div class="diario-riga">
-        <label class="campo"><input id="diarioCampo" type="text" inputmode="numeric" maxlength="4" placeholder="0" aria-label="Spesa di oggi in euro" /><span>€</span></label>
+        <label class="campo"><input id="diarioCampo" type="text" maxlength="40" placeholder="es. pizza 12" autocomplete="off" aria-label="Cosa hai speso e quanto" /><span>€</span></label>
       </div>
       <div class="diario-chips">
         <button type="button" class="benefit" data-cat="spesa">🛒 Spesa</button>
@@ -1381,6 +1391,7 @@ input[type=range]::-moz-range-thumb {
         <button type="button" class="benefit" data-cat="sfizi">🛍️ Sfizi</button>
         <button type="button" class="benefit" data-cat="zero">🙌 Oggi zero</button>
       </div>
+      <div class="diario-oggi" id="diarioOggi"></div>
       <p class="diario-ritmo" id="diarioRitmo"></p>
       <div class="diario-strip" id="diarioStrip" aria-hidden="true"></div>
     </div>
@@ -1401,10 +1412,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730q"></script>
-<script src="js/sogni.js?v=20260730q"></script>
-<script src="js/data.js?v=20260730q"></script>
-<script src="js/engine.js?v=20260730q"></script>
+<script src="js/europa.js?v=20260730s"></script>
+<script src="js/sogni.js?v=20260730s"></script>
+<script src="js/data.js?v=20260730s"></script>
+<script src="js/engine.js?v=20260730s"></script>
 <script>
 (function () {
   "use strict";
@@ -2170,6 +2181,31 @@ input[type=range]::-moz-range-thumb {
      propone di ricalibrare il piano sulle cifre vere. Tutto resta nel
      telefono, come il resto. */
 
+  /* Il dizionario delle spese quotidiane: come per i sogni, la parola
+     dice la categoria. Scrivi «pizza 12» e l'app capisce da sola. */
+  const SPESE_PAROLE = {
+    fuori: ["pizza", "pizzeria", "ristorante", "sushi", "poke", "kebab", "panino", "bar",
+            "caffe", "caffè", "colazione", "brioche", "aperitivo", "spritz", "birra", "vino",
+            "cena", "pranzo", "gelato", "burger", "glovo", "deliveroo", "justeat", "domicilio"],
+    sfizi: ["scarpe", "vestito", "vestiti", "maglietta", "felpa", "jeans", "zara", "amazon",
+            "regalo", "gioco", "videogioco", "libro", "cinema", "concerto", "biglietto",
+            "profumo", "trucco", "parrucchiere", "barbiere", "estetista", "sigarette"],
+    spesa: ["spesa", "supermercato", "super", "conad", "coop", "esselunga", "lidl", "eurospin",
+            "carrefour", "mercato", "pane", "latte", "frutta", "verdura", "carne", "farmacia"],
+  };
+
+  function capisciSpesa(testo) {
+    const t = (testo || "").toLowerCase().trim();
+    const num = t.match(/(\d+[.,]?\d*)/);
+    const valore = num ? Math.round(parseFloat(num[1].replace(",", "."))) : 0;
+    const parole = t.replace(num ? num[1] : "", "").replace(/[€]/g, "").trim();
+    let cat = "spesa";
+    for (const c in SPESE_PAROLE) {
+      if (SPESE_PAROLE[c].some((k) => parole.includes(k))) { cat = c; break; }
+    }
+    return { valore, cat, testo: parole.slice(0, 24) };
+  }
+
   const chiaveGiorno = (d) => {
     const x = d || new Date();
     return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0");
@@ -2194,12 +2230,16 @@ input[type=range]::-moz-range-thumb {
              mensile: (c) => Math.round((cat[c] || 0) / chiavi.length * 30.44) };
   }
 
-  function segnaSpesa(cat, valore) {
+  function segnaSpesa(cat, valore, testo) {
     state.diario = state.diario || {};
     const k = chiaveGiorno();
-    const g = state.diario[k] || { tot: 0, cat: {} };
+    const g = state.diario[k] || { tot: 0, cat: {}, righe: [] };
+    g.righe = g.righe || [];
     g.tot += valore;
-    if (valore > 0) g.cat[cat] = (g.cat[cat] || 0) + valore;
+    if (valore > 0) {
+      g.cat[cat] = (g.cat[cat] || 0) + valore;
+      g.righe.push({ v: valore, c: cat, t: testo || "" });
+    }
     state.diario[k] = g;
     save();
     renderDiario();
@@ -2235,6 +2275,16 @@ input[type=range]::-moz-range-thumb {
       strip.innerHTML = barre.map((b) =>
         `<i class="${b.oggi ? "oggi" : ""} ${b.v === null ? "vuoto" : ""}" style="height:${b.v === null ? 2 : Math.max(2, Math.round(b.v / max * 26))}px"></i>`
       ).join("");
+    }
+
+    /* le righe di oggi: cosa, quanto */
+    const listaOggi = $("#diarioOggi");
+    if (listaOggi) {
+      const righe = (oggi && oggi.righe) || [];
+      const em = { fuori: "🍕", sfizi: "🛍️", spesa: "🛒" };
+      listaOggi.innerHTML = righe.slice(-3).map((r) =>
+        `<div><span>${em[r.c] || "📌"} ${r.t || "spesa"}</span><b>${euro(r.v)}</b></div>`
+      ).join("") + (righe.length > 3 ? `<div><span>…e altre ${righe.length - 3}</span></div>` : "");
     }
 
     /* il ritmo di oggi, senza voti */
@@ -2303,12 +2353,22 @@ input[type=range]::-moz-range-thumb {
   $$(".diario-chips .benefit").forEach((b) => {
     b.addEventListener("click", () => {
       const cat = b.dataset.cat;
-      const val = parseInt($("#diarioCampo").value.replace(/\D/g, ""), 10) || 0;
-      if (cat !== "zero" && val <= 0) { $("#diarioCampo").focus(); return; }
-      segnaSpesa(cat === "zero" ? "spesa" : cat, cat === "zero" ? 0 : val);
+      const capita = capisciSpesa($("#diarioCampo").value);
+      if (cat !== "zero" && capita.valore <= 0) { $("#diarioCampo").focus(); return; }
+      segnaSpesa(cat === "zero" ? "spesa" : cat, cat === "zero" ? 0 : capita.valore, capita.testo);
       $("#diarioCampo").value = "";
       setTimeout(() => $("#diarioVelo").classList.remove("aperto"), 750);
     });
+  });
+
+  /* Invio: «pizza 12» basta da solo — cifra e categoria dalle parole */
+  $("#diarioCampo").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const capita = capisciSpesa($("#diarioCampo").value);
+    if (capita.valore <= 0) return;
+    segnaSpesa(capita.cat, capita.valore, capita.testo);
+    $("#diarioCampo").value = "";
+    setTimeout(() => $("#diarioVelo").classList.remove("aperto"), 750);
   });
 
   function tempoUmano(days) {
@@ -2787,6 +2847,13 @@ input[type=range]::-moz-range-thumb {
         aggiornaResto();
         save();
       };
+
+      row.addEventListener("click", (e) => {
+        if (e.target.closest(".voce-campo") || e.target.classList.contains("range")) return;
+        const era = row.classList.contains("aperta");
+        $$(".voce.aperta").forEach((x) => x.classList.remove("aperta"));
+        row.classList.toggle("aperta", !era);
+      });
 
       campo.addEventListener("focus", () => campo.select());
       campo.addEventListener("input", () => applica(parseInt(campo.value.replace(/\D/g, ""), 10) || 0, false));
