@@ -2,6 +2,8 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8" />
+<script>/* l'acchiappa-errori: se qualcosa esplode, lo dice invece di tacere */
+window.addEventListener("error", (e) => { window.__err = (window.__err || "") + e.message + " @" + e.lineno + " · "; });</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <script>
 /* Lo smistatore, regola semplice (voluta da Karim il 30/7/2026):
@@ -443,6 +445,68 @@ input[type=range]::-moz-range-thumb {
 /* La clessidra ha una sua stanza, al centro: è il posto dove l'occhio si
    posa quando riapri l'app e non c'è niente da fare se non guardare il
    tempo che lavora per te. */
+/* ---------- il Diario: il kakeibo con la clessidra attaccata ----------
+   Una pastiglia sola sulla home (zero righe in più: fluttua), un foglio
+   che si apre, una cifra e un tocco. Il gesto è il prodotto. */
+.diario-fab {
+  position: absolute; right: 12px; bottom: 12px; z-index: 30;
+  border: 1px solid rgba(217,255,75,.5); background: rgba(11,11,18,.85);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: var(--paper); border-radius: 999px; padding: 10px 15px;
+  font-size: 13.5px; font-weight: 600; font-family: var(--font-display);
+  box-shadow: 0 6px 24px -8px rgba(217,255,75,.35);
+  transition: transform .2s var(--ease), background .2s;
+}
+.diario-fab:active { transform: scale(.95); }
+.diario-fab b { color: var(--lime); }
+
+.diario-velo {
+  position: absolute; inset: 0; z-index: 40;
+  background: rgba(5,5,10,.72);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.diario-velo.aperto { opacity: 1; pointer-events: auto; }
+.diario-sheet {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 41;
+  border: 1px solid var(--line); background: #101019;
+  border-radius: 20px; padding: 15px 15px 13px;
+  transform: translateY(110%); transition: transform .35s var(--ease);
+}
+.diario-velo.aperto .diario-sheet { transform: none; }
+.diario-sheet h3 { margin: 0; font-family: var(--font-display); font-size: 16px; letter-spacing: -.01em; }
+.diario-riga { display: flex; gap: 8px; margin-top: 11px; }
+.diario-riga .campo {
+  flex: 1; display: flex; align-items: center; gap: 4px;
+  background: rgba(245,244,239,.08); border: 1px solid rgba(245,244,239,.18);
+  border-radius: 12px; padding: 9px 12px;
+}
+.diario-riga .campo:focus-within { border-color: var(--lime); }
+.diario-riga input {
+  width: 100%; background: none; border: none; outline: none; color: var(--paper);
+  font-family: var(--font-display); font-weight: 700; font-size: 19px;
+  font-variant-numeric: tabular-nums; padding: 0;
+}
+.diario-riga .campo span { color: var(--muted); font-weight: 600; }
+.diario-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.diario-chips .benefit { flex: none; }
+.diario-ritmo { margin: 11px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); min-height: 18px; }
+.diario-ritmo b { color: var(--lime); }
+.diario-strip { display: flex; gap: 4px; align-items: flex-end; height: 26px; margin-top: 10px; }
+.diario-strip i {
+  flex: 1; border-radius: 3px 3px 0 0; background: rgba(124,92,255,.5); min-height: 2px;
+}
+.diario-strip i.oggi { background: var(--lime); }
+.diario-strip i.vuoto { background: rgba(245,244,239,.10); }
+
+.bentornato.ricalibro b { color: var(--lime); }
+.ricalibro-azioni { display: flex; gap: 8px; margin-top: 9px; }
+.ricalibro-azioni button {
+  border-radius: 999px; padding: 8px 14px; font-size: 12.5px; font-weight: 600;
+}
+.ricalibro-azioni .si { background: var(--lime); color: var(--ink); border: none; }
+.ricalibro-azioni .no { background: none; color: var(--muted); border: 1px solid var(--line); }
+
 .clessidra-box {
   margin-top: 12px; padding: 12px 14px 12px;
   border: 1px solid var(--line); background: var(--card);
@@ -1226,6 +1290,7 @@ input[type=range]::-moz-range-thumb {
       </div>
 
       <div class="bentornato" id="bentornato" hidden></div>
+      <div class="bentornato ricalibro" id="ricalibroBox" hidden></div>
 
       <div class="cd-infl" id="cdInfl" hidden style="display:none"></div>
       <div class="testata">
@@ -1272,6 +1337,24 @@ input[type=range]::-moz-range-thumb {
         <button class="add-voce" id="addSogno">+ Aggiungi un sogno</button>
       </div>
 
+      <button class="diario-fab" id="diarioFab" hidden>✍️ Oggi</button>
+      <div class="diario-velo" id="diarioVelo">
+        <div class="diario-sheet">
+          <h3>Oggi quanto è uscito?</h3>
+          <div class="diario-riga">
+            <label class="campo"><input id="diarioCampo" type="text" inputmode="numeric" maxlength="4" placeholder="0" aria-label="Spesa di oggi in euro" /><span>€</span></label>
+          </div>
+          <div class="diario-chips">
+            <button type="button" class="benefit" data-cat="spesa">🛒 Spesa</button>
+            <button type="button" class="benefit" data-cat="fuori">🍕 Fuori</button>
+            <button type="button" class="benefit" data-cat="sfizi">🛍️ Sfizi</button>
+            <button type="button" class="benefit" data-cat="zero">🙌 Oggi zero</button>
+          </div>
+          <p class="diario-ritmo" id="diarioRitmo"></p>
+          <div class="diario-strip" id="diarioStrip" aria-hidden="true"></div>
+        </div>
+      </div>
+
     </section>
 
     <!-- 4. AZIONE: il catalogo delle mosse -->
@@ -1311,10 +1394,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730n"></script>
-<script src="js/sogni.js?v=20260730n"></script>
-<script src="js/data.js?v=20260730n"></script>
-<script src="js/engine.js?v=20260730n"></script>
+<script src="js/europa.js?v=20260730o"></script>
+<script src="js/sogni.js?v=20260730o"></script>
+<script src="js/data.js?v=20260730o"></script>
+<script src="js/engine.js?v=20260730o"></script>
 <script>
 (function () {
   "use strict";
@@ -1869,6 +1952,7 @@ input[type=range]::-moz-range-thumb {
        al suo posto si apre la finestra nel flusso */
     const videoAttivo = sfondoCrescita && sfondoCrescita.dataset.pronto === "1";
     $(".clessidra-box").hidden = videoAttivo;
+    renderDiario();
     $("#finestraCrescita").hidden = true;
 
     /* La clessidra racconta a parole quello che disegna. */
@@ -2068,6 +2152,145 @@ input[type=range]::-moz-range-thumb {
   /* Oltre l'anno, i giorni smettono di parlare: "745 giorni" spaventa,
      "2 anni" si capisce. Fino a 365 il numero grosso resta in giorni;
      oltre, il grosso diventa anni e mesi e i giorni scivolano in piccolo. */
+  /* ---------- il Diario ----------
+     Il kakeibo (1904) con la clessidra attaccata: scrivi cosa esce, in
+     cinque secondi, e te ne accorgi. Il primo mese l'app osserva; poi
+     propone di ricalibrare il piano sulle cifre vere. Tutto resta nel
+     telefono, come il resto. */
+
+  const chiaveGiorno = (d) => {
+    const x = d || new Date();
+    return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0");
+  };
+
+  function budgetGiornaliero() {
+    return (valoreVoce("spesa") + valoreVoce("hobby") + valoreVoce("shopping")) / 30.44;
+  }
+
+  function diarioStat() {
+    const d = state.diario || {};
+    const chiavi = Object.keys(d).sort();
+    if (!chiavi.length) return null;
+    const cat = { spesa: 0, fuori: 0, sfizi: 0 };
+    let tot = 0;
+    for (const k of chiavi) {
+      tot += d[k].tot || 0;
+      for (const c in (d[k].cat || {})) cat[c] = (cat[c] || 0) + d[k].cat[c];
+    }
+    const giorniCal = Math.floor((new Date(chiaveGiorno()) - new Date(chiavi[0])) / 86400000) + 1;
+    return { giorniLog: chiavi.length, giorniCal, tot, cat,
+             mensile: (c) => Math.round((cat[c] || 0) / chiavi.length * 30.44) };
+  }
+
+  function segnaSpesa(cat, valore) {
+    state.diario = state.diario || {};
+    const k = chiaveGiorno();
+    const g = state.diario[k] || { tot: 0, cat: {} };
+    g.tot += valore;
+    if (valore > 0) g.cat[cat] = (g.cat[cat] || 0) + valore;
+    state.diario[k] = g;
+    save();
+    renderDiario();
+  }
+
+  function renderDiario() {
+    const fab = $("#diarioFab");
+    if (!fab || !state.voci) return;
+    fab.hidden = false;
+    const oggi = (state.diario || {})[chiaveGiorno()];
+    fab.innerHTML = oggi !== undefined ? `✍️ Oggi: <b>${euro(oggi.tot)}</b>` : "✍️ Segna la spesa di oggi";
+
+    /* la striscia: gli ultimi 7 giorni, oggi in lime */
+    const strip = $("#diarioStrip");
+    if (strip) {
+      const barre = [];
+      let max = 10;
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const g = (state.diario || {})[chiaveGiorno(d)];
+        const v = g ? g.tot : null;
+        if (v !== null && v > max) max = v;
+        barre.push({ v, oggi: i === 0 });
+      }
+      strip.innerHTML = barre.map((b) =>
+        `<i class="${b.oggi ? "oggi" : ""} ${b.v === null ? "vuoto" : ""}" style="height:${b.v === null ? 2 : Math.max(2, Math.round(b.v / max * 26))}px"></i>`
+      ).join("");
+    }
+
+    /* il ritmo di oggi, senza voti */
+    const r = $("#diarioRitmo");
+    if (r) {
+      const budget = budgetGiornaliero();
+      if (oggi === undefined) {
+        r.innerHTML = `Il tuo ritmo è <b>${euro(budget)}</b> al giorno. Una cifra e un tocco: cinque secondi.`;
+      } else {
+        const diff = budget - oggi.tot;
+        r.innerHTML = diff >= 0
+          ? `Oggi ${euro(oggi.tot)} — sotto il tuo ritmo di <b>${euro(diff)}</b>: il sogno respira 🌱`
+          : `Oggi ${euro(oggi.tot)} — ${euro(-diff)} oltre il ritmo. Nessun voto: domani si riequilibra.`;
+      }
+    }
+
+    ricalibroForse();
+  }
+
+  /* Dopo un mese di diario, il piano si offre di diventare vero. */
+  function ricalibroForse() {
+    const box = $("#ricalibroBox");
+    if (!box) return;
+    const s = diarioStat();
+    const mese = chiaveGiorno().slice(0, 7);
+    box.hidden = true;
+    if (!s || s.giorniCal < 28 || s.giorniLog < 12) return;
+    if (state.ricalibroSnooze === mese) return;
+    const stimato = valoreVoce("spesa") + valoreVoce("hobby") + valoreVoce("shopping");
+    const vero = Math.round(s.tot / s.giorniLog * 30.44);
+    if (Math.abs(vero - stimato) < 15) return;
+    box.hidden = false;
+    box.innerHTML = `Un mese di diario: le tue uscite vere fanno <b>${euro(vero)}</b> al mese, il piano ne stimava ${euro(stimato)}. Vuoi che il piano diventi le tue cifre?
+      <div class="ricalibro-azioni">
+        <button class="si" id="ricalibroSi">Ricalibra sulle mie cifre</button>
+        <button class="no" id="ricalibroNo">Non ora</button>
+      </div>`;
+    $("#ricalibroSi").addEventListener("click", () => {
+      const metti = (id, val) => {
+        const v = state.voci.find((x) => x.id === id);
+        if (v) { v.valore = val; v.ok = true; v.mia = true; }
+      };
+      metti("spesa", s.mensile("spesa"));
+      metti("hobby", s.mensile("fuori"));
+      metti("shopping", s.mensile("sfizi"));
+      state.ricalibroSnooze = mese;
+      save();
+      renderHome();
+    });
+    $("#ricalibroNo").addEventListener("click", () => {
+      state.ricalibroSnooze = mese;
+      save();
+      box.hidden = true;
+    });
+  }
+
+  /* il foglio: si apre dalla pastiglia, si chiude dal velo */
+  $("#diarioFab").addEventListener("click", () => {
+    $("#diarioVelo").classList.add("aperto");
+    renderDiario();
+    setTimeout(() => $("#diarioCampo").focus(), 350);
+  });
+  $("#diarioVelo").addEventListener("click", (e) => {
+    if (e.target === $("#diarioVelo")) $("#diarioVelo").classList.remove("aperto");
+  });
+  $$(".diario-chips .benefit").forEach((b) => {
+    b.addEventListener("click", () => {
+      const cat = b.dataset.cat;
+      const val = parseInt($("#diarioCampo").value.replace(/\D/g, ""), 10) || 0;
+      if (cat !== "zero" && val <= 0) { $("#diarioCampo").focus(); return; }
+      segnaSpesa(cat === "zero" ? "spesa" : cat, cat === "zero" ? 0 : val);
+      $("#diarioCampo").value = "";
+      setTimeout(() => $("#diarioVelo").classList.remove("aperto"), 750);
+    });
+  });
+
   function tempoUmano(days) {
     if (!isFinite(days) || days <= 365) return null;
     let anni = Math.floor(days / 365);
@@ -2080,6 +2303,7 @@ input[type=range]::-moz-range-thumb {
 
   /* La crescita 3D: quando il file esiste, il video diventa lo sfondo
      della Clessidra e la card disegnata si spegne. */
+  document.querySelector('[data-screen="home"]').style.position = "relative";
   const sfondoCrescita = $("#sfondoCrescita");
 
   /* Nel filmato la clessidra vive nella fascia 37,5%–80% del quadro
@@ -2326,15 +2550,7 @@ input[type=range]::-moz-range-thumb {
       $("#pVehicle").value = state.plan.vehicle;
       $("#pTipo").value = state.plan.incomeType || "fisso";
       $("#pTipo").dispatchEvent(new Event("change"));
-      /* il tenore di vita segue l'età (coefficienti Eurostat HBS in data.js) */
-    const f = fasciaPerEta(state.plan.eta);
-    v.spesa = (v.spesa || 0) * f.spesa;
-    v.salute = (v.salute || 0) * f.salute;
-    v.abbonamenti = (v.abbonamenti || 0) * f.svago;
-    v.hobby = (v.hobby || 0) * f.svago;
-    v.shopping = (v.shopping || 0) * f.svago;
-
-    const bf = state.plan.benefit || {};
+      const bf = state.plan.benefit || {};
       $("#pBPasto").classList.toggle("on", !!bf.pasto);
       $("#pBAuto").classList.toggle("on", !!bf.auto);
       $("#pBWelfare").classList.toggle("on", !!bf.welfare);
@@ -2409,6 +2625,14 @@ input[type=range]::-moz-range-thumb {
     const v = {};
     b.cats.forEach((c) => (v[c.id] = c.val));
     const d = dream();
+
+    /* il tenore di vita segue l'età (coefficienti Eurostat HBS in data.js) */
+    const fEta = fasciaPerEta(state.plan.eta);
+    v.spesa = (v.spesa || 0) * fEta.spesa;
+    v.salute = (v.salute || 0) * fEta.salute;
+    v.abbonamenti = (v.abbonamenti || 0) * fEta.svago;
+    v.hobby = (v.hobby || 0) * fEta.svago;
+    v.shopping = (v.shopping || 0) * fEta.svago;
 
     /* I benefit del lavoro entrano qui, dove le stime diventano voci:
        i buoni pasto coprono ~160 € di spesa (8 € per ~20 giorni), l'auto
@@ -2845,6 +3069,15 @@ input[type=range]::-moz-range-thumb {
       ]
     });
     migraSogni();
+    /* un mese di diario finto, così la ricalibrazione si vede subito */
+    state.diario = {};
+    for (let i = 29; i >= 0; i--) {
+      if (i % 5 === 4) continue;              /* qualche giorno dimenticato */
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const spesa = 8 + ((i * 7) % 18);
+      const cat = ["spesa", "fuori", "sfizi"][i % 3];
+      state.diario[chiaveGiorno(d)] = { tot: spesa, cat: { [cat]: spesa } };
+    }
     fillSelects();
     dreamInput.value = state.dreamText;
     costInput.value = state.dreamCost;
