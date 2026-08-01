@@ -1103,13 +1103,21 @@ input[type=range]::-moz-range-thumb {
       <p class="sub" style="margin-top:7px">Niente stime a caso. Dimmi due cose sulla tua vita e calcoliamo insieme quanto puoi metterne via davvero, sui costi reali della tua città.</p>
 
       <div class="field">
-        <label for="pEta">Quanti anni hai</label>
-        <select id="pEta"></select>
+        <label for="pTipo">Il tuo lavoro</label>
+        <select id="pTipo">
+          <option value="fisso">Dipendente</option>
+          <option value="piva">Partita IVA</option>
+        </select>
       </div>
 
       <div class="field">
-        <label for="pIncome">Quanto ti entra al mese, netto</label>
+        <label for="pIncome" id="pIncomeLabel">Quanto ti entra al mese, netto</label>
         <div class="field-money"><input id="pIncome" type="text" inputmode="numeric" value="1500" maxlength="6" /><span>€</span></div>
+      </div>
+
+      <div class="field">
+        <label for="pEta">Quanti anni hai</label>
+        <select id="pEta"></select>
       </div>
 
       <div class="field">
@@ -1131,8 +1139,6 @@ input[type=range]::-moz-range-thumb {
         <label for="pVehicle">Come ti muovi</label>
         <select id="pVehicle"></select>
       </div>
-
-      <label class="check"><input type="checkbox" id="pPiva" /> <span>Ho la partita IVA <small>metà di ogni incasso va da parte per il fisco</small></span></label>
 
       <div class="spacer"></div>
       <button class="cta" id="pCalc" style="margin-top:12px">Vediamo i miei numeri</button>
@@ -1291,10 +1297,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730h"></script>
-<script src="js/sogni.js?v=20260730h"></script>
-<script src="js/data.js?v=20260730h"></script>
-<script src="js/engine.js?v=20260730h"></script>
+<script src="js/europa.js?v=20260730i"></script>
+<script src="js/sogni.js?v=20260730i"></script>
+<script src="js/data.js?v=20260730i"></script>
+<script src="js/engine.js?v=20260730i"></script>
 <script>
 (function () {
   "use strict";
@@ -2306,7 +2312,8 @@ input[type=range]::-moz-range-thumb {
       $("#pIncome").value = state.plan.income;
       $("#pHousing").value = state.plan.housing;
       $("#pVehicle").value = state.plan.vehicle;
-      $("#pPiva").checked = state.plan.incomeType === "piva";
+      $("#pTipo").value = state.plan.incomeType || "fisso";
+      $("#pTipo").dispatchEvent(new Event("change"));
       if (state.plan.eta) $("#pEta").value = state.plan.eta;
     }
   }
@@ -2318,6 +2325,15 @@ input[type=range]::-moz-range-thumb {
   /* La fascia d'età suggerisce casa e mezzo sensati: a 16 anni si vive
      coi genitori, a 40 più spesso in una casa propria. È solo la
      preselezione — i campi vengono dopo e restano tutti correggibili. */
+  /* Il bivio del lavoro: al dipendente si chiede il netto, alla partita
+     IVA il lordo — e nella schermata dopo metà di quel lordo va al fisco,
+     come sempre. Qui cambia solo la domanda, i conti non si toccano. */
+  $("#pTipo").addEventListener("change", () => {
+    $("#pIncomeLabel").textContent = $("#pTipo").value === "piva"
+      ? "Quanto incassi al mese, lordo"
+      : "Quanto ti entra al mese, netto";
+  });
+
   $("#pEta").addEventListener("change", () => {
     const e = ETA.find((x) => x.id === $("#pEta").value);
     if (!e) return;
@@ -2334,7 +2350,7 @@ input[type=range]::-moz-range-thumb {
       cityId: $("#pCity").value,
       housing: $("#pHousing").value,
       vehicle: $("#pVehicle").value,
-      incomeType: $("#pPiva").checked ? "piva" : "fisso",
+      incomeType: $("#pTipo").value,
       eta: $("#pEta").value,
       family: "solo",
       goals: { short: null, mid: null, long: null },
