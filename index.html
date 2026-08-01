@@ -448,17 +448,23 @@ input[type=range]::-moz-range-thumb {
 /* ---------- il Diario: il kakeibo con la clessidra attaccata ----------
    Una pastiglia sola sulla home (zero righe in più: fluttua), un foglio
    che si apre, una cifra e un tocco. Il gesto è il prodotto. */
-.diario-fab {
-  position: absolute; right: 12px; bottom: 12px; z-index: 30;
-  border: 1px solid rgba(217,255,75,.5); background: rgba(11,11,18,.85);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  color: var(--paper); border-radius: 999px; padding: 10px 15px;
-  font-size: 13.5px; font-weight: 600; font-family: var(--font-display);
-  box-shadow: 0 6px 24px -8px rgba(217,255,75,.35);
-  transition: transform .2s var(--ease), background .2s;
+.diario-cta {
+  position: absolute; left: 12px; right: 12px; z-index: 30;
+  background: var(--lime); color: var(--ink); border: none;
+  border-radius: 999px; padding: 13px 16px;
+  font-size: 15px; font-weight: 700; font-family: var(--font-display);
+  box-shadow: 0 8px 32px -8px rgba(217,255,75,.55);
+  transition: transform .2s var(--ease), background .25s, color .25s, box-shadow .25s;
 }
-.diario-fab:active { transform: scale(.95); }
-.diario-fab b { color: var(--lime); }
+.diario-cta:active { transform: scale(.97); }
+/* a spesa segnata si mette da parte: bordo lime, fondo scuro */
+.diario-cta.fatto {
+  background: rgba(11,11,18,.85); color: var(--paper);
+  border: 1px solid rgba(217,255,75,.5); box-shadow: none;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font-size: 13.5px; padding: 11px 16px;
+}
+.diario-cta.fatto b { color: var(--lime); }
 
 .diario-velo {
   position: absolute; inset: 0; z-index: 40;
@@ -1338,24 +1344,6 @@ input[type=range]::-moz-range-thumb {
         <button class="add-voce" id="addSogno">+ Aggiungi un sogno</button>
       </div>
 
-      <button class="diario-fab" id="diarioFab" hidden>✍️ Oggi</button>
-      <div class="diario-velo" id="diarioVelo">
-        <div class="diario-sheet">
-          <h3>Oggi quanto è uscito?</h3>
-          <div class="diario-riga">
-            <label class="campo"><input id="diarioCampo" type="text" inputmode="numeric" maxlength="4" placeholder="0" aria-label="Spesa di oggi in euro" /><span>€</span></label>
-          </div>
-          <div class="diario-chips">
-            <button type="button" class="benefit" data-cat="spesa">🛒 Spesa</button>
-            <button type="button" class="benefit" data-cat="fuori">🍕 Fuori</button>
-            <button type="button" class="benefit" data-cat="sfizi">🛍️ Sfizi</button>
-            <button type="button" class="benefit" data-cat="zero">🙌 Oggi zero</button>
-          </div>
-          <p class="diario-ritmo" id="diarioRitmo"></p>
-          <div class="diario-strip" id="diarioStrip" aria-hidden="true"></div>
-        </div>
-      </div>
-
     </section>
 
     <!-- 4. AZIONE: il catalogo delle mosse -->
@@ -1380,6 +1368,24 @@ input[type=range]::-moz-range-thumb {
 
   </div>
 
+  <button class="diario-cta" id="diarioFab" hidden>✍️ Segna la spesa di oggi</button>
+  <div class="diario-velo" id="diarioVelo">
+    <div class="diario-sheet">
+      <h3>Oggi quanto è uscito?</h3>
+      <div class="diario-riga">
+        <label class="campo"><input id="diarioCampo" type="text" inputmode="numeric" maxlength="4" placeholder="0" aria-label="Spesa di oggi in euro" /><span>€</span></label>
+      </div>
+      <div class="diario-chips">
+        <button type="button" class="benefit" data-cat="spesa">🛒 Spesa</button>
+        <button type="button" class="benefit" data-cat="fuori">🍕 Fuori</button>
+        <button type="button" class="benefit" data-cat="sfizi">🛍️ Sfizi</button>
+        <button type="button" class="benefit" data-cat="zero">🙌 Oggi zero</button>
+      </div>
+      <p class="diario-ritmo" id="diarioRitmo"></p>
+      <div class="diario-strip" id="diarioStrip" aria-hidden="true"></div>
+    </div>
+  </div>
+
   <div class="ticker" id="ticker" hidden aria-hidden="true">
     <div class="ticker-track" id="tickerTrack"></div>
   </div>
@@ -1395,10 +1401,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730p"></script>
-<script src="js/sogni.js?v=20260730p"></script>
-<script src="js/data.js?v=20260730p"></script>
-<script src="js/engine.js?v=20260730p"></script>
+<script src="js/europa.js?v=20260730q"></script>
+<script src="js/sogni.js?v=20260730q"></script>
+<script src="js/data.js?v=20260730q"></script>
+<script src="js/engine.js?v=20260730q"></script>
 <script>
 (function () {
   "use strict";
@@ -1669,6 +1675,12 @@ input[type=range]::-moz-range-thumb {
     if (sfondoCrescita) {
       sfondoCrescita.hidden = !(name === "home" && sfondoCrescita.dataset.pronto === "1");
       if (!sfondoCrescita.hidden) requestAnimationFrame(posizionaCrescita);
+    }
+    const diarioCta = $("#diarioFab");
+    if (diarioCta) {
+      diarioCta.hidden = !(name === "home" && state.voci);
+      $("#diarioVelo").classList.remove("aperto");
+      if (!diarioCta.hidden) requestAnimationFrame(renderDiario);
     }
     $("#ticker").hidden = name !== "home";
     const sc = $(`.screen[data-screen="${name}"]`);
@@ -2198,7 +2210,15 @@ input[type=range]::-moz-range-thumb {
     if (!fab || !state.voci) return;
     fab.hidden = false;
     const oggi = (state.diario || {})[chiaveGiorno()];
-    fab.innerHTML = oggi !== undefined ? `✍️ Oggi: <b>${euro(oggi.tot)}</b>` : "✍️ Segna la spesa di oggi";
+    fab.classList.toggle("fatto", oggi !== undefined);
+    fab.innerHTML = oggi !== undefined
+      ? `✍️ Oggi: <b>${euro(oggi.tot)}</b> · aggiungi`
+      : "✍️ Segna la spesa di oggi";
+
+    /* incollato sopra la banda dei maestri, misurato dal vivo */
+    const phone = document.querySelector(".phone").getBoundingClientRect();
+    const banda = ($("#ticker") && !$("#ticker").hidden) ? $("#ticker") : $("#tabbar");
+    if (banda) fab.style.bottom = (phone.bottom - banda.getBoundingClientRect().top + 10) + "px";
 
     /* la striscia: gli ultimi 7 giorni, oggi in lime */
     const strip = $("#diarioStrip");
@@ -2303,7 +2323,6 @@ input[type=range]::-moz-range-thumb {
 
   /* La crescita 3D: quando il file esiste, il video diventa lo sfondo
      della Clessidra e la card disegnata si spegne. */
-  document.querySelector('[data-screen="home"]').style.position = "relative";
   const sfondoCrescita = $("#sfondoCrescita");
 
   /* Nel filmato la clessidra vive nella fascia 37,5%–80% del quadro
@@ -2322,7 +2341,10 @@ input[type=range]::-moz-range-thumb {
     if (!barra || !banda) return;
 
     const sopra = barra.getBoundingClientRect().bottom - phone.top;
-    const sotto = banda.getBoundingClientRect().top - phone.top;
+    const cta = $("#diarioFab");
+    const tettoBanda = banda.getBoundingClientRect().top;
+    const tettoCta = cta && !cta.hidden ? cta.getBoundingClientRect().top : Infinity;
+    const sotto = Math.min(tettoBanda, tettoCta) - phone.top - 6;
     const zona = sotto - sopra;
     if (zona < 120) return;               /* niente spazio: meglio fermi */
 
