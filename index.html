@@ -706,8 +706,8 @@ input[type=range]::-moz-range-thumb {
 
 .voce {
   display: grid;
-  grid-template-columns: 26px 1fr auto auto;
-  grid-template-areas: "emoji nome campo check" "emoji slider slider slider";
+  grid-template-columns: 26px 1fr auto;
+  grid-template-areas: "emoji nome campo" "emoji slider slider";
   align-items: center; gap: 7px 9px;
   border: 1px solid var(--line); background: var(--card);
   border-radius: 14px; padding: 9px 11px;
@@ -1171,13 +1171,8 @@ input[type=range]::-moz-range-thumb {
         <li class="on"><span>2</span>Risveglio</li>
         <li><span>3</span>Azione</li>
       </ol>
-      <h1 style="margin-top:9px">Le tue cifre.<br />Una per una.</h1>
-      <p class="sub" style="margin-top:7px">Ho messo delle stime per partire, ma <b>sono mie, non tue</b>. Correggile o confermale: è qui che si aprono gli occhi.</p>
-
-      <div class="conferma-barra">
-        <div class="conferma-bar"><div class="conferma-fill" id="confermaFill"></div></div>
-        <span class="conferma-n" id="confermaN">0 di 0</span>
-      </div>
+      <h1 style="margin-top:9px">Già compilato,<br />dalle tue risposte.</h1>
+      <p class="sub" style="margin-top:7px">Lavoro, età, città, benefit: c'è già tutto. <b>Ritocca ciò che non torna</b> — ogni cifra resta tua.</p>
 
       <div class="voci" id="vociList"></div>
 
@@ -1316,10 +1311,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730l"></script>
-<script src="js/sogni.js?v=20260730l"></script>
-<script src="js/data.js?v=20260730l"></script>
-<script src="js/engine.js?v=20260730l"></script>
+<script src="js/europa.js?v=20260730m"></script>
+<script src="js/sogni.js?v=20260730m"></script>
+<script src="js/data.js?v=20260730m"></script>
+<script src="js/engine.js?v=20260730m"></script>
 <script>
 (function () {
   "use strict";
@@ -2422,7 +2417,7 @@ input[type=range]::-moz-range-thumb {
 
     const voci = [];
     const add = (id, emoji, nome, hint, valore, tipo) =>
-      voci.push({ id, emoji, nome, hint, valore: Math.round(valore) || 0, tipo, ok: false });
+      voci.push({ id, emoji, nome, hint, valore: Math.round(valore) || 0, tipo, ok: true });
 
     if (b.isPiva) add("tasse", "🏛️", "Fisco", "metà di ogni incasso: non è tuo", v.tasse, "fissa");
     add("casa", "🏠", "Casa", state.plan.housing === "genitori" ? "vivi coi genitori" : "affitto o mutuo", v.casa, "fissa");
@@ -2461,11 +2456,10 @@ input[type=range]::-moz-range-thumb {
 
     lista.innerHTML = state.voci.map((x, i) => {
       const cap = x.id === "investimento" ? maxInvestimento() : max;
-      return `<div class="voce ${x.ok ? "ok" : ""} ${x.tipo === "futuro" ? "futuro" : ""} ${x.tipo === "sogno" ? "sogno" : ""}" data-i="${i}">
+      return `<div class="voce ${x.mia ? "ok" : ""} ${x.tipo === "futuro" ? "futuro" : ""} ${x.tipo === "sogno" ? "sogno" : ""}" data-i="${i}">
         <span class="voce-emoji">${x.emoji}</span>
         <span class="voce-nome"><b>${x.nome}</b><small>${x.hint}</small></span>
         <span class="voce-campo"><input type="text" inputmode="numeric" maxlength="5" value="${x.valore}" aria-label="${x.nome} in euro" /><span>€</span></span>
-        <button class="voce-check" aria-label="Confermo ${x.nome}">✓</button>
         <input class="range" type="range" min="0" max="${cap}" step="5" value="${Math.min(x.valore, cap)}" aria-label="${x.nome} (cursore)" />
       </div>`;
     }).join("") +
@@ -2514,6 +2508,7 @@ input[type=range]::-moz-range-thumb {
 
         state.voci[i].valore = v;
         state.voci[i].ok = true;
+        state.voci[i].mia = true;
         row.classList.add("ok");
 
         if (daSlider) {
@@ -2532,12 +2527,6 @@ input[type=range]::-moz-range-thumb {
       campo.addEventListener("blur", () => { campo.value = state.voci[i].valore; });
       campo.addEventListener("keydown", (e) => { if (e.key === "Enter") campo.blur(); });
       slider.addEventListener("input", () => { fill(); applica(+slider.value, true); });
-      $(".voce-check", row).addEventListener("click", () => {
-        state.voci[i].ok = !state.voci[i].ok;
-        row.classList.toggle("ok", state.voci[i].ok);
-        aggiornaResto();
-        save();
-      });
     });
 
     aggiornaResto();
@@ -2549,13 +2538,8 @@ input[type=range]::-moz-range-thumb {
   const valoreVoce = (id) => (state.voci.find((x) => x.id === id) || {}).valore || 0;
 
   function aggiornaResto() {
-    const tot = state.voci.length;
-    const fatte = state.voci.filter((x) => x.ok).length;
-    $("#confermaFill").style.width = (fatte / tot) * 100 + "%";
-    $("#confermaN").textContent = `${fatte} di ${tot}`;
-    $("#confermaPiano").disabled = fatte < tot;
-    $("#confermaPiano").textContent = fatte < tot
-      ? `Mancano ${tot - fatte} voci` : "Conferma il piano ✓";
+    $("#confermaPiano").disabled = false;
+    $("#confermaPiano").textContent = "Sono i miei numeri →";
 
     const r = risparmio();
     const rispEl = $("#risparmioVal");
@@ -2584,7 +2568,7 @@ input[type=range]::-moz-range-thumb {
     const quanto = parseInt((prompt(`Quanto ti costa "${nome.trim()}" al mese, in euro?`) || "").replace(/\D/g, ""), 10) || 0;
     state.voci.splice(state.voci.length - 1, 0, {
       id: "custom-" + Date.now(), emoji: "📌", nome: nome.trim().slice(0, 28),
-      hint: "voce tua", valore: quanto, tipo: "variabile", ok: true,
+      hint: "voce tua", valore: quanto, tipo: "variabile", ok: true, mia: true,
     });
     save();
     renderVoci();
