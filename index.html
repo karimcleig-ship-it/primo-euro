@@ -4,18 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <script>
-/* Lo smistatore. Karim ha distribuito DUE link sulla stessa porta:
-   quello nudo per far vedere il sito, quello con ?nuovo per provare l'app.
-   Quindi: parametri dell'app (?nuovo, ?test, ?reset, ?clessidra, ?app) o un piano
-   già salvato → si entra nell'app. Link nudo e nessun piano → è qualcuno
-   venuto a conoscere PRIMO EURO: lo si accompagna al sito. Sta in cima,
-   prima dei fogli di stile, così chi va al sito non vede nemmeno un lampo
-   dell'app. I file non si spostano: i link di tutti restano veri. */
+/* Lo smistatore, regola semplice (voluta da Karim il 30/7/2026):
+   il link nudo porta SEMPRE al sito, per tutti — un link che fa sempre
+   la stessa cosa è l'unico di cui ci si fida. Nell'app si entra solo
+   dalle porte dichiarate: ?app (senza mai cancellare il piano), ?nuovo
+   (da zero), ?clessidra (demo), ?test/?reset. Sta in cima, prima dei
+   fogli di stile, così chi va al sito non vede nemmeno un lampo di app. */
 (function () {
   if (/[?&](nuovo|test|reset|clessidra|app)\b/.test(location.search)) return;
-  var piano = null;
-  try { piano = localStorage.getItem("primo-mobile-v1"); } catch (e) {}
-  if (!piano) location.replace("sito/");
+  location.replace("sito/");
 })();
 </script>
 <title>PRIMO EURO — quanto dista il tuo sogno</title>
