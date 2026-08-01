@@ -1103,6 +1103,11 @@ input[type=range]::-moz-range-thumb {
       <p class="sub" style="margin-top:7px">Niente stime a caso. Dimmi due cose sulla tua vita e calcoliamo insieme quanto puoi metterne via davvero, sui costi reali della tua città.</p>
 
       <div class="field">
+        <label for="pEta">Quanti anni hai</label>
+        <select id="pEta"></select>
+      </div>
+
+      <div class="field">
         <label for="pIncome">Quanto ti entra al mese, netto</label>
         <div class="field-money"><input id="pIncome" type="text" inputmode="numeric" value="1500" maxlength="6" /><span>€</span></div>
       </div>
@@ -1286,10 +1291,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730f"></script>
-<script src="js/sogni.js?v=20260730f"></script>
-<script src="js/data.js?v=20260730f"></script>
-<script src="js/engine.js?v=20260730f"></script>
+<script src="js/europa.js?v=20260730g"></script>
+<script src="js/sogni.js?v=20260730g"></script>
+<script src="js/data.js?v=20260730g"></script>
+<script src="js/engine.js?v=20260730g"></script>
 <script>
 (function () {
   "use strict";
@@ -2288,6 +2293,8 @@ input[type=range]::-moz-range-thumb {
   /* i menu si costruiscono dagli stessi dati della versione desktop */
   function fillSelects() {
     $("#pCountry").innerHTML = PAESI_EURO().map(([c, n]) => `<option value="${c}">${n}</option>`).join("");
+    $("#pEta").innerHTML = ETA.map((e) => `<option value="${e.id}">${e.emoji} ${e.label}</option>`).join("");
+    $("#pEta").value = (state.plan && state.plan.eta) || "2534";
     $("#pHousing").innerHTML = HOUSING.map((h) => `<option value="${h.id}">${h.emoji} ${h.label}</option>`).join("");
     $("#pVehicle").innerHTML = VEHICLES.map((v) => `<option value="${v.id}">${v.emoji} ${v.label}</option>`).join("");
 
@@ -2300,12 +2307,23 @@ input[type=range]::-moz-range-thumb {
       $("#pHousing").value = state.plan.housing;
       $("#pVehicle").value = state.plan.vehicle;
       $("#pPiva").checked = state.plan.incomeType === "piva";
+      if (state.plan.eta) $("#pEta").value = state.plan.eta;
     }
   }
 
   $("#pCountry").addEventListener("change", () => riempiCitta($("#pCountry").value));
 
   $("#pIncome").addEventListener("focus", (e) => e.target.select());
+
+  /* La fascia d'età suggerisce casa e mezzo sensati: a 16 anni si vive
+     coi genitori, a 40 più spesso in una casa propria. È solo la
+     preselezione — i campi vengono dopo e restano tutti correggibili. */
+  $("#pEta").addEventListener("change", () => {
+    const e = ETA.find((x) => x.id === $("#pEta").value);
+    if (!e) return;
+    $("#pHousing").value = e.casa;
+    $("#pVehicle").value = e.mezzo;
+  });
 
   /* il risveglio: le stime servono solo ad ancorare — poi le cifre
      le scrive l'utente, una per una. È lì che si aprono gli occhi. */
@@ -2317,6 +2335,7 @@ input[type=range]::-moz-range-thumb {
       housing: $("#pHousing").value,
       vehicle: $("#pVehicle").value,
       incomeType: $("#pPiva").checked ? "piva" : "fisso",
+      eta: $("#pEta").value,
       family: "solo",
       goals: { short: null, mid: null, long: null },
     };
@@ -2747,7 +2766,7 @@ input[type=range]::-moz-range-thumb {
       dreamText: "andare a tokyo", dreamCost: 2600, dreamEmoji: "🗾",
       baseRate: 225, saved: 0, cifraTua: false,
       plan: { income: 1600, country: "IT", cityId: "milano", housing: "stanza",
-              vehicle: "mezzi", incomeType: "fisso", family: "solo",
+              vehicle: "mezzi", incomeType: "fisso", eta: "2534", family: "solo",
               goals: { short: null, mid: null, long: null } },
       sogni: [{ id: "demo1", text: "andare a tokyo", emoji: "🗾", cost: 2600, saved: 0, peso: 1 }],
       attivoId: "demo1", ultimoAccesso: Date.now(),
