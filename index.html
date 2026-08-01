@@ -675,8 +675,9 @@ input[type=range]::-moz-range-thumb {
 .move.misura .move-cifra { color: var(--muted); }
 
 .move-gain {
-  font-size: 11.5px; color: var(--lime); font-weight: 600;
-  font-variant-numeric: tabular-nums;
+  margin-left: auto; flex: none;
+  font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  color: var(--lime); font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 
 .move.done {
@@ -1365,7 +1366,7 @@ input[type=range]::-moz-range-thumb {
         <li class="on"><span>3</span>Azione</li>
       </ol>
       <h1 style="margin-top:9px">I consigli<br />della settimana.</h1>
-      <p class="sub" style="margin-top:7px">Piccole abitudini, non compiti: un caffè in meno, la spesa con la lista. <b>Tocca quelle che ti somigliano</b> e guarda i giorni scendere.</p>
+      <p class="sub" style="margin-top:7px">Ogni consiglio dice <b>quanti giorni taglia</b> dal contatore. Tocca quelli che ti somigliano e guardalo scendere.</p>
 
       <div class="mini-conta">
         <span class="mini-emoji" id="movesEmoji">🎯</span>
@@ -1394,10 +1395,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730o"></script>
-<script src="js/sogni.js?v=20260730o"></script>
-<script src="js/data.js?v=20260730o"></script>
-<script src="js/engine.js?v=20260730o"></script>
+<script src="js/europa.js?v=20260730p"></script>
+<script src="js/sogni.js?v=20260730p"></script>
+<script src="js/data.js?v=20260730p"></script>
+<script src="js/engine.js?v=20260730p"></script>
 <script>
 (function () {
   "use strict";
@@ -1478,7 +1479,6 @@ input[type=range]::-moz-range-thumb {
     { id: "banca",   type: "once", emoji: "💳", name: "Taglia le commissioni", meta: "carte e conti doppioni", perMonth: 9 },
     { id: "vendi",   type: "once", emoji: "🛍️", name: "Vendi 5 cose che non usi", meta: "una tantum, subito da parte", oneShot: 120 },
     { id: "vestiti", type: "week", emoji: "👕", name: "Niente vestiti nuovi", meta: "l'armadio è già pieno", perMonth: 50, su: "shopping", quota: .60 },
-    { id: "impulso", type: "week", emoji: "⏳", name: "Regola delle 48 ore", meta: "se lo vuoi ancora, compralo", perMonth: 55, su: "shopping", quota: .35 },
     { id: "consegne",type: "week", emoji: "🛵", name: "Niente cibo a domicilio", meta: "le commissioni pesano più del cibo", perMonth: 45, su: "hobby", quota: .20 },
     { id: "cena",    type: "week", emoji: "🍕", name: "Una cena fuori in meno", meta: "cucinata insieme conta uguale", perMonth: 35, su: "hobby", quota: .18 },
     { id: "aperi",   type: "week", emoji: "🍹", name: "Un aperitivo in meno", meta: "o a casa, stessi amici", perMonth: 40, su: "hobby", quota: .15 },
@@ -2392,6 +2392,10 @@ input[type=range]::-moz-range-thumb {
      dice cosa vale davvero — la somma di un anno, che non è mai zero. */
   function guadagno(m, x, gain) {
     if (gain >= 1) return "−" + gain + (gain === 1 ? " giorno" : " giorni");
+    /* la mossa è piccola sulla settimana? Si racconta l'anno intero,
+       sempre in giorni: un caffè al giorno è un mese di attesa in meno */
+    const anno = Math.max(0, daysLeft() - daysLeft(valoreAnnuo(m), 0));
+    if (anno >= 1) return "−" + anno + " gg in un anno";
     return euro(valoreAnnuo(m)) + " in un anno";
   }
 
@@ -2430,10 +2434,9 @@ input[type=range]::-moz-range-thumb {
         <span class="wm-check">✓</span>`;
     } else {
       /* pastiglia da una riga sola, come gli esempi del sogno */
-      b.title = x.reale ? "calcolata sui " + x.nota.replace("dai tuoi ", "") : m.meta;
+      b.title = (x.reale ? "calcolata sui " + x.nota.replace("dai tuoi ", "") + " · " : m.meta + " · ") + cifra;
       b.innerHTML = `<span class="move-emoji">${m.emoji}</span>
         <span class="move-name">${m.name}</span>
-        <span class="move-cifra">${cifra}</span>
         <span class="move-gain">${done ? "✓" : guadagno(m, x, gain)}</span>`;
     }
     if (!done) b.addEventListener("click", () => doMove(m, gain));
@@ -2458,10 +2461,11 @@ input[type=range]::-moz-range-thumb {
       list.appendChild(el);
     };
 
+    /* sei per gruppo: le più pesanti per TE. Meno bosco, più chiarezza */
     titolo("Ogni settimana");
-    settimana.forEach((m) => list.appendChild(moveRow(m, "move")));
+    settimana.slice(0, 6).forEach((m) => list.appendChild(moveRow(m, "move")));
     titolo("E una volta sola, se ti va");
-    unaVolta.forEach((m) => list.appendChild(moveRow(m, "move")));
+    unaVolta.slice(0, 6).forEach((m) => list.appendChild(moveRow(m, "move")));
 
     aggiornaMiniConta(false);
   }
