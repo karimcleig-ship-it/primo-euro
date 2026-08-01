@@ -1116,6 +1116,13 @@ input[type=range]::-moz-range-thumb {
       </div>
 
       <div class="field">
+        <label>Benefit dal lavoro <small style="color:var(--faint);font-weight:400">— se ne hai, le stime ne tengono conto</small></label>
+        <label class="check"><input type="checkbox" id="pBPasto" /> <span>Buoni pasto <small>~160 € di spesa al mese li copre il lavoro</small></span></label>
+        <label class="check"><input type="checkbox" id="pBAuto" /> <span>Auto aziendale <small>i trasporti li paga l'azienda</small></span></label>
+        <label class="check"><input type="checkbox" id="pBWelfare" /> <span>Welfare aziendale <small>~80 € fra palestra, abbonamenti, corsi</small></span></label>
+      </div>
+
+      <div class="field">
         <label for="pEta">Quanti anni hai</label>
         <select id="pEta"></select>
       </div>
@@ -1297,10 +1304,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730i"></script>
-<script src="js/sogni.js?v=20260730i"></script>
-<script src="js/data.js?v=20260730i"></script>
-<script src="js/engine.js?v=20260730i"></script>
+<script src="js/europa.js?v=20260730j"></script>
+<script src="js/sogni.js?v=20260730j"></script>
+<script src="js/data.js?v=20260730j"></script>
+<script src="js/engine.js?v=20260730j"></script>
 <script>
 (function () {
   "use strict";
@@ -2314,6 +2321,10 @@ input[type=range]::-moz-range-thumb {
       $("#pVehicle").value = state.plan.vehicle;
       $("#pTipo").value = state.plan.incomeType || "fisso";
       $("#pTipo").dispatchEvent(new Event("change"));
+      const bf = state.plan.benefit || {};
+      $("#pBPasto").checked = !!bf.pasto;
+      $("#pBAuto").checked = !!bf.auto;
+      $("#pBWelfare").checked = !!bf.welfare;
       if (state.plan.eta) $("#pEta").value = state.plan.eta;
     }
   }
@@ -2351,6 +2362,11 @@ input[type=range]::-moz-range-thumb {
       housing: $("#pHousing").value,
       vehicle: $("#pVehicle").value,
       incomeType: $("#pTipo").value,
+      benefit: {
+        pasto: $("#pBPasto").checked,
+        auto: $("#pBAuto").checked,
+        welfare: $("#pBWelfare").checked,
+      },
       eta: $("#pEta").value,
       family: "solo",
       goals: { short: null, mid: null, long: null },
@@ -2375,6 +2391,19 @@ input[type=range]::-moz-range-thumb {
     b.cats.forEach((c) => (v[c.id] = c.val));
     const d = dream();
 
+    /* I benefit del lavoro entrano qui, dove le stime diventano voci:
+       i buoni pasto coprono ~160 € di spesa (8 € per ~20 giorni), l'auto
+       aziendale azzera i trasporti, il welfare copre ~80 € fra abbonamenti
+       e hobby. Come tutto, poi ogni cifra resta correggibile a mano. */
+    const bf = state.plan.benefit || {};
+    let hintSpesa = "cibo e casa", hintTrasporti = "come ti muovi ogni giorno";
+    if (bf.pasto) { v.spesa = Math.max(40, (v.spesa || 0) - 160); hintSpesa = "cibo e casa — buoni pasto contati"; }
+    if (bf.auto) { v.trasporti = 0; hintTrasporti = "ci pensa l'auto aziendale"; }
+    if (bf.welfare) {
+      v.abbonamenti = Math.max(0, (v.abbonamenti || 0) - 40);
+      v.hobby = Math.max(0, (v.hobby || 0) - 40);
+    }
+
     const voci = [];
     const add = (id, emoji, nome, hint, valore, tipo) =>
       voci.push({ id, emoji, nome, hint, valore: Math.round(valore) || 0, tipo, ok: false });
@@ -2382,8 +2411,8 @@ input[type=range]::-moz-range-thumb {
     if (b.isPiva) add("tasse", "🏛️", "Fisco", "metà di ogni incasso: non è tuo", v.tasse, "fissa");
     add("casa", "🏠", "Casa", state.plan.housing === "genitori" ? "vivi coi genitori" : "affitto o mutuo", v.casa, "fissa");
     add("bollette", "💡", "Bollette", "luce, gas, internet", v.bollette, "fissa");
-    add("spesa", "🛒", "Spesa", "cibo e casa", v.spesa, "fissa");
-    add("trasporti", (VEHICLES.find((x) => x.id === state.plan.vehicle) || {}).emoji || "🚌", "Trasporti", "come ti muovi ogni giorno", v.trasporti, "fissa");
+    add("spesa", "🛒", "Spesa", hintSpesa, v.spesa, "fissa");
+    add("trasporti", (VEHICLES.find((x) => x.id === state.plan.vehicle) || {}).emoji || "🚌", "Trasporti", hintTrasporti, v.trasporti, "fissa");
     add("salute", "❤️", "Salute", "farmacia, visite", v.salute, "fissa");
     add("abbonamenti", "📺", "Abbonamenti", "streaming, app, palestra", v.abbonamenti, "variabile");
     add("hobby", "🎨", "Hobby & uscite", "sport, cene, divertimento", v.hobby, "variabile");
