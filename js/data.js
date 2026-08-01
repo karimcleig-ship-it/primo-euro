@@ -46,11 +46,11 @@ const VEHICLES = [
    risposte sensate su casa e mezzi. casa/mezzo sono i suggerimenti che
    si preselezionano quando la scegli — poi ogni campo resta tuo. */
 const ETA = [
-  { id: "1417", emoji: "🎒", label: "14–17",   casa: "genitori", mezzo: "bici" },
-  { id: "1824", emoji: "🎓", label: "18–24",   casa: "genitori", mezzo: "mezzi" },
-  { id: "2534", emoji: "🚀", label: "25–34",   casa: "stanza",   mezzo: "mezzi" },
-  { id: "3549", emoji: "🏡", label: "35–49",   casa: "mono",     mezzo: "autoB" },
-  { id: "50",   emoji: "🌳", label: "50 e più", casa: "mono",    mezzo: "autoB" },
+  { id: "1417", label: "14–17",    casa: "genitori", mezzo: "bici" },
+  { id: "1824", label: "18–24",    casa: "genitori", mezzo: "mezzi" },
+  { id: "2534", label: "25–34",    casa: "stanza",   mezzo: "mezzi" },
+  { id: "3549", label: "35–49",    casa: "mono",     mezzo: "autoB" },
+  { id: "50",   label: "50 e più", casa: "mono",     mezzo: "autoB" },
 ];
 
 const HOUSING = [

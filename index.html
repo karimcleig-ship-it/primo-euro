@@ -1291,10 +1291,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730g"></script>
-<script src="js/sogni.js?v=20260730g"></script>
-<script src="js/data.js?v=20260730g"></script>
-<script src="js/engine.js?v=20260730g"></script>
+<script src="js/europa.js?v=20260730h"></script>
+<script src="js/sogni.js?v=20260730h"></script>
+<script src="js/data.js?v=20260730h"></script>
+<script src="js/engine.js?v=20260730h"></script>
 <script>
 (function () {
   "use strict";
@@ -2293,7 +2293,7 @@ input[type=range]::-moz-range-thumb {
   /* i menu si costruiscono dagli stessi dati della versione desktop */
   function fillSelects() {
     $("#pCountry").innerHTML = PAESI_EURO().map(([c, n]) => `<option value="${c}">${n}</option>`).join("");
-    $("#pEta").innerHTML = ETA.map((e) => `<option value="${e.id}">${e.emoji} ${e.label}</option>`).join("");
+    $("#pEta").innerHTML = ETA.map((e) => `<option value="${e.id}">${e.label}</option>`).join("");
     $("#pEta").value = (state.plan && state.plan.eta) || "2534";
     $("#pHousing").innerHTML = HOUSING.map((h) => `<option value="${h.id}">${h.emoji} ${h.label}</option>`).join("");
     $("#pVehicle").innerHTML = VEHICLES.map((v) => `<option value="${v.id}">${v.emoji} ${v.label}</option>`).join("");
