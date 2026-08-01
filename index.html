@@ -655,6 +655,16 @@ input[type=range]::-moz-range-thumb {
 }
 .field-money span { font-size: 17px; color: var(--lime); font-weight: 700; }
 
+/* i benefit: una riga di pastiglie, si accendono al tocco */
+.benefit-fila { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.benefit {
+  border: 1px solid var(--line); background: var(--card); color: var(--muted);
+  border-radius: 999px; padding: 8px 13px; font-size: 13px;
+  transition: border-color .2s, background .2s, color .2s, transform .2s var(--ease);
+}
+.benefit:active { transform: scale(.96); }
+.benefit.on { border-color: var(--lime); background: var(--lime-dim); color: var(--paper); }
+
 .check {
   display: flex; align-items: flex-start; gap: 10px; margin-top: 18px;
   font-size: 14px; line-height: 1.4; cursor: pointer;
@@ -1116,10 +1126,12 @@ input[type=range]::-moz-range-thumb {
       </div>
 
       <div class="field">
-        <label>Benefit dal lavoro <small style="color:var(--faint);font-weight:400">— se ne hai, le stime ne tengono conto</small></label>
-        <label class="check"><input type="checkbox" id="pBPasto" /> <span>Buoni pasto <small>~160 € di spesa al mese li copre il lavoro</small></span></label>
-        <label class="check"><input type="checkbox" id="pBAuto" /> <span>Auto aziendale <small>i trasporti li paga l'azienda</small></span></label>
-        <label class="check"><input type="checkbox" id="pBWelfare" /> <span>Welfare aziendale <small>~80 € fra palestra, abbonamenti, corsi</small></span></label>
+        <label>Benefit dal lavoro, se ne hai</label>
+        <div class="benefit-fila">
+          <button type="button" class="benefit" id="pBPasto">🍽️ Buoni pasto</button>
+          <button type="button" class="benefit" id="pBAuto">🚗 Auto aziendale</button>
+          <button type="button" class="benefit" id="pBWelfare">🎁 Welfare</button>
+        </div>
       </div>
 
       <div class="field">
@@ -1304,10 +1316,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730j"></script>
-<script src="js/sogni.js?v=20260730j"></script>
-<script src="js/data.js?v=20260730j"></script>
-<script src="js/engine.js?v=20260730j"></script>
+<script src="js/europa.js?v=20260730k"></script>
+<script src="js/sogni.js?v=20260730k"></script>
+<script src="js/data.js?v=20260730k"></script>
+<script src="js/engine.js?v=20260730k"></script>
 <script>
 (function () {
   "use strict";
@@ -2322,9 +2334,9 @@ input[type=range]::-moz-range-thumb {
       $("#pTipo").value = state.plan.incomeType || "fisso";
       $("#pTipo").dispatchEvent(new Event("change"));
       const bf = state.plan.benefit || {};
-      $("#pBPasto").checked = !!bf.pasto;
-      $("#pBAuto").checked = !!bf.auto;
-      $("#pBWelfare").checked = !!bf.welfare;
+      $("#pBPasto").classList.toggle("on", !!bf.pasto);
+      $("#pBAuto").classList.toggle("on", !!bf.auto);
+      $("#pBWelfare").classList.toggle("on", !!bf.welfare);
       if (state.plan.eta) $("#pEta").value = state.plan.eta;
     }
   }
@@ -2345,6 +2357,10 @@ input[type=range]::-moz-range-thumb {
       : "Quanto ti entra al mese, netto";
   });
 
+  ["pBPasto", "pBAuto", "pBWelfare"].forEach((id) => {
+    $("#" + id).addEventListener("click", () => $("#" + id).classList.toggle("on"));
+  });
+
   $("#pEta").addEventListener("change", () => {
     const e = ETA.find((x) => x.id === $("#pEta").value);
     if (!e) return;
@@ -2363,9 +2379,9 @@ input[type=range]::-moz-range-thumb {
       vehicle: $("#pVehicle").value,
       incomeType: $("#pTipo").value,
       benefit: {
-        pasto: $("#pBPasto").checked,
-        auto: $("#pBAuto").checked,
-        welfare: $("#pBWelfare").checked,
+        pasto: $("#pBPasto").classList.contains("on"),
+        auto: $("#pBAuto").classList.contains("on"),
+        welfare: $("#pBWelfare").classList.contains("on"),
       },
       eta: $("#pEta").value,
       family: "solo",
