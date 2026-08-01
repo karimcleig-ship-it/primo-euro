@@ -43,16 +43,27 @@ const VEHICLES = [
   { id: "autoB",    emoji: "🚗", label: "Auto a benzina",     desc: "benzina, assicurazione, bollo",   cost: 210 },
 ];
 
-/* La fascia d'età: è la prima domanda del Risveglio, perché cambia le
-   risposte sensate su casa e mezzi. casa/mezzo sono i suggerimenti che
-   si preselezionano quando la scegli — poi ogni campo resta tuo. */
+/* L'età si chiede ESATTA, la fascia la capisce l'app da sola ("da" è la
+   soglia d'ingresso). casa/mezzo sono i suggerimenti che si preselezionano;
+   spesa/salute/svago sono coefficienti sul tenore di vita, modellati sulle
+   indagini Eurostat sui bilanci familiari (HBS): la spesa sanitaria cresce
+   con l'età, lo svago pesa di più sotto i 35, il cibo sale leggermente. */
 const ETA = [
-  { id: "1417", label: "14–17",    casa: "genitori", mezzo: "bici" },
-  { id: "1824", label: "18–24",    casa: "genitori", mezzo: "mezzi" },
-  { id: "2534", label: "25–34",    casa: "stanza",   mezzo: "mezzi" },
-  { id: "3549", label: "35–49",    casa: "mono",     mezzo: "autoB" },
-  { id: "50",   label: "50 e più", casa: "mono",     mezzo: "autoB" },
+  { id: "1417", da: 0,  casa: "genitori", mezzo: "bici",  spesa: 0.90, salute: 0.60, svago: 0.90 },
+  { id: "1824", da: 18, casa: "genitori", mezzo: "mezzi", spesa: 0.95, salute: 0.80, svago: 1.10 },
+  { id: "2534", da: 25, casa: "stanza",   mezzo: "mezzi", spesa: 1.00, salute: 1.00, svago: 1.10 },
+  { id: "3549", da: 35, casa: "mono",     mezzo: "autoB", spesa: 1.10, salute: 1.20, svago: 0.90 },
+  { id: "50",   da: 50, casa: "mono",     mezzo: "autoB", spesa: 1.15, salute: 1.50, svago: 0.80 },
 ];
+
+/* dammi gli anni, ti do la fascia */
+function fasciaPerEta(anni) {
+  const n = parseInt(anni, 10);
+  if (!n || n < 1) return ETA[2];               /* senza età: adulto tipo */
+  let f = ETA[0];
+  for (const e of ETA) if (n >= e.da) f = e;
+  return f;
+}
 
 const HOUSING = [
   { id: "genitori", emoji: "🏠", label: "Con i genitori", desc: "Casa (quasi) gratis" },

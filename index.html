@@ -1136,7 +1136,7 @@ input[type=range]::-moz-range-thumb {
 
       <div class="field">
         <label for="pEta">Quanti anni hai</label>
-        <select id="pEta"></select>
+        <div class="field-money"><input id="pEta" type="text" inputmode="numeric" value="25" maxlength="3" /><span>anni</span></div>
       </div>
 
       <div class="field">
@@ -1311,10 +1311,10 @@ input[type=range]::-moz-range-thumb {
 
 <!-- lo stesso motore della versione desktop: costi delle città,
      partita IVA, regola 70/30. Niente duplicati. -->
-<script src="js/europa.js?v=20260730m"></script>
-<script src="js/sogni.js?v=20260730m"></script>
-<script src="js/data.js?v=20260730m"></script>
-<script src="js/engine.js?v=20260730m"></script>
+<script src="js/europa.js?v=20260730n"></script>
+<script src="js/sogni.js?v=20260730n"></script>
+<script src="js/data.js?v=20260730n"></script>
+<script src="js/engine.js?v=20260730n"></script>
 <script>
 (function () {
   "use strict";
@@ -2313,8 +2313,6 @@ input[type=range]::-moz-range-thumb {
   /* i menu si costruiscono dagli stessi dati della versione desktop */
   function fillSelects() {
     $("#pCountry").innerHTML = PAESI_EURO().map(([c, n]) => `<option value="${c}">${n}</option>`).join("");
-    $("#pEta").innerHTML = ETA.map((e) => `<option value="${e.id}">${e.label}</option>`).join("");
-    $("#pEta").value = (state.plan && state.plan.eta) || "2534";
     $("#pHousing").innerHTML = HOUSING.map((h) => `<option value="${h.id}">${h.emoji} ${h.label}</option>`).join("");
     $("#pVehicle").innerHTML = VEHICLES.map((v) => `<option value="${v.id}">${v.emoji} ${v.label}</option>`).join("");
 
@@ -2328,11 +2326,22 @@ input[type=range]::-moz-range-thumb {
       $("#pVehicle").value = state.plan.vehicle;
       $("#pTipo").value = state.plan.incomeType || "fisso";
       $("#pTipo").dispatchEvent(new Event("change"));
-      const bf = state.plan.benefit || {};
+      /* il tenore di vita segue l'età (coefficienti Eurostat HBS in data.js) */
+    const f = fasciaPerEta(state.plan.eta);
+    v.spesa = (v.spesa || 0) * f.spesa;
+    v.salute = (v.salute || 0) * f.salute;
+    v.abbonamenti = (v.abbonamenti || 0) * f.svago;
+    v.hobby = (v.hobby || 0) * f.svago;
+    v.shopping = (v.shopping || 0) * f.svago;
+
+    const bf = state.plan.benefit || {};
       $("#pBPasto").classList.toggle("on", !!bf.pasto);
       $("#pBAuto").classList.toggle("on", !!bf.auto);
       $("#pBWelfare").classList.toggle("on", !!bf.welfare);
-      if (state.plan.eta) $("#pEta").value = state.plan.eta;
+      if (state.plan.eta) {
+        const vecchie = { "1417": 16, "1824": 21, "2534": 29, "3549": 42, "50": 57 };
+        $("#pEta").value = vecchie[state.plan.eta] || state.plan.eta;
+      }
     }
   }
 
@@ -2357,10 +2366,9 @@ input[type=range]::-moz-range-thumb {
   });
 
   $("#pEta").addEventListener("change", () => {
-    const e = ETA.find((x) => x.id === $("#pEta").value);
-    if (!e) return;
-    $("#pHousing").value = e.casa;
-    $("#pVehicle").value = e.mezzo;
+    const f = fasciaPerEta($("#pEta").value);
+    $("#pHousing").value = f.casa;
+    $("#pVehicle").value = f.mezzo;
   });
 
   /* il risveglio: le stime servono solo ad ancorare — poi le cifre
@@ -2378,7 +2386,7 @@ input[type=range]::-moz-range-thumb {
         auto: $("#pBAuto").classList.contains("on"),
         welfare: $("#pBWelfare").classList.contains("on"),
       },
-      eta: $("#pEta").value,
+      eta: Math.max(0, parseInt($("#pEta").value.replace(/\D/g, ""), 10) || 0),
       family: "solo",
       goals: { short: null, mid: null, long: null },
     };
@@ -2406,6 +2414,14 @@ input[type=range]::-moz-range-thumb {
        i buoni pasto coprono ~160 € di spesa (8 € per ~20 giorni), l'auto
        aziendale azzera i trasporti, il welfare copre ~80 € fra abbonamenti
        e hobby. Come tutto, poi ogni cifra resta correggibile a mano. */
+    /* il tenore di vita segue l'età (coefficienti Eurostat HBS in data.js) */
+    const f = fasciaPerEta(state.plan.eta);
+    v.spesa = (v.spesa || 0) * f.spesa;
+    v.salute = (v.salute || 0) * f.salute;
+    v.abbonamenti = (v.abbonamenti || 0) * f.svago;
+    v.hobby = (v.hobby || 0) * f.svago;
+    v.shopping = (v.shopping || 0) * f.svago;
+
     const bf = state.plan.benefit || {};
     let hintSpesa = "cibo e casa", hintTrasporti = "come ti muovi ogni giorno";
     if (bf.pasto) { v.spesa = Math.max(40, (v.spesa || 0) - 160); hintSpesa = "cibo e casa — buoni pasto contati"; }
@@ -2811,7 +2827,7 @@ input[type=range]::-moz-range-thumb {
       dreamText: "andare a tokyo", dreamCost: 2600, dreamEmoji: "🗾",
       baseRate: 225, saved: 0, cifraTua: false,
       plan: { income: 1600, country: "IT", cityId: "milano", housing: "stanza",
-              vehicle: "mezzi", incomeType: "fisso", eta: "2534", family: "solo",
+              vehicle: "mezzi", incomeType: "fisso", eta: 29, family: "solo",
               goals: { short: null, mid: null, long: null } },
       sogni: [{ id: "demo1", text: "andare a tokyo", emoji: "🗾", cost: 2600, saved: 0, peso: 1 }],
       attivoId: "demo1", ultimoAccesso: Date.now(),
